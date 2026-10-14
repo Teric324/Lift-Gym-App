@@ -41,7 +41,13 @@ afterEach(async () => {
 });
 
 const storedRow = async () => (await getDraft(db, sessionId))!.items[0]!.rows[0]!;
-const weight = () => screen.getByLabelText('Weight (kg)') as HTMLInputElement;
+const weightButton = () => screen.getByRole('button', { name: 'Weight (kg)' });
+const weightText = () => weightButton().textContent?.replace(/\s+/g, ' ').trim();
+/** Types into the picker's field, opening the picker first if it is closed. */
+function typeWeight(text: string) {
+  if (!document.querySelector('dialog[open]')) fireEvent.click(weightButton());
+  fireEvent.change(screen.getByLabelText('Type a weight (kg)'), { target: { value: text } });
+}
 const reps = () => screen.getByLabelText('Reps') as HTMLInputElement;
 
 function renderRow() {
@@ -55,7 +61,7 @@ function renderRow() {
 describe('SetRow with the real database', () => {
   it('starts with the pre-filled values, unchecked', () => {
     renderRow();
-    expect(weight().value).toBe('80');
+    expect(weightText()).toBe('80 kg');
     expect(reps().value).toBe('5');
     const check = screen.getByLabelText('Mark set as done') as HTMLButtonElement;
     expect(check.disabled).toBe(false);
@@ -64,23 +70,23 @@ describe('SetRow with the real database', () => {
 
   it('writes every valid keystroke to the draft, before any blur', async () => {
     renderRow();
-    fireEvent.change(weight(), { target: { value: '8' } });
+    typeWeight('8');
     await waitFor(async () => expect((await storedRow()).weightGrams).toBe(8000));
-    fireEvent.change(weight(), { target: { value: '82' } });
+    typeWeight('82');
     await waitFor(async () => expect((await storedRow()).weightGrams).toBe(82000));
-    fireEvent.change(weight(), { target: { value: '82,5' } });
+    typeWeight('82,5');
     await waitFor(async () => expect((await storedRow()).weightGrams).toBe(82500));
-    // No blur happened, yet the value is in the database.
-    expect(document.activeElement).not.toBe(weight());
+    // The picker is still open and nothing was confirmed, yet the value is in the database.
+    expect(document.querySelector('dialog[open]')).toBeTruthy();
   });
 
   it('keeps the last valid value in the draft when the text becomes invalid', async () => {
     renderRow();
-    fireEvent.change(weight(), { target: { value: '82' } });
+    typeWeight('82');
     await waitFor(async () => expect((await storedRow()).weightGrams).toBe(82000));
-    fireEvent.change(weight(), { target: { value: '82x' } });
-    fireEvent.change(weight(), { target: { value: '' } });
-    fireEvent.change(weight(), { target: { value: '9999999' } });
+    typeWeight('82x');
+    typeWeight('');
+    typeWeight('9999999');
     // Give any (wrongly) scheduled write time to land before asserting it did not.
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect((await storedRow()).weightGrams).toBe(82000);
@@ -96,7 +102,7 @@ describe('SetRow with the real database', () => {
 
   it('check creates the stored set with the edited values; editing it updates the set', async () => {
     renderRow();
-    fireEvent.change(weight(), { target: { value: '85' } });
+    typeWeight('85');
     await waitFor(async () => expect((await storedRow()).weightGrams).toBe(85000));
 
     fireEvent.click(screen.getByLabelText('Mark set as done'));
@@ -109,8 +115,8 @@ describe('SetRow with the real database', () => {
     row = await storedRow();
     cleanup();
     renderRow();
-    expect(weight().value).toBe('85');
-    fireEvent.change(weight(), { target: { value: '86' } });
+    expect(weightText()).toBe('85 kg');
+    typeWeight('86');
     await waitFor(async () => {
       const [updated] = await listSetsForSession(db, sessionId);
       expect(updated?.weightGrams).toBe(86000);
