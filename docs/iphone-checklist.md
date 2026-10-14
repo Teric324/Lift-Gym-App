@@ -92,6 +92,58 @@ Workouts (the **Workouts** tab, the home screen):
 Old backup compatibility (only if you still have a backup made before this version):
 - [ ] Import it: it is accepted (format 1), and all workouts come back as active.
 
+## 9. Workout session (step 8)
+
+Do this on the updated app (Settings → bottom line shows the new `Version ...`). Export a backup
+first (Settings → Export backup).
+
+Start and fill in:
+- [ ] Workouts → a workout with at least one exercise → **Start**. The session opens at once.
+- [ ] Exercises you have trained before show the last sets already filled in (weight and reps),
+      unchecked. An exercise with no history starts with no rows; **Add set** adds one.
+- [ ] Tap the big square on the right of a row: it fills in (✓) in one tap. Tap again: it empties.
+- [ ] A row with a blank weight or reps cannot be checked (the square is dimmed).
+- [ ] Change a weight before checking, then check. Change a weight of a checked row: it stays
+      checked with the new weight.
+- [ ] Type `27,5` in a weight field (comma) and `27.5` (dot): both work. Type `abc`: the field is
+      marked red with "Not saved. Keeping ... kg." and the old value stays.
+- [ ] Type `600` in a weight: a yellow "Over 500 kg" note appears; the value is still kept.
+- [ ] Reps: `+` and `−` change by one; typing `0` or `101` is marked and not saved.
+- [ ] **Add set** copies the last row's values. **✕** removes a row; on a checked row it asks first.
+
+Closing the app in the middle of a workout (the important one):
+- [ ] Start a workout with two or more exercises. Check two sets. Change the weight of a third,
+      unchecked set (for example from 80 to 82,5) **without checking it**. Do not tap anywhere else.
+- [ ] Better still: tap into a weight field and type a new value, leave the keyboard open.
+- [ ] Open the app switcher and **swipe the app away**. Wait about 10 seconds.
+- [ ] Open the app again from the Home Screen. Go to Workouts: the banner "Workout in progress"
+      is there; tap **Resume**.
+- [ ] The two checked sets are still checked, the third still shows the edited value and is still
+      unchecked, and the value typed with the keyboard open is there too.
+- [ ] Do the same once with the app sent to the background (home gesture, then another app for
+      a minute) instead of swiped away.
+
+Several sessions and the forgotten one:
+- [ ] With a workout in progress, go to Workouts and tap **Start** on another one (or the same):
+      a dialog says a workout is already in progress and offers **Resume it** (no way to start a
+      second one).
+- [ ] Leave a workout in progress overnight (or change the phone date forward by a day for a
+      moment). Next day, tap **Start**: the dialog says "You have an unfinished workout" with the
+      date, and offers **Open it**, **Finish it and start the new one** and **Cancel**. **Discard
+      it** appears only if that session has no checked sets. Nothing is finished by itself.
+- [ ] After "Finish it and start the new one", the next workout's pre-fill comes from the
+      finished session.
+
+Finish:
+- [ ] **Finish workout** with unchecked sets left: asks "1 set is not checked and will not be
+      saved". Cancel keeps you in the workout. **Finish anyway** returns to the list and the
+      banner is gone.
+- [ ] Start the same workout again: the pre-fill is the sets you checked last time (not the
+      unchecked ones).
+- [ ] With nothing checked the button says **Discard workout**; it asks, then removes the
+      session.
+- [ ] Settings → Export, then Import that file: the finished session's sets are intact.
+
 ## How to update the installed app
 
 An installed Home Screen app is a separate copy of the site that updates itself in the background.

@@ -96,3 +96,28 @@ Related: an active session with no checked sets can be offered as "discard" inst
   Components use semantic class names and no inline styles.
 - Settings shows the build (`<git hash> · <UTC time>`, from `vite.config.ts`) to tell installed
   copies apart.
+
+## Workout session (step 8)
+
+- Flow: Home `Start` -> `startSession` (draft = routine's exercises, plan rows copied from each
+  exercise's last finished session) -> `/session` -> check rows -> `Finish workout`.
+- One active session. Starting while one is open opens a dialog (`ActiveSessionDialog`): resume
+  it; if it is from an earlier day also "finish it and start the new one" (ends it at its last
+  checked set, `finishSessionAtLastSet`); "discard it" only when it has no checked sets.
+  Nothing is finished or deleted without a tap.
+- Everything on the session screen is read from IndexedDB (`useSessionView`, a live query) and
+  every change is written at once. Closing the app loses nothing but scroll position and focus.
+- `WeightField` / `RepsField` save on every valid keystroke (`readWeightText` / `readRepsText`
+  in `src/domain/field-input.ts`). Empty or invalid text is never saved; an invalid text stays
+  visible and marked, with a note of the value that is kept. Over 500 kg shows a note, no block.
+- `WeightField`'s props (`valueGrams`, `stepGrams`, `lastGrams`, `onChange`) are the contract for
+  the weight picker of the next step; `SetRow` does not need to change when the picker replaces
+  the text field. `stepGrams` and `lastGrams` are passed already but not used yet.
+- A checked row's stored set takes the row's position as `order`, so later pre-filling lists the
+  sets in the planned order even if they were checked out of order.
+- Finish asks only when unchecked rows remain (they are dropped with the draft). With no checked
+  set the only exit is Discard, so empty sessions never reach the history.
+- Component tests run in jsdom (`// @vitest-environment jsdom` at the top of the file) with
+  Testing Library; `src/test/jsdom-dialog.ts` stands in for the missing `<dialog>.showModal`.
+  The dialogs are always in the DOM, so tests wait for `dialog[open]`, not for their text.
+- Session styles live in `src/features/session/session.css` and use the shared tokens.
