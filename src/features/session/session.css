@@ -216,3 +216,42 @@
 .weight-button__unit {
   opacity: 0.7;
 }
+
+.exercise-card__heading {
+  min-width: 0;
+}
+.exercise-card__actions {
+  display: flex;
+  flex: none;
+  gap: var(--space-1);
+}
+.exercise-card__actions .button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+}
+
+.choice-group {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  border: 0;
+}
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+}
+.choice input {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  flex: none;
+}
+.choice--disabled {
+  opacity: 0.6;
+}
+.skipped-list {
+  margin: var(--space-2) 0;
+}

@@ -72,6 +72,42 @@ export const en = {
     },
     addSet: 'Add set',
     addExercise: 'Add exercise',
+    moveUp: (name: string) => `Move ${name} up`,
+    moveDown: (name: string) => `Move ${name} down`,
+    more: (name: string) => `More actions for ${name}`,
+    menuTitle: (name: string) => name,
+    menuReplace: 'Replace with another exercise…',
+    menuSkip: 'Skip this exercise',
+    menuClose: 'Close',
+    insteadOf: (name: string) => `Instead of ${name}`,
+    skipTitle: 'Skip this exercise?',
+    skipBody: (n: number) =>
+      n === 1
+        ? 'Skipping removes its 1 checked set from this workout. If you bring the exercise back, its rows return unchecked.'
+        : `Skipping removes its ${n} checked sets from this workout. If you bring the exercise back, its rows return unchecked.`,
+    skipConfirm: 'Skip and remove sets',
+    skippedHeading: (n: number) => `Skipped (${n})`,
+    bringBack: 'Bring back',
+    editFailed: 'That change could not be made. Nothing was changed.',
+    replace: {
+      pickTitle: (name: string) => `Replace ${name} with…`,
+      title: (oldName: string, newName: string) => `Replace ${oldName} with ${newName}?`,
+      keepsDone: (oldName: string, newName: string, n: number) =>
+        `${oldName} keeps its ${n === 1 ? '1 set' : `${n} sets`} already done. ${newName} takes the rest of this exercise. History stays with the exercise you actually did.`,
+      dropsPlan: (oldName: string) =>
+        `${oldName} and the values you changed for it are removed from this workout. Nothing of it was recorded, so nothing is lost from your history.`,
+      scopeLabel: 'Apply this',
+      onlyToday: 'Only today',
+      onlyTodayHelp: 'The workout itself stays as it is.',
+      updateWorkout: 'Update the workout',
+      updateWorkoutHelp: 'The workout uses the new exercise from now on.',
+      cannotUpdate: {
+        notFromRoutine: 'This exercise was added today, so the workout has nothing to replace.',
+        routineChanged: 'The workout no longer contains the exercise being replaced.',
+        alreadyInRoutine: (name: string) => `${name} is already in this workout.`,
+      },
+      confirm: 'Replace',
+    },
     addExerciseTitle: 'Add exercises to this workout',
     finish: 'Finish workout',
     finishTitle: 'Finish with unchecked sets?',
