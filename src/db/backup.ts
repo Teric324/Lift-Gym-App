@@ -14,11 +14,17 @@ import type { LiftDB } from './schema';
 import { STARTER_EXERCISES, SEEDED_KEY } from './seed';
 
 /**
- * JSON backup. `formatVersion` changes only when the shape of `data` changes in a way an older
+ * JSON backup. `formatVersion` changes when the shape of `data` changes in a way an older
  * reader could not understand. Drafts are not included: they are working state, not history.
+ *
+ * - 1: first format. Workouts have no `archived` flag.
+ * - 2: workouts have `archived`. Format 1 files are still read (archived = false).
+ *
+ * The app writes the latest version and reads every version listed in READABLE_VERSIONS.
  */
 export const BACKUP_APP = 'lift';
-export const BACKUP_FORMAT_VERSION = 1;
+export const BACKUP_FORMAT_VERSION = 2;
+const READABLE_VERSIONS: readonly number[] = [1, 2];
 
 const LAST_EXPORT_KEY = 'lastExportAt';
 export const BACKUP_REMINDER_DAYS = 30;
@@ -157,15 +163,20 @@ function readExercise(raw: unknown, path: string): Exercise {
   };
 }
 
-function readWorkout(raw: unknown, path: string): Workout {
+function readWorkout(raw: unknown, path: string, formatVersion: number): Workout {
   const r = record(raw, path);
+  let archived = false; // format 1 has no archived workouts
+  if (formatVersion >= 2) {
+    if (typeof r.archived !== 'boolean') fail(`${path}.archived`, 'true or false');
+    archived = r.archived;
+  }
   return {
     id: str(r.id, `${path}.id`),
     name: str(r.name, `${path}.name`),
     exerciseIds: list(r.exerciseIds, `${path}.exerciseIds`).map((id, i) =>
       str(id, `${path}.exerciseIds[${i}]`),
     ),
-    archived: false, // format 1 has no archived workouts (format 2 reads the real flag)
+    archived,
   };
 }
 
@@ -202,13 +213,13 @@ function readSet(raw: unknown, path: string): SessionSet {
   };
 }
 
-function readData(raw: unknown): BackupData {
+function readData(raw: unknown, formatVersion: number): BackupData {
   const data = record(raw, 'data');
   const exercises = list(data.exercises, 'data.exercises').map((v, i) =>
     readExercise(v, `data.exercises[${i}]`),
   );
   const workouts = list(data.workouts, 'data.workouts').map((v, i) =>
-    readWorkout(v, `data.workouts[${i}]`),
+    readWorkout(v, `data.workouts[${i}]`, formatVersion),
   );
   const sessions = list(data.sessions, 'data.sessions').map((v, i) =>
     readSession(v, `data.sessions[${i}]`),
@@ -243,7 +254,7 @@ export function validateBackup(raw: unknown): BackupParseResult {
   if (!isRecord(raw) || raw.app !== BACKUP_APP || typeof raw.formatVersion !== 'number') {
     return { ok: false, error: 'not-a-backup' };
   }
-  if (raw.formatVersion !== BACKUP_FORMAT_VERSION) {
+  if (!READABLE_VERSIONS.includes(raw.formatVersion)) {
     return { ok: false, error: 'unsupported-version', version: raw.formatVersion };
   }
   try {
@@ -251,7 +262,7 @@ export function validateBackup(raw: unknown): BackupParseResult {
       app: BACKUP_APP,
       formatVersion: BACKUP_FORMAT_VERSION,
       exportedAt: finite(raw.exportedAt, 'exportedAt'),
-      data: readData(raw.data),
+      data: readData(raw.data, raw.formatVersion),
     };
     return { ok: true, backup };
   } catch (error) {

@@ -15,6 +15,7 @@ import {
   validateBackup,
   type BackupFile,
 } from './backup';
+import type { Workout } from '../domain/types';
 import { getDraft } from './repo/drafts';
 import { addExercise, listExercises, renameExercise } from './repo/exercises';
 import { finishSession, getActiveSession, startSession } from './repo/sessions';
@@ -48,7 +49,7 @@ const DAY = 24 * 60 * 60 * 1000;
 function validBackup(): BackupFile {
   return {
     app: 'lift',
-    formatVersion: 1,
+    formatVersion: 2,
     exportedAt: T0,
     data: {
       exercises: [
@@ -150,10 +151,10 @@ describe('validateBackup / parseBackupText: rejected', () => {
   });
 
   it('rejects an unknown formatVersion and reports it', () => {
-    expect(validateBackup({ ...validBackup(), formatVersion: 2 })).toEqual({
+    expect(validateBackup({ ...validBackup(), formatVersion: 3 })).toEqual({
       ok: false,
       error: 'unsupported-version',
-      version: 2,
+      version: 3,
     });
     expect(validateBackup({ ...validBackup(), formatVersion: 0 })).toMatchObject({
       error: 'unsupported-version',
@@ -187,6 +188,15 @@ describe('validateBackup / parseBackupText: rejected', () => {
     ['empty exercise name', (b: BackupFile) => (b.data.exercises[0]!.name = '  ')],
     ['zero step', (b: BackupFile) => (b.data.exercises[0]!.stepGrams = 0)],
     [
+      'workout archived missing (format 2)',
+      (b: BackupFile) => delete (b.data.workouts[0] as Partial<Workout>).archived,
+    ],
+    [
+      'workout archived not boolean',
+      (b: BackupFile) =>
+        ((b.data.workouts[0] as unknown as Record<string, unknown>).archived = 'yes'),
+    ],
+    [
       'archived not boolean',
       (b: BackupFile) =>
         ((b.data.exercises[0] as unknown as Record<string, unknown>).archived = 'no'),
@@ -217,6 +227,62 @@ describe('validateBackup / parseBackupText: rejected', () => {
     backup.data.sets[0]!.reps = 0;
     const result = validateBackup(JSON.parse(JSON.stringify(backup)));
     expect(result).toMatchObject({ ok: false, detail: expect.stringContaining('data.sets[0]') });
+  });
+});
+
+describe('format versions', () => {
+  it('still reads a format 1 file (no archived on workouts): workouts come back active', async () => {
+    const v1 = JSON.parse(JSON.stringify(validBackup()));
+    v1.formatVersion = 1;
+    for (const w of v1.data.workouts) delete w.archived;
+    const parsed = validateBackup(v1);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.backup.data.workouts[0]).toMatchObject({ id: 'w1', archived: false });
+
+    await importBackup(db, parsed.backup);
+    const exported = await exportBackup(db, T0);
+    expect(exported.formatVersion).toBe(2);
+    expect(exported.data.workouts).toEqual([
+      { id: 'w1', name: 'Push', exerciseIds: ['e1', 'e2'], archived: false },
+    ]);
+  });
+
+  it('ignores an archived flag in a format 1 file (the format never had one)', () => {
+    const v1 = JSON.parse(JSON.stringify(validBackup()));
+    v1.formatVersion = 1;
+    v1.data.workouts[0].archived = true;
+    const parsed = validateBackup(v1);
+    expect(parsed.ok && parsed.backup.data.workouts[0]?.archived).toBe(false);
+  });
+
+  it('archived workouts survive export -> import', async () => {
+    const backup = validBackup();
+    backup.data.workouts.push({
+      id: 'w2',
+      name: 'Old routine',
+      exerciseIds: ['e1'],
+      archived: true,
+    });
+    await importBackup(db, backup);
+    const text = serializeBackup(await exportBackup(db, T0));
+    const parsed = parseBackupText(text);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    const other = freshDb();
+    await importBackup(other, parsed.backup);
+    const workouts = (await exportBackup(other, T0)).data.workouts;
+    expect(workouts.find((w) => w.id === 'w2')?.archived).toBe(true);
+    expect(workouts.find((w) => w.id === 'w1')?.archived).toBe(false);
+  });
+
+  it('a session of an archived workout keeps its workout', async () => {
+    const backup = validBackup();
+    backup.data.workouts[0]!.archived = true;
+    await importBackup(db, backup);
+    const exported = await exportBackup(db, T0);
+    const session = exported.data.sessions[0]!;
+    expect(exported.data.workouts.find((w) => w.id === session.workoutId)).toBeDefined();
   });
 });
 
@@ -253,7 +319,7 @@ describe('export and import', () => {
       'sets',
       'workouts',
     ]);
-    expect(exported).toMatchObject({ app: 'lift', formatVersion: 1, exportedAt: T0 + 2 * DAY });
+    expect(exported).toMatchObject({ app: 'lift', formatVersion: 2, exportedAt: T0 + 2 * DAY });
     expect(JSON.stringify(exported)).not.toContain('checkedSetId');
   });
 
