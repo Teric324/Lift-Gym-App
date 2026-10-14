@@ -9,6 +9,13 @@ export interface Exercise {
   archived: boolean;
 }
 
+/** A reusable routine. It only points to registry exercises; it never owns history. */
+export interface Workout {
+  id: string;
+  name: string;
+  exerciseIds: string[];
+}
+
 export interface Session {
   id: string;
   workoutId: string;
@@ -29,4 +36,26 @@ export interface SessionSet {
   weightGrams: number;
   reps: number;
   createdAt: number;
+}
+
+/** How an exercise ended up in the active session. */
+export type DraftItemOrigin = 'routine' | 'added' | 'replacement';
+
+export interface DraftItem {
+  exerciseId: string;
+  origin: DraftItemOrigin;
+  /** Set when origin is "replacement": the routine exercise this one stands in for today. */
+  replacesExerciseId: string | null;
+  /** Skipped exercises stay visible in the draft but record nothing. */
+  skipped: boolean;
+}
+
+/**
+ * Working state of the active session, stored apart from the checked sets so it survives the
+ * app being closed. Its order is the order the user sees; it is deleted when the session ends.
+ */
+export interface SessionDraft {
+  sessionId: string;
+  items: DraftItem[];
+  updatedAt: number;
 }

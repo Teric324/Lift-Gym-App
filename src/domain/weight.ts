@@ -49,3 +49,6 @@ export function stepList(stepGrams: number, count: number): number[] {
   }
   return Array.from({ length: Math.max(0, count) }, (_, i) => stepGrams * (i + 1));
 }
+
+/** Step given to a new exercise: 2.5 kg. */
+export const DEFAULT_STEP_GRAMS = 2500;
