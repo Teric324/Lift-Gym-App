@@ -13,6 +13,7 @@ import {
   type BackupSummary,
 } from '../../db/backup';
 import { db } from '../../db/instance';
+import { getPersistRecord, type PersistRecord } from '../../db/persist';
 import { localDateString } from '../../domain/date';
 import { en } from '../../i18n/en';
 import { canShareFile, shareFile } from './share';
@@ -73,6 +74,7 @@ export function SettingsScreen() {
   const [forceLink, setForceLink] = useState(false);
   const [importState, setImportState] = useState<ImportState>({ kind: 'idle' });
   const [busy, setBusy] = useState(false);
+  const [persist, setPersist] = useState<PersistRecord | null | undefined>(undefined);
 
   // Loads the status and prepares the export file ahead of the tap: the share sheet has to be
   // opened straight from the tap handler on iOS.
@@ -89,6 +91,9 @@ export function SettingsScreen() {
       if (cancelled) return;
       setStatus({ ...s, now: Date.now() });
       setPrepared(file);
+    });
+    void getPersistRecord(db).then((record) => {
+      if (!cancelled) setPersist(record);
     });
     return () => {
       cancelled = true;
@@ -228,6 +233,11 @@ export function SettingsScreen() {
           )}
           {exportMessage && <p role="status">{exportMessage}</p>}
         </>
+      )}
+
+      <h2>{t.storageHeading}</h2>
+      {persist !== undefined && (
+        <p>{persist === null ? t.storage.unknown : t.storage[persist.status]}</p>
       )}
 
       <h2>{t.importHeading}</h2>

@@ -4,10 +4,72 @@
     system-ui,
     -apple-system,
     sans-serif;
+  --bar-bg: #16181d;
+  --bar-fg: #f2f4f8;
+  --accent: #4cc2ff;
+  --gutter: 16px;
 }
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
-  padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+  /* The page may run edge to edge (viewport-fit=cover): keep content out of the notch,
+     the home indicator and the rounded corners. */
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* The status bar is translucent on iOS, so this bar always sits under it, in a dark colour
+   that keeps the white status bar text readable in both light and dark mode. */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  /* Full width even though the body has side padding. */
+  margin: 0 calc(-1 * max(var(--gutter), env(safe-area-inset-left))) 0
+    calc(-1 * max(var(--gutter), env(safe-area-inset-right)));
+  padding: env(safe-area-inset-top) max(var(--gutter), env(safe-area-inset-right)) 0
+    max(var(--gutter), env(safe-area-inset-left));
+  min-height: calc(48px + env(safe-area-inset-top));
+  background: var(--bar-bg);
+  color: var(--bar-fg);
+}
+.app-header nav {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+.app-header nav a {
+  padding: 12px 10px;
+  color: inherit;
+  opacity: 0.7;
+  text-decoration: none;
+}
+.app-header nav a.active {
+  opacity: 1;
+  box-shadow: inset 0 -3px var(--accent);
+}
+.update-button {
+  min-height: 36px;
+  padding: 4px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.85rem;
+}
+.update-note {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
 }
 
 main {

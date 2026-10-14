@@ -5,6 +5,16 @@ export const en = {
   appName: 'Lift',
   tagline: 'Your workout tracker',
 
+  nav: { label: 'Main', home: 'Home', settings: 'Settings' },
+  home: {
+    title: 'Workouts',
+    placeholder: 'Your workouts will appear here.',
+  },
+  update: {
+    available: 'Update available',
+    afterWorkout: 'An update is ready. It will install after your workout, on the next start.',
+  },
+
   settings: {
     title: 'Settings',
     loading: 'Loading…',
@@ -26,6 +36,16 @@ export const en = {
       days === null
         ? 'You have not exported a backup yet. Export one now.'
         : `It has been ${days} days since your last backup. Export a new one.`,
+
+    storageHeading: 'Storage',
+    storage: {
+      granted: 'Protected: the browser will not clear this data on its own.',
+      denied:
+        'Not guaranteed: the browser may clear this data if the phone runs low on space or the app is unused for a while. Export a backup regularly.',
+      unsupported:
+        'This browser cannot protect the data from being cleared. Export a backup regularly.',
+      unknown: 'Storage protection has not been checked yet.',
+    },
 
     importHeading: 'Restore from a backup',
     importIntro: 'Importing replaces all data on this phone with the contents of the file.',
