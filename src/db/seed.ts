@@ -2,7 +2,7 @@ import { DEFAULT_STEP_GRAMS } from '../domain/weight';
 import type { Exercise } from '../domain/types';
 import type { LiftDB } from './schema';
 
-const SEEDED_KEY = 'exercisesSeeded';
+export const SEEDED_KEY = 'exercisesSeeded';
 
 const STARTER_NAMES = [
   'Bench press',
