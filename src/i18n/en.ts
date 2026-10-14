@@ -57,6 +57,18 @@ export const en = {
     stepNote: (kg: string) => `Step ${kg} kg`,
     noHistory: 'No history yet',
     addSet: 'Add set',
+    finish: 'Finish workout',
+    finishTitle: 'Finish with unchecked sets?',
+    finishBody: (n: number) =>
+      n === 1
+        ? '1 set is not checked and will not be saved.'
+        : `${n} sets are not checked and will not be saved.`,
+    finishConfirm: 'Finish anyway',
+    discard: 'Discard workout',
+    discardTitle: 'Discard this workout?',
+    discardBody: 'Nothing was recorded, so nothing is lost.',
+    discardConfirm: 'Discard',
+    finishFailed: 'Could not finish the workout. Nothing was changed.',
     removeSet: (n: number) => `Remove set ${n}`,
     removeCheckedTitle: 'Remove this set?',
     removeCheckedBody: 'It is marked as done, so the saved set is deleted too.',
