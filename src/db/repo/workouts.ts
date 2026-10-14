@@ -31,7 +31,12 @@ export async function createWorkout(
   const clean = cleanName(name);
   return db.transaction('rw', db.workouts, db.exercises, async () => {
     await assertExercisesExist(db, exerciseIds);
-    const workout: Workout = { id: newId(), name: clean, exerciseIds: [...exerciseIds] };
+    const workout: Workout = {
+      id: newId(),
+      name: clean,
+      exerciseIds: [...exerciseIds],
+      archived: false,
+    };
     await db.workouts.add(workout);
     return workout;
   });

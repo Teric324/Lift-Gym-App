@@ -55,7 +55,7 @@ function validBackup(): BackupFile {
         { id: 'e1', name: 'Bench press', stepGrams: 2500, archived: false },
         { id: 'e2', name: 'Dips', stepGrams: 1000, archived: true },
       ],
-      workouts: [{ id: 'w1', name: 'Push', exerciseIds: ['e1', 'e2'] }],
+      workouts: [{ id: 'w1', name: 'Push', exerciseIds: ['e1', 'e2'], archived: false }],
       sessions: [
         { id: 's1', workoutId: 'w1', date: '2026-10-05', startedAt: T0, finishedAt: T0 + 3600000 },
       ],

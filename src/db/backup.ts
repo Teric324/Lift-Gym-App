@@ -165,6 +165,7 @@ function readWorkout(raw: unknown, path: string): Workout {
     exerciseIds: list(r.exerciseIds, `${path}.exerciseIds`).map((id, i) =>
       str(id, `${path}.exerciseIds[${i}]`),
     ),
+    archived: false, // format 1 has no archived workouts (format 2 reads the real flag)
   };
 }
 

@@ -14,6 +14,9 @@ export interface Workout {
   id: string;
   name: string;
   exerciseIds: string[];
+  /** Archived routines are hidden from the main list but never deleted, so a session's
+   * `workoutId` always resolves. */
+  archived: boolean;
 }
 
 export interface Session {
