@@ -1,8 +1,8 @@
 # Lift — Gym Tracker (PWA)
 
 A fast, intuitive workout **tracker**. The user logs exercises, sets, weight and reps, and can
-look back at history. **No recommendations, no progression algorithms, no auto-prescribed
-weights.** The app records; the user decides.
+look back at history and personal records. **No recommendations, no progression algorithms, no
+auto-prescribed weights.** The app records; the user decides.
 
 Platform: web app / PWA used from the phone browser (Add to Home Screen). No App Store.
 Developed from a Windows PC and a MacBook through this repo.
@@ -11,11 +11,11 @@ Full product description: `docs/product-spec.md` (read it before building anythi
 
 ## Product principles
 
-- Speed first: logging a set takes seconds, minimal taps, typing only when the user wants to.
-- Only record what actually happened: sets are never pre-created or pre-filled as done.
-  Previous sessions may appear as read-only reference.
-- Flexible weight input (per-exercise step, fast reach to high weights, free typing with
-  `.` or `,`) so every kind of machine and plate set is covered.
+- Speed first: a repeat of last time's workout is one tap per set; changing anything is easy.
+- Sets are pre-filled from the last time but **saved only when checked**; unchecked = not stored.
+- Total freedom in a session: edit values, add/delete sets, replace/add/reorder exercises.
+- History and PR belong to the exercise (registry), not to the routine.
+- Flexible weight input (per-exercise step, jump buttons, free typing with `.` or `,`).
 - Works offline in the gym (service worker, local storage).
 - Data loss is unacceptable: JSON export/import from day one.
 - Weights in kg, stored as integer grams (no floating-point drift).
@@ -23,16 +23,11 @@ Full product description: `docs/product-spec.md` (read it before building anythi
 ## Stack (proposed, confirm before scaffolding)
 
 TypeScript, Vite, React, PWA (manifest + service worker), Dexie (IndexedDB), Vitest for pure
-logic such as weight parsing. Pin the Node major version in `.nvmrc` (same on both machines).
+logic such as weight parsing and PR calculation. Pin the Node major version in `.nvmrc`.
 
-## Open decisions (ask the user before building)
+## Open decisions
 
-1. Workout = reusable routine with dated sessions, or one-off session (see spec)
-2. How to reach high weights fast (see spec)
-3. Data: local-only with export, or account and sync across devices
-4. Single user or multiple people
-5. UI language (Romanian, English, both)
-6. Extras: rest timer, notes per set, bodyweight log, charts
+- PR rule alternative (see spec). Everything else for v1 is decided in the spec.
 
 ## Working agreements
 
