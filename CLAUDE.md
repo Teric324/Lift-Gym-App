@@ -8,6 +8,7 @@ Platform: web app / PWA used from the phone browser (Add to Home Screen). No App
 Developed from a Windows PC and a MacBook through this repo.
 
 Full product description: `docs/product-spec.md` (read it before building anything).
+Current status, decisions already made and next steps: `docs/progress.md`.
 
 ## Product principles
 
