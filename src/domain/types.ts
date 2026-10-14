@@ -41,6 +41,19 @@ export interface SessionSet {
 /** How an exercise ended up in the active session. */
 export type DraftItemOrigin = 'routine' | 'added' | 'replacement';
 
+/**
+ * One editable row of the session plan. It becomes a real set (`SessionSet`) only when checked;
+ * until then it lives in the draft and never counts for PR or history.
+ */
+export interface DraftRow {
+  id: string;
+  /** null = not filled in yet (a blank row). */
+  weightGrams: number | null;
+  reps: number | null;
+  /** Id of the stored set while the row is checked, otherwise null. */
+  checkedSetId: string | null;
+}
+
 export interface DraftItem {
   exerciseId: string;
   origin: DraftItemOrigin;
@@ -48,6 +61,8 @@ export interface DraftItem {
   replacesExerciseId: string | null;
   /** Skipped exercises stay visible in the draft but record nothing. */
   skipped: boolean;
+  /** The session plan for this exercise, copied from its last session and then editable. */
+  rows: DraftRow[];
 }
 
 /**

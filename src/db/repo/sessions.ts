@@ -2,6 +2,7 @@ import { localDateString } from '../../domain/date';
 import { newId } from '../../domain/id';
 import type { Session, SessionDraft } from '../../domain/types';
 import type { LiftDB } from '../schema';
+import { buildPlanRows } from './drafts';
 
 export class ActiveSessionExistsError extends Error {
   constructor(public readonly activeSession: Session) {
@@ -36,12 +37,13 @@ export async function startSession(
   workoutId: string,
   now: number = Date.now(),
 ): Promise<{ session: Session; draft: SessionDraft }> {
-  return db.transaction('rw', db.sessions, db.drafts, db.workouts, async () => {
+  return db.transaction('rw', db.sessions, db.drafts, db.workouts, db.sets, async () => {
     const active = await getActiveSession(db);
     if (active) throw new ActiveSessionExistsError(active);
 
     const workout = await db.workouts.get(workoutId);
     if (!workout) throw new Error(`Workout ${workoutId} not found`);
+    const planRows = await buildPlanRows(db, workout.exerciseIds);
 
     const session: Session = {
       id: newId(),
@@ -57,6 +59,7 @@ export async function startSession(
         origin: 'routine',
         replacesExerciseId: null,
         skipped: false,
+        rows: planRows.get(exerciseId) ?? [],
       })),
       updatedAt: now,
     };

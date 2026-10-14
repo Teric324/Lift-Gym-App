@@ -12,3 +12,9 @@ export function assertValidSetValues(weightGrams: number, reps: number): void {
     throw new RangeError(`Invalid reps: ${reps}`);
   }
 }
+
+/** For a row that may still be blank: each value is checked only if it is filled in. */
+export function assertValidPartialSetValues(weightGrams: number | null, reps: number | null): void {
+  if (weightGrams !== null) assertValidSetValues(weightGrams, MIN_REPS);
+  if (reps !== null) assertValidSetValues(0, reps);
+}

@@ -10,7 +10,15 @@ import {
   setExerciseArchived,
   setExerciseStep,
 } from './repo/exercises';
-import { deleteDraft, getDraft, saveDraft } from './repo/drafts';
+import {
+  addExerciseToDraft,
+  checkDraftRow,
+  deleteDraft,
+  getDraft,
+  saveDraft,
+  uncheckDraftRow,
+  updateDraftRow,
+} from './repo/drafts';
 import {
   ActiveSessionExistsError,
   deleteSession,
@@ -261,8 +269,14 @@ describe('sessions and drafts', () => {
       db,
       session.id,
       [
-        { exerciseId: c.id, origin: 'replacement', replacesExerciseId: a.id, skipped: false },
-        { exerciseId: b.id, origin: 'routine', replacesExerciseId: null, skipped: true },
+        {
+          exerciseId: c.id,
+          origin: 'replacement',
+          replacesExerciseId: a.id,
+          skipped: false,
+          rows: [],
+        },
+        { exerciseId: b.id, origin: 'routine', replacesExerciseId: null, skipped: true, rows: [] },
       ],
       T0 + 10,
     );
@@ -273,8 +287,14 @@ describe('sessions and drafts', () => {
     const draft = await getDraft(db, session.id);
     expect(draft?.updatedAt).toBe(T0 + 10);
     expect(draft?.items).toEqual([
-      { exerciseId: c.id, origin: 'replacement', replacesExerciseId: a.id, skipped: false },
-      { exerciseId: b.id, origin: 'routine', replacesExerciseId: null, skipped: true },
+      {
+        exerciseId: c.id,
+        origin: 'replacement',
+        replacesExerciseId: a.id,
+        skipped: false,
+        rows: [],
+      },
+      { exerciseId: b.id, origin: 'routine', replacesExerciseId: null, skipped: true, rows: [] },
     ]);
     expect((await getActiveSession(db))?.id).toBe(session.id);
   });
@@ -353,5 +373,164 @@ describe('sessions and drafts', () => {
     const two = await startSession(db, w.id, T0 + DAY);
     await finishSession(db, two.session.id, T0 + DAY + 1);
     expect((await listSessions(db)).map((s) => s.id)).toEqual([two.session.id, one.session.id]);
+  });
+});
+
+describe('draft plan rows (editable, unchecked until ticked)', () => {
+  async function history() {
+    const bench = await addExercise(db, 'Bench press');
+    const incline = await addExercise(db, 'Incline press');
+    const push = await createWorkout(db, 'Push', [bench.id]);
+    const first = await startSession(db, push.id, T0);
+    const base = { sessionId: first.session.id, exerciseId: bench.id };
+    await addSet(db, { ...base, weightGrams: 80000, reps: 5 }, T0);
+    await addSet(db, { ...base, weightGrams: 82500, reps: 4 }, T0 + 1);
+    await finishSession(db, first.session.id, T0 + 2);
+    return { bench, incline, push };
+  }
+
+  const values = (rows: { weightGrams: number | null; reps: number | null }[]) =>
+    rows.map((r) => [r.weightGrams, r.reps]);
+
+  it('startSession copies the last session of each exercise into the draft as unchecked rows', async () => {
+    const { bench, push } = await history();
+    const { session, draft } = await startSession(db, push.id, T0 + DAY);
+    const rows = draft.items[0]!.rows;
+    expect(values(rows)).toEqual([
+      [80000, 5],
+      [82500, 4],
+    ]);
+    expect(rows.every((r) => r.checkedSetId === null)).toBe(true);
+    expect(new Set(rows.map((r) => r.id)).size).toBe(2);
+    // Nothing was stored as a set for today.
+    expect(await listSetsForSession(db, session.id)).toEqual([]);
+    expect((await getDraft(db, session.id))?.items[0]?.exerciseId).toBe(bench.id);
+  });
+
+  it('an exercise without history starts with no rows', async () => {
+    const { incline } = await history();
+    const w = await createWorkout(db, 'New', [incline.id]);
+    const { draft } = await startSession(db, w.id, T0 + DAY);
+    expect(draft.items[0]!.rows).toEqual([]);
+  });
+
+  it('adding an exercise copies its own prefill, from any workout', async () => {
+    const { bench, push } = await history();
+    const other = await createWorkout(db, 'Legs', []);
+    const prev = await startSession(db, other.id, T0 + DAY);
+    await finishSession(db, prev.session.id, T0 + DAY + 1);
+
+    const { session } = await startSession(db, push.id, T0 + 2 * DAY);
+    const extra = await addExercise(db, 'Cable fly');
+    const noHistory = await addExerciseToDraft(db, session.id, extra.id, T0 + 2 * DAY);
+    expect(noHistory.items.at(-1)).toMatchObject({
+      exerciseId: extra.id,
+      origin: 'added',
+      rows: [],
+    });
+    await expect(addExerciseToDraft(db, session.id, bench.id)).rejects.toThrow(/already/);
+  });
+
+  it('editing an unchecked row survives close and reopen and never reaches sets or PR', async () => {
+    const { bench, push } = await history();
+    const { session, draft } = await startSession(db, push.id, T0 + DAY);
+    const row = draft.items[0]!.rows[0]!;
+    const setsBefore = await listAllSets(db);
+
+    await updateDraftRow(db, session.id, bench.id, row.id, { weightGrams: 200000, reps: 12 });
+
+    db.close();
+    db = new LiftDB(dbName);
+
+    const reopened = await getDraft(db, session.id);
+    expect(reopened?.items[0]?.rows[0]).toEqual({
+      id: row.id,
+      weightGrams: 200000,
+      reps: 12,
+      checkedSetId: null,
+    });
+    const setsAfter = await listAllSets(db);
+    expect(setsAfter).toEqual(setsBefore);
+    expect(getPR(bench.id, setsAfter)).toMatchObject({ weightGrams: 82500, reps: 4 });
+  });
+
+  it('checking creates a real set; unchecking removes it; the row keeps its values', async () => {
+    const { bench, push } = await history();
+    const { session, draft } = await startSession(db, push.id, T0 + DAY);
+    const row = draft.items[0]!.rows[1]!;
+
+    const set = await checkDraftRow(db, session.id, bench.id, row.id, T0 + DAY + 5);
+    expect(set).toMatchObject({
+      sessionId: session.id,
+      exerciseId: bench.id,
+      weightGrams: 82500,
+      reps: 4,
+      createdAt: T0 + DAY + 5,
+    });
+    expect((await getDraft(db, session.id))?.items[0]?.rows[1]?.checkedSetId).toBe(set.id);
+    // Checking twice is idempotent.
+    expect((await checkDraftRow(db, session.id, bench.id, row.id)).id).toBe(set.id);
+    expect(await listSetsForSession(db, session.id)).toHaveLength(1);
+
+    await uncheckDraftRow(db, session.id, bench.id, row.id);
+    expect(await listSetsForSession(db, session.id)).toEqual([]);
+    expect((await getDraft(db, session.id))?.items[0]?.rows[1]).toMatchObject({
+      weightGrams: 82500,
+      reps: 4,
+      checkedSetId: null,
+    });
+  });
+
+  it('editing a checked row updates its stored set in the same step', async () => {
+    const { bench, push } = await history();
+    const { session, draft } = await startSession(db, push.id, T0 + DAY);
+    const row = draft.items[0]!.rows[0]!;
+    const set = await checkDraftRow(db, session.id, bench.id, row.id, T0 + DAY + 1);
+
+    await updateDraftRow(db, session.id, bench.id, row.id, { weightGrams: 85000 });
+
+    const stored = (await listSetsForSession(db, session.id))[0]!;
+    expect(stored).toMatchObject({
+      id: set.id,
+      weightGrams: 85000,
+      reps: 5,
+      createdAt: T0 + DAY + 1,
+    });
+    expect((await getDraft(db, session.id))?.items[0]?.rows[0]?.weightGrams).toBe(85000);
+    await expect(updateDraftRow(db, session.id, bench.id, row.id, { reps: null })).rejects.toThrow(
+      /checked set/,
+    );
+  });
+
+  it('rejects invalid values and checking a blank row', async () => {
+    const { bench, push } = await history();
+    const { session, draft } = await startSession(db, push.id, T0 + DAY);
+    const row = draft.items[0]!.rows[0]!;
+    await expect(updateDraftRow(db, session.id, bench.id, row.id, { reps: 0 })).rejects.toThrow(
+      RangeError,
+    );
+    await expect(
+      updateDraftRow(db, session.id, bench.id, row.id, { weightGrams: -5 }),
+    ).rejects.toThrow(RangeError);
+
+    await updateDraftRow(db, session.id, bench.id, row.id, { reps: null });
+    await expect(checkDraftRow(db, session.id, bench.id, row.id)).rejects.toThrow(/Fill in/);
+    expect(await listSetsForSession(db, session.id)).toEqual([]);
+  });
+
+  it('unchecked rows of a finished session disappear with the draft and do not feed prefill', async () => {
+    const { bench, push } = await history();
+    const { session, draft } = await startSession(db, push.id, T0 + DAY);
+    const row = draft.items[0]!.rows[0]!;
+    await updateDraftRow(db, session.id, bench.id, row.id, { weightGrams: 99000 });
+    await finishSession(db, session.id, T0 + DAY + 1);
+
+    expect(await getDraft(db, session.id)).toBeUndefined();
+    const next = await startSession(db, push.id, T0 + 2 * DAY);
+    // Still the original session's sets, not the unchecked edit.
+    expect(values(next.draft.items[0]!.rows)).toEqual([
+      [80000, 5],
+      [82500, 4],
+    ]);
   });
 });
