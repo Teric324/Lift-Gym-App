@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../db/instance';
+import { localDateString } from '../../domain/date';
 import { getDraft } from '../../db/repo/drafts';
 import { getActiveSession } from '../../db/repo/sessions';
 import { getWorkout } from '../../db/repo/workouts';
@@ -10,6 +11,8 @@ export interface SessionView {
   workout: Workout | null;
   draft: SessionDraft;
   exercises: Map<string, Exercise>;
+  /** Today's local date when the view was read ("YYYY-MM-DD"). */
+  today: string;
 }
 
 /**
@@ -27,6 +30,7 @@ export function useSessionView(): SessionView | null | undefined {
       session,
       workout: (await getWorkout(db, session.workoutId)) ?? null,
       draft,
+      today: localDateString(Date.now()),
       exercises: new Map(
         exercises.filter((e): e is Exercise => e !== undefined).map((e) => [e.id, e]),
       ),

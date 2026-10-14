@@ -7,6 +7,8 @@ import { en } from '../../i18n/en';
 import { CollapsibleSection } from '../../ui/CollapsibleSection';
 import { EmptyState } from '../../ui/EmptyState';
 import { TextPrompt } from '../../ui/TextPrompt';
+import { ResumeBanner } from '../session/ResumeBanner';
+import { StartWorkoutButton } from '../session/StartWorkoutButton';
 
 const t = en.workouts;
 
@@ -24,6 +26,8 @@ export function WorkoutListScreen() {
       <h1>{t.title}</h1>
       <p className="muted">{t.intro}</p>
 
+      <ResumeBanner />
+
       <div className="screen__actions">
         <button type="button" className="button button--primary" onClick={() => setAdding(true)}>
           {t.add}
@@ -39,6 +43,7 @@ export function WorkoutListScreen() {
               <span className="list__title">{workout.name}</span>
               <span className="list__meta">{t.exerciseCount(workout.exerciseIds.length)}</span>
             </Link>
+            <StartWorkoutButton workout={workout} />
           </li>
         ))}
       </ul>

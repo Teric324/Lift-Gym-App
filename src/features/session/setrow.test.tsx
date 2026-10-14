@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
+import '../../test/jsdom-dialog';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { db } from '../../db/instance';
@@ -10,14 +11,6 @@ import { finishSession, startSession } from '../../db/repo/sessions';
 import { createWorkout } from '../../db/repo/workouts';
 import type { DraftRow, Exercise } from '../../domain/types';
 import { SetRow } from './SetRow';
-
-// jsdom has no modal <dialog>; a minimal stand-in is enough for these tests.
-HTMLDialogElement.prototype.showModal = function showModal() {
-  this.setAttribute('open', '');
-};
-HTMLDialogElement.prototype.close = function close() {
-  this.removeAttribute('open');
-};
 
 const T0 = new Date(2026, 9, 5, 18, 0).getTime();
 

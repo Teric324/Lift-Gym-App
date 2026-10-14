@@ -18,6 +18,28 @@ export const en = {
 
   nav: { label: 'Main', home: 'Workouts', exercises: 'Exercises', settings: 'Settings' },
 
+  start: {
+    button: 'Start',
+    noExercises: 'Add exercises to this workout first.',
+    inProgressTitle: 'A workout is already in progress',
+    inProgressBody: (name: string, sets: number) =>
+      `${name} is still open (${sets === 1 ? '1 set' : `${sets} sets`} done). Finish it before starting another.`,
+    resume: 'Resume it',
+    staleTitle: 'You have an unfinished workout',
+    staleBody: (name: string, date: string, sets: number) =>
+      `${name} from ${date} was never finished (${sets === 1 ? '1 set' : `${sets} sets`} done).`,
+    finishAndStart: 'Finish it and start the new one',
+    openIt: 'Open it',
+    discard: 'Discard it',
+    discardNote: 'It has no sets, so nothing is lost.',
+    working: 'Starting…',
+    failed: 'Could not start the workout.',
+    bannerToday: (name: string, time: string) => `Workout in progress: ${name}, started ${time}.`,
+    bannerStale: (name: string, date: string) => `Unfinished workout: ${name} from ${date}.`,
+    bannerResume: 'Resume',
+    bannerOpen: 'Open',
+  },
+
   session: {
     title: 'Workout',
     none: 'No workout in progress.',
