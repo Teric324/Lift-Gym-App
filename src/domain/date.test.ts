@@ -31,3 +31,20 @@ describe('localDateString', () => {
     expect(localDateString(ms)).toBe('2026-10-14');
   });
 });
+
+describe('localTimeString', () => {
+  it('formats local hours and minutes with padding', async () => {
+    const { localTimeString } = await import('./date');
+    expect(localTimeString(new Date(2026, 9, 14, 0, 5).getTime())).toBe('00:05');
+    expect(localTimeString(new Date(2026, 9, 14, 18, 45).getTime())).toBe('18:45');
+  });
+});
+
+describe('formatSessionDate', () => {
+  it('names the weekday and month from the date itself', async () => {
+    const { formatSessionDate } = await import('./date');
+    expect(formatSessionDate('2026-10-12')).toBe('Mon 12 Oct');
+    expect(formatSessionDate('2026-01-01')).toBe('Thu 1 Jan');
+    expect(formatSessionDate('2026-12-31')).toBe('Thu 31 Dec');
+  });
+});

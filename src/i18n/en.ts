@@ -18,6 +18,24 @@ export const en = {
 
   nav: { label: 'Main', home: 'Workouts', exercises: 'Exercises', settings: 'Settings' },
 
+  session: {
+    title: 'Workout',
+    none: 'No workout in progress.',
+    goToWorkouts: 'Go to workouts',
+    started: (date: string, time: string) => `${date}, started ${time}`,
+    noExercises: 'This workout has no exercises.',
+    noSets: 'No sets yet.',
+    setNumber: (n: number) => `Set ${n}`,
+    kg: 'kg',
+    weightLabel: 'Weight (kg)',
+    repsLabel: 'Reps',
+    check: 'Mark set as done',
+    uncheck: 'Mark set as not done',
+    skipped: 'Skipped',
+    stepNote: (kg: string) => `Step ${kg} kg`,
+    noHistory: 'No history yet',
+  },
+
   workouts: {
     title: 'Workouts',
     intro: 'A workout is a reusable routine. Each time you train it, a new session is recorded.',

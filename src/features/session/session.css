@@ -1,0 +1,42 @@
+/* Session screen. Uses the tokens from src/app/theme.css. */
+
+.exercise-card {
+  margin: var(--space-4) 0;
+  padding: var(--space-3) 0 var(--space-2);
+  border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+}
+.exercise-card__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.exercise-card__title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.set-list {
+  margin: var(--space-2) 0;
+  padding: 0;
+  list-style: none;
+}
+.set-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: var(--space-1) 0;
+}
+.set-row__number {
+  flex: none;
+  width: 1.5rem;
+  text-align: right;
+  opacity: 0.7;
+}
+.set-row__values {
+  flex: 1;
+}
+.set-row--done .set-row__values {
+  font-weight: 600;
+}
