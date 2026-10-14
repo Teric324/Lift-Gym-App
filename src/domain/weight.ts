@@ -13,8 +13,8 @@ export type WeightError = 'empty' | 'invalid' | 'negative' | 'too-many-decimals'
 export type ParseWeightResult =
   { ok: true; grams: number; needsConfirm: boolean } | { ok: false; error: WeightError };
 
-// digits with an optional `.`/`,` fraction (or a bare fraction like ".5"), optional "kg".
-const WEIGHT_PATTERN = /^(\d*)(?:[.,](\d+))?\s*(?:kg)?$/i;
+// digits with an optional `.`/`,` fraction ("27." and ".5" are fine, a lone "." is not), optional "kg".
+const WEIGHT_PATTERN = /^(\d*)(?:[.,](\d*))?\s*(?:kg)?$/i;
 
 export function parseWeight(input: string): ParseWeightResult {
   const text = input.trim();
