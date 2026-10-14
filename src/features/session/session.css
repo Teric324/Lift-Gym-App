@@ -40,3 +40,63 @@
 .set-row--done .set-row__values {
   font-weight: 600;
 }
+
+.set-row {
+  flex-wrap: wrap;
+}
+.set-row__unit {
+  flex: none;
+  opacity: 0.8;
+}
+.field-inline {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+}
+.field-inline__input {
+  width: 5.5rem;
+  text-align: right;
+}
+.reps-field .field-inline__input {
+  width: 3rem;
+  text-align: center;
+}
+.reps-field__step {
+  min-width: 36px;
+  padding: 0;
+}
+.field__input--invalid {
+  border-color: var(--danger);
+}
+.field__warning {
+  flex-basis: 100%;
+  color: var(--warning);
+  font-size: var(--font-small);
+}
+.field-inline .field__error {
+  flex-basis: 100%;
+  margin: 0;
+}
+.set-row__check {
+  flex: none;
+  box-sizing: border-box;
+  width: 52px;
+  height: 52px;
+  margin-left: auto;
+  border: 2px solid currentColor;
+  border-radius: var(--radius);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.set-row__check:disabled {
+  opacity: 0.35;
+}
+.set-row__check--done {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--bar-bg);
+}

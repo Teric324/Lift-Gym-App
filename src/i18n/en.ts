@@ -34,6 +34,20 @@ export const en = {
     skipped: 'Skipped',
     stepNote: (kg: string) => `Step ${kg} kg`,
     noHistory: 'No history yet',
+    notSaved: (kept: string) => `Not saved. Keeping ${kept}.`,
+    notSavedBlank: 'Not saved. Enter a value.',
+    overWeight: 'Over 500 kg. Make sure that is right.',
+    repsMinus: 'One rep less',
+    repsPlus: 'One rep more',
+    fieldError: {
+      empty: 'Enter a value.',
+      invalid: 'Enter a number like 27.5 or 27,5.',
+      negative: 'Cannot be negative.',
+      'too-many-decimals': 'Use at most 2 decimals.',
+      'too-large': 'That is too large.',
+      'not-a-whole-number': 'Use a whole number.',
+      'reps-out-of-range': 'Reps must be from 1 to 100.',
+    },
   },
 
   workouts: {
