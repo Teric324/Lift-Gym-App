@@ -22,6 +22,11 @@ Full product description: `docs/product-spec.md` (read it before building anythi
 - UI language is **English**. Keep all UI strings in a single file (`src/i18n/en.ts`) so another
   language can be added later. Exercise names use common gym terms (Bench press, Leg press).
 
+## Data safety
+
+- Never modify an existing Dexie version block. Schema changes only by adding a new `version()`
+  with an upgrade. The user's data lives on their phone.
+
 ## Stack (proposed, confirm before scaffolding)
 
 TypeScript, Vite, React, PWA (manifest + service worker), Dexie (IndexedDB), Vitest for pure
