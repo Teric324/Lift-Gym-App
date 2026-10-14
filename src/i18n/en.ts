@@ -16,7 +16,54 @@ export const en = {
     nameRequired: 'Enter a name.',
   },
 
-  nav: { label: 'Main', home: 'Home', settings: 'Settings' },
+  nav: { label: 'Main', home: 'Home', exercises: 'Exercises', settings: 'Settings' },
+
+  exercises: {
+    title: 'Exercises',
+    intro: 'Every exercise exists once. History and records belong to the exercise.',
+    add: 'Add exercise',
+    addTitle: 'New exercise',
+    nameLabel: 'Name',
+    searchLabel: 'Search',
+    searchPlaceholder: 'Search exercises',
+    empty: 'No exercises yet. Add your first one.',
+    noMatches: 'No exercise matches your search.',
+    archivedHeading: (n: number) => `Archived (${n})`,
+    step: (kg: string) => `Step ${kg} kg`,
+    nameTaken: (name: string) => `An exercise named "${name}" already exists.`,
+    restoreTitle: 'Restore this exercise?',
+    restoreBody: (name: string) =>
+      `"${name}" is archived. Restore it with its history and records?`,
+    notFound: 'This exercise does not exist.',
+    back: 'Back to exercises',
+    rename: 'Rename',
+    renameTitle: 'Rename exercise',
+    stepHeading: 'Weight step',
+    stepHelp: 'The weight picker counts in this step.',
+    stepCustom: 'Custom step (kg)',
+    stepSet: 'Set step',
+    stepPreview: (list: string) => `Picker: ${list} …`,
+    stepError: {
+      empty: 'Enter a step in kg.',
+      invalid: 'Enter a number like 2.5 or 1,25.',
+      negative: 'The step cannot be negative.',
+      'too-many-decimals': 'Use at most 2 decimals.',
+      'too-large': 'That step is too large.',
+      zero: 'The step must be more than 0.',
+      'too-small': 'The smallest step is 0.01 kg.',
+      'too-big': 'The largest step is 100 kg.',
+    },
+    usedIn: (names: string[]) =>
+      names.length === 0 ? 'Not used in any workout.' : `Used in: ${names.join(', ')}.`,
+    setsLogged: (n: number) => (n === 1 ? '1 set logged.' : `${n} sets logged.`),
+    archiveTitle: 'Archive this exercise?',
+    archiveBody: (inWorkouts: number) =>
+      inWorkouts === 0
+        ? 'It will be hidden from pickers. Its history and records stay.'
+        : `It will be hidden from pickers and left out of new sessions of the ${inWorkouts} workout(s) that use it. Its history and records stay, and you can restore it any time.`,
+    archivedNote: 'Archived. Its history and records are kept.',
+  },
+
   home: {
     title: 'Workouts',
     placeholder: 'Your workouts will appear here.',

@@ -18,6 +18,9 @@ export function Layout() {
           <NavLink className="app-header__link" to="/" end>
             {en.nav.home}
           </NavLink>
+          <NavLink className="app-header__link" to="/exercises">
+            {en.nav.exercises}
+          </NavLink>
           <NavLink className="app-header__link" to="/settings">
             {en.nav.settings}
           </NavLink>
