@@ -4,23 +4,40 @@ The app is a static site: `npm run build` produces `dist/`. Cloudflare Pages bui
 GitHub repo on every push to `main` and serves it over HTTPS (needed for the service worker and
 for installing it on the iPhone).
 
-## One-time setup (done by the owner, in the browser)
+- Cloudflare Pages project: **`lift-tracker-dwa`**
+- Production URL: **https://lift-tracker-dwa.pages.dev**
+- Repo: `Teric324/Lift-Gym-App`, production branch `main`
 
-1. Create a free account at <https://dash.cloudflare.com/sign-up> and verify the email.
-2. In the dashboard open **Workers & Pages** → **Create application** → **Pages** →
-   **Connect to Git**. (Cloudflare now also promotes Workers for new projects; Pages is still
-   available under the "Looking to deploy Pages?" link.)
-3. Sign in with GitHub, choose **Only select repositories**, pick `Teric324/Lift-Gym-App`, then
-   **Install & Authorize** → **Begin setup**.
-4. Project name: `lift` (this becomes `https://lift.pages.dev`; if the name is taken Cloudflare
-   suggests another one). Production branch: `main`.
-5. Build settings:
-   - Framework preset: **Vite** (or None)
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-   - Environment variable (optional, the repo's `.nvmrc` already says 24): `NODE_VERSION` = `24`
-6. **Save and Deploy**. The first build takes a minute or two. The site is then live at the
-   `*.pages.dev` address.
+## Important: the data is tied to this URL
+
+Everything the app stores (IndexedDB, the service worker, the Home Screen install) belongs to the
+**origin**: scheme + host, here `https://lift-tracker-dwa.pages.dev`. A different address is a
+different origin with its own, empty database.
+
+If the address ever changes (a renamed or recreated Pages project, a custom domain, moving to
+Workers), the app on the phone starts **empty**, and the old data is still on the old origin.
+Before changing the address:
+
+1. In the app on the old address: Settings → **Export backup** and save the file in Files.
+2. Add the new address to the Home Screen (open it in Safari, Share → Add to Home Screen).
+3. In the new app: Settings → **Choose backup file…** and import the file.
+
+Do not rename or delete the `lift-tracker-dwa` project, and do not set up a custom domain
+without doing the export/import above first. Preview deployments (`<hash>.lift-tracker-dwa.pages.dev`
+and branch URLs) are also different origins: they have their own empty data, so never use them for
+real workouts.
+
+## Project settings (already configured)
+
+- Framework preset: Vite (or None)
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Node: the repo's `.nvmrc` says 24; if a build ever uses an older Node, set the environment
+  variable `NODE_VERSION` = `24` in the project settings.
+
+To create the project from scratch (only if it is ever lost): dashboard → **Workers & Pages** →
+**Create application** → **Pages** → **Connect to Git**, pick the repo, use the settings above.
+Remember that a new project means a new URL and therefore an empty phone database (see above).
 
 ## Things that are already handled in the repo
 
@@ -32,9 +49,10 @@ for installing it on the iPhone).
 
 ## After a deploy
 
-- Open the site in a normal browser once; it should load without errors.
-- Run `docs/iphone-checklist.md` on the phone.
-- Pushing to `main` deploys to production. Branches and pull requests get preview URLs.
+- Open https://lift-tracker-dwa.pages.dev in a normal browser once; it should load without errors.
+- Run `docs/iphone-checklist.md` on the phone when the PWA, storage or backup code changed.
+- Pushing to `main` deploys to production. Branches and pull requests get preview URLs (see the
+  warning above: do not use them for real data).
 
 ## If the build fails
 
