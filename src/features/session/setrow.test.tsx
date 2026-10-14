@@ -11,6 +11,14 @@ import { createWorkout } from '../../db/repo/workouts';
 import type { DraftRow, Exercise } from '../../domain/types';
 import { SetRow } from './SetRow';
 
+// jsdom has no modal <dialog>; a minimal stand-in is enough for these tests.
+HTMLDialogElement.prototype.showModal = function showModal() {
+  this.setAttribute('open', '');
+};
+HTMLDialogElement.prototype.close = function close() {
+  this.removeAttribute('open');
+};
+
 const T0 = new Date(2026, 9, 5, 18, 0).getTime();
 
 let exercise: Exercise;
@@ -119,5 +127,27 @@ describe('SetRow with the real database', () => {
     fireEvent.click(screen.getByLabelText('Mark set as not done'));
     await waitFor(async () => expect(await listSetsForSession(db, sessionId)).toEqual([]));
     expect((await storedRow()).weightGrams).toBe(86000);
+  });
+
+  it('removing an unchecked row deletes it from the draft at once', async () => {
+    renderRow();
+    fireEvent.click(screen.getByLabelText('Remove set 1'));
+    await waitFor(async () => expect((await getDraft(db, sessionId))!.items[0]!.rows).toEqual([]));
+  });
+
+  it('removing a checked row asks first, then deletes the row and its stored set', async () => {
+    renderRow();
+    fireEvent.click(screen.getByLabelText('Mark set as done'));
+    await waitFor(async () => expect(await listSetsForSession(db, sessionId)).toHaveLength(1));
+    row = await storedRow();
+    cleanup();
+    renderRow();
+
+    fireEvent.click(screen.getByLabelText('Remove set 1'));
+    // Nothing is deleted until the question is answered.
+    expect(await listSetsForSession(db, sessionId)).toHaveLength(1);
+    fireEvent.click(screen.getByText('Remove', { selector: 'dialog button' }));
+    await waitFor(async () => expect(await listSetsForSession(db, sessionId)).toEqual([]));
+    expect((await getDraft(db, sessionId))!.items[0]!.rows).toEqual([]);
   });
 });

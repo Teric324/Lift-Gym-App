@@ -1,3 +1,5 @@
+import { db } from '../../db/instance';
+import { addDraftRow } from '../../db/repo/drafts';
 import type { DraftItem, Exercise } from '../../domain/types';
 import { formatWeight } from '../../domain/weight';
 import { en } from '../../i18n/en';
@@ -33,6 +35,14 @@ export function SessionExerciseCard({ sessionId, exercise, item }: SessionExerci
           />
         ))}
       </ol>
+
+      <button
+        type="button"
+        className="button"
+        onClick={() => void addDraftRow(db, sessionId, exercise.id)}
+      >
+        {t.addSet}
+      </button>
     </article>
   );
 }
