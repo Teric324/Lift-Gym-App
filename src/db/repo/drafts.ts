@@ -1,5 +1,6 @@
 import { newId } from '../../domain/id';
 import { prefillForExercises } from '../../domain/prefill';
+import { applyReplacement, moveVisible, routineTargetOf } from '../../domain/session-items';
 import { assertValidPartialSetValues, assertValidSetValues } from '../../domain/set-values';
 import type { DraftItem, DraftRow, SessionDraft, SessionSet } from '../../domain/types';
 import type { LiftDB } from '../schema';
@@ -89,7 +90,9 @@ export async function addExerciseToDraft(
 ): Promise<SessionDraft> {
   return db.transaction('rw', db.drafts, db.sessions, db.sets, db.exercises, async () => {
     const draft = await loadActiveDraft(db, sessionId);
-    if (!(await db.exercises.get(exerciseId))) throw new Error(`Exercise ${exerciseId} not found`);
+    const exercise = await db.exercises.get(exerciseId);
+    if (!exercise) throw new Error(`Exercise ${exerciseId} not found`);
+    if (exercise.archived) throw new Error('An archived exercise cannot be added');
     if (draft.items.some((i) => i.exerciseId === exerciseId)) {
       throw new Error('Exercise is already in this session');
     }
@@ -241,4 +244,136 @@ export async function removeDraftRow(
     draft.updatedAt = now;
     await db.drafts.put(draft);
   });
+}
+
+/** Thrown when skipping or replacing needs the user to confirm that checked sets go away. */
+export class ItemHasCheckedSetsError extends Error {
+  constructor(public readonly checkedSets: number) {
+    super(`The exercise has ${checkedSets} checked set(s)`);
+    this.name = 'ItemHasCheckedSetsError';
+  }
+}
+
+/** Moves an exercise one place up (-1) or down (+1) among the visible ones. Today only. */
+export async function moveDraftItem(
+  db: LiftDB,
+  sessionId: string,
+  exerciseId: string,
+  direction: -1 | 1,
+  now: number = Date.now(),
+): Promise<void> {
+  await db.transaction('rw', db.drafts, db.sessions, async () => {
+    const draft = await loadActiveDraft(db, sessionId);
+    if (!draft.items.some((i) => i.exerciseId === exerciseId)) {
+      throw new Error(`Exercise ${exerciseId} is not in this session`);
+    }
+    await db.drafts.put({
+      ...draft,
+      items: moveVisible(draft.items, exerciseId, direction),
+      updatedAt: now,
+    });
+  });
+}
+
+/**
+ * Leaves an exercise out of this workout. Its rows are kept (unchecked) so that "bring back"
+ * restores them. If some of its sets are checked, `removeCheckedSets` must be true: those stored
+ * sets are deleted, otherwise `ItemHasCheckedSetsError` is thrown and nothing changes.
+ */
+export async function skipDraftItem(
+  db: LiftDB,
+  sessionId: string,
+  exerciseId: string,
+  options: { removeCheckedSets?: boolean } = {},
+  now: number = Date.now(),
+): Promise<void> {
+  await db.transaction('rw', db.drafts, db.sessions, db.sets, async () => {
+    const draft = await loadActiveDraft(db, sessionId);
+    const item = draft.items.find((i) => i.exerciseId === exerciseId);
+    if (!item) throw new Error(`Exercise ${exerciseId} is not in this session`);
+    const checked = item.rows.filter((r) => r.checkedSetId !== null);
+    if (checked.length > 0 && !options.removeCheckedSets) {
+      throw new ItemHasCheckedSetsError(checked.length);
+    }
+    for (const row of checked) {
+      await db.sets.delete(row.checkedSetId!);
+      row.checkedSetId = null;
+    }
+    item.skipped = true;
+    draft.updatedAt = now;
+    await db.drafts.put(draft);
+  });
+}
+
+/** Brings a skipped exercise back, with its rows as they were (unchecked). */
+export async function unskipDraftItem(
+  db: LiftDB,
+  sessionId: string,
+  exerciseId: string,
+  now: number = Date.now(),
+): Promise<void> {
+  await db.transaction('rw', db.drafts, db.sessions, async () => {
+    const draft = await loadActiveDraft(db, sessionId);
+    const item = draft.items.find((i) => i.exerciseId === exerciseId);
+    if (!item) throw new Error(`Exercise ${exerciseId} is not in this session`);
+    item.skipped = false;
+    draft.updatedAt = now;
+    await db.drafts.put(draft);
+  });
+}
+
+/**
+ * Replaces an exercise of the session by another one (see `applyReplacement`). The new
+ * exercise's rows come from its own history. With `updateWorkout` the routine is changed too:
+ * the exercise it stands for is swapped in place. That needs the item to come from the routine
+ * and the new exercise not to be in it already, otherwise it throws and nothing changes.
+ */
+export async function replaceDraftExercise(
+  db: LiftDB,
+  sessionId: string,
+  oldExerciseId: string,
+  newExerciseId: string,
+  options: { updateWorkout?: boolean } = {},
+  now: number = Date.now(),
+): Promise<SessionDraft> {
+  return db.transaction(
+    'rw',
+    [db.drafts, db.sessions, db.sets, db.exercises, db.workouts],
+    async () => {
+      const draft = await loadActiveDraft(db, sessionId);
+      if (oldExerciseId === newExerciseId) throw new Error('Choose a different exercise');
+      const old = draft.items.find((i) => i.exerciseId === oldExerciseId);
+      if (!old) throw new Error(`Exercise ${oldExerciseId} is not in this session`);
+      const exercise = await db.exercises.get(newExerciseId);
+      if (!exercise) throw new Error(`Exercise ${newExerciseId} not found`);
+      if (exercise.archived) throw new Error('An archived exercise cannot be used');
+      if (draft.items.some((i) => i.exerciseId === newExerciseId)) {
+        throw new Error('Exercise is already in this session');
+      }
+
+      if (options.updateWorkout) {
+        const session = (await db.sessions.get(sessionId))!;
+        const workout = await db.workouts.get(session.workoutId);
+        const target = routineTargetOf(old);
+        if (!workout || target === null || !workout.exerciseIds.includes(target)) {
+          throw new Error('The workout has no exercise to replace');
+        }
+        if (workout.exerciseIds.includes(newExerciseId)) {
+          throw new Error('The exercise is already in the workout');
+        }
+        await db.workouts.update(workout.id, {
+          exerciseIds: workout.exerciseIds.map((id) => (id === target ? newExerciseId : id)),
+        });
+      }
+
+      const rows = (await buildPlanRows(db, [newExerciseId])).get(newExerciseId) ?? [];
+      const next: SessionDraft = {
+        ...draft,
+        items: applyReplacement(draft.items, oldExerciseId, newExerciseId, rows),
+        updatedAt: now,
+      };
+      await db.drafts.put(next);
+      return next;
+    },
+  );
 }
