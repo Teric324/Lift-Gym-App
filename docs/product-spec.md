@@ -60,7 +60,7 @@ Implementation notes:
 
 ## Defaults for v1
 
-Local-only storage (IndexedDB) with JSON export/import; single user; Romanian UI; installable PWA
+Local-only storage (IndexedDB) with JSON export/import; single user; English UI (all UI strings in one file, so another language can be added later); installable PWA
 that works offline.
 
 ## Out of scope for v1

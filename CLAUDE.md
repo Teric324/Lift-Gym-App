@@ -19,6 +19,8 @@ Full product description: `docs/product-spec.md` (read it before building anythi
 - Works offline in the gym (service worker, local storage).
 - Data loss is unacceptable: JSON export/import from day one.
 - Weights in kg, stored as integer grams (no floating-point drift).
+- UI language is **English**. Keep all UI strings in a single file (`src/i18n/en.ts`) so another
+  language can be added later. Exercise names use common gym terms (Bench press, Leg press).
 
 ## Stack (proposed, confirm before scaffolding)
 
