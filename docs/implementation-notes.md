@@ -39,3 +39,21 @@ The UI must handle it explicitly when starting a session:
 3. Only then start the new session. Never finish or delete the old one silently.
 
 Related: an active session with no checked sets can be offered as "discard" instead of "finish".
+
+## Backup (src/db/backup.ts, src/features/settings)
+
+- File: `{ app: "lift", formatVersion: 1, exportedAt, data: { exercises, workouts, sessions, sets } }`.
+  Drafts are not exported. Name: `lift-backup-YYYY-MM-DD.json` (local date).
+- Import replaces everything in one transaction, after strict validation (shape, value limits,
+  unique ids, references) and an explicit confirmation showing counts. Unknown `formatVersion`
+  is rejected. It sets the `exercisesSeeded` flag so the starter list never reloads.
+- An active session in a backup gets a draft rebuilt from its checked sets (unchecked plan rows
+  were never exported).
+- If the phone already has data, the current data is exported first; the import does not run
+  unless that export succeeded.
+- Export uses `navigator.share` with the file (Share sheet: Files / iCloud Drive) when available,
+  otherwise a download link. The file is prepared before the tap because iOS needs `share()` to
+  start directly from the gesture.
+- The reminder shows after 30 days without an export (counted from the oldest data if never
+  exported). `lastExportAt` is stored in `meta`.
+- Changing the format later: bump `formatVersion`, keep a reader for the old one.
