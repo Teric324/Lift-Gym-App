@@ -150,7 +150,7 @@ export async function checkDraftRow(
 ): Promise<SessionSet> {
   return db.transaction('rw', db.drafts, db.sessions, db.sets, db.exercises, async () => {
     const draft = await loadActiveDraft(db, sessionId);
-    const { row } = findRow(draft, exerciseId, rowId);
+    const { item, row } = findRow(draft, exerciseId, rowId);
     if (row.checkedSetId !== null) {
       const existing = await db.sets.get(row.checkedSetId);
       if (existing) return existing;
@@ -161,7 +161,14 @@ export async function checkDraftRow(
     assertValidSetValues(row.weightGrams, row.reps);
     const set = await addSet(
       db,
-      { sessionId, exerciseId, weightGrams: row.weightGrams, reps: row.reps },
+      {
+        sessionId,
+        exerciseId,
+        weightGrams: row.weightGrams,
+        reps: row.reps,
+        // The row's position, so later pre-filling lists the sets in the order they were planned.
+        order: item.rows.indexOf(row),
+      },
       now,
     );
     row.checkedSetId = set.id;
@@ -185,6 +192,52 @@ export async function uncheckDraftRow(
     if (row.checkedSetId === null) return;
     await db.sets.delete(row.checkedSetId);
     row.checkedSetId = null;
+    draft.updatedAt = now;
+    await db.drafts.put(draft);
+  });
+}
+
+/**
+ * Appends a row to an exercise's plan. It copies the weight and reps of the exercise's last row
+ * (a repeated set is the common case); with no rows yet it starts blank.
+ */
+export async function addDraftRow(
+  db: LiftDB,
+  sessionId: string,
+  exerciseId: string,
+  now: number = Date.now(),
+): Promise<DraftRow> {
+  return db.transaction('rw', db.drafts, db.sessions, async () => {
+    const draft = await loadActiveDraft(db, sessionId);
+    const item = draft.items.find((i) => i.exerciseId === exerciseId);
+    if (!item) throw new Error(`Exercise ${exerciseId} is not in this session`);
+    const previous = item.rows.at(-1);
+    const row: DraftRow = {
+      id: newId(),
+      weightGrams: previous?.weightGrams ?? null,
+      reps: previous?.reps ?? null,
+      checkedSetId: null,
+    };
+    item.rows.push(row);
+    draft.updatedAt = now;
+    await db.drafts.put(draft);
+    return { ...row };
+  });
+}
+
+/** Removes a plan row. If the row was checked, its stored set is deleted too. */
+export async function removeDraftRow(
+  db: LiftDB,
+  sessionId: string,
+  exerciseId: string,
+  rowId: string,
+  now: number = Date.now(),
+): Promise<void> {
+  await db.transaction('rw', db.drafts, db.sessions, db.sets, db.exercises, async () => {
+    const draft = await loadActiveDraft(db, sessionId);
+    const { item, row } = findRow(draft, exerciseId, rowId);
+    if (row.checkedSetId !== null) await db.sets.delete(row.checkedSetId);
+    item.rows = item.rows.filter((r) => r.id !== rowId);
     draft.updatedAt = now;
     await db.drafts.put(draft);
   });

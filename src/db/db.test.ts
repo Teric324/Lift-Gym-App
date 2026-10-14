@@ -12,10 +12,12 @@ import {
   setExerciseStep,
 } from './repo/exercises';
 import {
+  addDraftRow,
   addExerciseToDraft,
   checkDraftRow,
   deleteDraft,
   getDraft,
+  removeDraftRow,
   saveDraft,
   uncheckDraftRow,
   updateDraftRow,
@@ -23,8 +25,12 @@ import {
 import {
   ActiveSessionExistsError,
   deleteSession,
+  discardEmptySession,
   finishSession,
+  finishSessionAtLastSet,
   getActiveSession,
+  getSessionSummary,
+  SessionHasSetsError,
   listSessions,
   startSession,
 } from './repo/sessions';
@@ -638,5 +644,122 @@ describe('exercise lookup and archived exercises in sessions', () => {
     await setExerciseArchived(db, a.id, false);
     const next = await startSession(db, w.id, T0 + DAY);
     expect(next.draft.items.map((i) => i.exerciseId)).toEqual([a.id, b.id]);
+  });
+});
+
+describe('session rows: add, remove, order, summary, discard, stale finish', () => {
+  async function started() {
+    const bench = await addExercise(db, 'Bench press');
+    const fly = await addExercise(db, 'Cable fly');
+    const w = await createWorkout(db, 'Push', [bench.id, fly.id]);
+    const prev = await startSession(db, w.id, T0);
+    await addSet(
+      db,
+      { sessionId: prev.session.id, exerciseId: bench.id, weightGrams: 80000, reps: 5 },
+      T0,
+    );
+    await finishSession(db, prev.session.id, T0 + 1);
+    const { session, draft } = await startSession(db, w.id, T0 + DAY);
+    return { bench, fly, w, session, draft };
+  }
+
+  it('addDraftRow copies the last row, or starts blank for an exercise without rows', async () => {
+    const { bench, fly, session } = await started();
+    const copied = await addDraftRow(db, session.id, bench.id);
+    expect(copied).toMatchObject({ weightGrams: 80000, reps: 5, checkedSetId: null });
+    const blank = await addDraftRow(db, session.id, fly.id);
+    expect(blank).toMatchObject({ weightGrams: null, reps: null, checkedSetId: null });
+
+    const draft = await getDraft(db, session.id);
+    expect(draft?.items[0]?.rows).toHaveLength(2);
+    expect(draft?.items[1]?.rows).toHaveLength(1);
+    await expect(addDraftRow(db, session.id, 'unknown')).rejects.toThrow(/not in this session/);
+  });
+
+  it('a copied row is independent: editing it does not change the original', async () => {
+    const { bench, session, draft } = await started();
+    const original = draft.items[0]!.rows[0]!;
+    const copy = await addDraftRow(db, session.id, bench.id);
+    await updateDraftRow(db, session.id, bench.id, copy.id, { weightGrams: 90000 });
+    const rows = (await getDraft(db, session.id))!.items[0]!.rows;
+    expect(rows.map((r) => r.weightGrams)).toEqual([80000, 90000]);
+    expect(rows[0]!.id).toBe(original.id);
+  });
+
+  it('removeDraftRow drops an unchecked row, and a checked row together with its set', async () => {
+    const { bench, session, draft } = await started();
+    const extra = await addDraftRow(db, session.id, bench.id);
+    const first = draft.items[0]!.rows[0]!;
+    await checkDraftRow(db, session.id, bench.id, first.id);
+    expect(await listSetsForSession(db, session.id)).toHaveLength(1);
+
+    await removeDraftRow(db, session.id, bench.id, extra.id);
+    expect((await getDraft(db, session.id))!.items[0]!.rows).toHaveLength(1);
+    expect(await listSetsForSession(db, session.id)).toHaveLength(1);
+
+    await removeDraftRow(db, session.id, bench.id, first.id);
+    expect((await getDraft(db, session.id))!.items[0]!.rows).toHaveLength(0);
+    expect(await listSetsForSession(db, session.id)).toEqual([]);
+  });
+
+  it('checked sets are stored in row order even if checked out of order', async () => {
+    const { bench, session, draft } = await started();
+    const second = await addDraftRow(db, session.id, bench.id);
+    const third = await addDraftRow(db, session.id, bench.id);
+    await updateDraftRow(db, session.id, bench.id, second.id, { weightGrams: 82500 });
+    await updateDraftRow(db, session.id, bench.id, third.id, { weightGrams: 85000 });
+
+    // Check the last row first, then the first.
+    await checkDraftRow(db, session.id, bench.id, third.id, T0 + DAY + 1);
+    await checkDraftRow(db, session.id, bench.id, draft.items[0]!.rows[0]!.id, T0 + DAY + 2);
+    await checkDraftRow(db, session.id, bench.id, second.id, T0 + DAY + 3);
+    await finishSession(db, session.id, T0 + DAY + 4);
+
+    const next = await startSession(db, (await listWorkouts(db))[0]!.id, T0 + 2 * DAY);
+    expect(next.draft.items[0]!.rows.map((r) => r.weightGrams)).toEqual([80000, 82500, 85000]);
+  });
+
+  it('getSessionSummary counts exercises, checked sets and unchecked rows', async () => {
+    const { bench, fly, session, draft } = await started();
+    await addDraftRow(db, session.id, bench.id);
+    await addDraftRow(db, session.id, fly.id);
+    await checkDraftRow(db, session.id, bench.id, draft.items[0]!.rows[0]!.id);
+    expect(await getSessionSummary(db, session.id)).toEqual({
+      exercises: 2,
+      checkedSets: 1,
+      uncheckedRows: 2,
+    });
+  });
+
+  it('discardEmptySession removes a session with no sets, and refuses one with sets', async () => {
+    const { bench, session, draft } = await started();
+    await discardEmptySession(db, session.id);
+    expect(await getActiveSession(db)).toBeUndefined();
+    expect(await getDraft(db, session.id)).toBeUndefined();
+
+    const w = (await listWorkouts(db))[0]!;
+    const again = await startSession(db, w.id, T0 + 2 * DAY);
+    await checkDraftRow(db, again.session.id, bench.id, again.draft.items[0]!.rows[0]!.id);
+    await expect(discardEmptySession(db, again.session.id)).rejects.toBeInstanceOf(
+      SessionHasSetsError,
+    );
+    expect(await getActiveSession(db)).toBeDefined();
+    expect(draft).toBeDefined();
+  });
+
+  it('finishSessionAtLastSet records the end at the last checked set, not now', async () => {
+    const { bench, session, draft } = await started();
+    await checkDraftRow(db, session.id, bench.id, draft.items[0]!.rows[0]!.id, T0 + DAY + 5000);
+    await finishSessionAtLastSet(db, session.id);
+    const finished = (await listSessions(db)).find((s) => s.id === session.id);
+    expect(finished?.finishedAt).toBe(T0 + DAY + 5000);
+    expect(await getDraft(db, session.id)).toBeUndefined();
+  });
+
+  it('finishSessionAtLastSet on an empty session ends at its start time', async () => {
+    const { session } = await started();
+    await finishSessionAtLastSet(db, session.id);
+    const finished = (await listSessions(db)).find((s) => s.id === session.id);
+    expect(finished?.finishedAt).toBe(session.startedAt);
   });
 });

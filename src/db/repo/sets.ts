@@ -11,7 +11,12 @@ export interface SetValues {
 /** Stores a checked set. Unchecked sets never reach the database. */
 export async function addSet(
   db: LiftDB,
-  input: SetValues & { sessionId: string; exerciseId: string },
+  input: SetValues & {
+    sessionId: string;
+    exerciseId: string;
+    /** Position among the exercise's sets; defaults to after the existing ones. */
+    order?: number;
+  },
   now: number = Date.now(),
 ): Promise<SessionSet> {
   assertValidSetValues(input.weightGrams, input.reps);
@@ -23,9 +28,11 @@ export async function addSet(
       throw new Error(`Exercise ${input.exerciseId} not found`);
     }
     const existing = await db.sets.where('sessionId').equals(input.sessionId).toArray();
-    const order = existing
-      .filter((s) => s.exerciseId === input.exerciseId)
-      .reduce((next, s) => Math.max(next, s.order + 1), 0);
+    const order =
+      input.order ??
+      existing
+        .filter((s) => s.exerciseId === input.exerciseId)
+        .reduce((next, s) => Math.max(next, s.order + 1), 0);
 
     const set: SessionSet = {
       id: newId(),

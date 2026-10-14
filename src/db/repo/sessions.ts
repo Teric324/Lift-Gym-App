@@ -1,4 +1,5 @@
 import { localDateString } from '../../domain/date';
+import { endTimeForSession } from '../../domain/session-state';
 import { newId } from '../../domain/id';
 import type { Session, SessionDraft } from '../../domain/types';
 import type { LiftDB } from '../schema';
@@ -101,4 +102,52 @@ export async function deleteSession(db: LiftDB, sessionId: string): Promise<void
     await db.drafts.delete(sessionId);
     await db.sessions.delete(sessionId);
   });
+}
+
+export class SessionHasSetsError extends Error {
+  constructor() {
+    super('The session has checked sets and cannot be discarded');
+    this.name = 'SessionHasSetsError';
+  }
+}
+
+/** Deletes a session that recorded nothing. A session with checked sets must be finished. */
+export async function discardEmptySession(db: LiftDB, sessionId: string): Promise<void> {
+  await db.transaction('rw', db.sessions, db.sets, db.drafts, async () => {
+    const count = await db.sets.where('sessionId').equals(sessionId).count();
+    if (count > 0) throw new SessionHasSetsError();
+    await db.drafts.delete(sessionId);
+    await db.sessions.delete(sessionId);
+  });
+}
+
+/** Finishes a forgotten session as of its last checked set (see `endTimeForSession`). */
+export async function finishSessionAtLastSet(db: LiftDB, sessionId: string): Promise<void> {
+  await db.transaction('rw', db.sessions, db.sets, db.drafts, async () => {
+    const session = await db.sessions.get(sessionId);
+    if (!session) throw new Error(`Session ${sessionId} not found`);
+    const sets = await db.sets.where('sessionId').equals(sessionId).toArray();
+    await finishSession(db, sessionId, endTimeForSession(session, sets));
+  });
+}
+
+export interface SessionSummary {
+  exercises: number;
+  checkedSets: number;
+  uncheckedRows: number;
+}
+
+/** What is in an active session, for the finish and stale-session dialogs. */
+export async function getSessionSummary(db: LiftDB, sessionId: string): Promise<SessionSummary> {
+  const [draft, checkedSets] = await Promise.all([
+    db.drafts.get(sessionId),
+    db.sets.where('sessionId').equals(sessionId).count(),
+  ]);
+  const items = (draft?.items ?? []).filter((i) => !i.skipped);
+  const rows = items.flatMap((i) => i.rows);
+  return {
+    exercises: items.length,
+    checkedSets,
+    uncheckedRows: rows.filter((r) => r.checkedSetId === null).length,
+  };
 }
