@@ -71,6 +71,8 @@ export const en = {
       nowTag: 'now',
     },
     addSet: 'Add set',
+    addExercise: 'Add exercise',
+    addExerciseTitle: 'Add exercises to this workout',
     finish: 'Finish workout',
     finishTitle: 'Finish with unchecked sets?',
     finishBody: (n: number) =>

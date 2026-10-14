@@ -3,6 +3,7 @@ import { formatSessionDate, localTimeString } from '../../domain/date';
 import { en } from '../../i18n/en';
 import './session.css';
 import { EmptyState } from '../../ui/EmptyState';
+import { AddExerciseButton } from './AddExerciseButton';
 import { FinishBar } from './FinishBar';
 import { SessionExerciseCard } from './SessionExerciseCard';
 import { useSessionView } from './useSessionView';
@@ -49,6 +50,8 @@ export function SessionScreen() {
           />
         );
       })}
+
+      <AddExerciseButton sessionId={session.id} draft={draft} />
 
       <FinishBar sessionId={session.id} draft={draft} />
     </section>

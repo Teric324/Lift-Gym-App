@@ -8,23 +8,42 @@ import { EmptyState } from '../../ui/EmptyState';
 
 const t = en.workouts.picker;
 
-interface ExercisePickerProps {
-  open: boolean;
-  /** Registry exercises that can be added (the caller leaves out archived ones). */
-  available: Exercise[];
-  /** Called with the chosen existing ids and the names of exercises to create. */
-  onConfirm: (selection: { exerciseIds: string[]; newNames: string[] }) => void | Promise<void>;
-  onCancel: () => void;
+export interface ExerciseSelection {
+  exerciseIds: string[];
+  newNames: string[];
 }
 
-/** Full-screen sheet: search the registry, tick several exercises, or create a new one inline. */
-export function ExercisePicker({ open, available, onConfirm, onCancel }: ExercisePickerProps) {
+interface ExercisePickerProps {
+  open: boolean;
+  /** Registry exercises that can be chosen (the caller leaves out archived and unusable ones). */
+  available: Exercise[];
+  /** Called with the chosen existing ids and the names of exercises to create. */
+  onConfirm: (selection: ExerciseSelection) => void | Promise<void>;
+  onCancel: () => void;
+  /**
+   * "multiple": tick several and confirm. "single": one tap on an exercise (or on "Create ...")
+   * chooses it at once, for replacing an exercise.
+   */
+  mode?: 'multiple' | 'single';
+  title?: string;
+}
+
+/** Full-screen sheet: search the registry, pick exercises, or create a new one inline. */
+export function ExercisePicker({
+  open,
+  available,
+  onConfirm,
+  onCancel,
+  mode = 'multiple',
+  title = t.title,
+}: ExercisePickerProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<string[]>([]);
   const [newNames, setNewNames] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const single = mode === 'single';
 
   useEffect(() => {
     const dialog = ref.current;
@@ -48,6 +67,7 @@ export function ExercisePicker({ open, available, onConfirm, onCancel }: Exercis
   const alreadyQueued = newNames.some((n) => n.toLowerCase() === needle);
   const canCreate = needle !== '' && !exactMatch && !alreadyQueued;
   const count = selected.length + newNames.length;
+  const cleanQuery = query.trim().replace(/\s+/g, ' ');
 
   function toggle(id: string) {
     setSelected((current) =>
@@ -55,23 +75,20 @@ export function ExercisePicker({ open, available, onConfirm, onCancel }: Exercis
     );
   }
 
-  async function queueNewName() {
-    const name = query.trim().replace(/\s+/g, ' ');
-    // The name may belong to an exercise that is archived or already in this workout.
+  /** The name may belong to an exercise that is archived or already in the workout. */
+  async function nameIsFree(name: string): Promise<boolean> {
     const existing = await findExerciseByName(db, name);
     if (existing) {
       setError(en.exercises.nameTaken(existing.name));
-      return;
+      return false;
     }
-    setNewNames((current) => [...current, name]);
-    setQuery('');
-    setError(null);
+    return true;
   }
 
-  async function confirm() {
+  async function confirmWith(selection: ExerciseSelection) {
     setBusy(true);
     try {
-      await onConfirm({ exerciseIds: selected, newNames });
+      await onConfirm(selection);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -79,14 +96,25 @@ export function ExercisePicker({ open, available, onConfirm, onCancel }: Exercis
     }
   }
 
+  async function createClicked() {
+    if (!(await nameIsFree(cleanQuery))) return;
+    if (single) {
+      await confirmWith({ exerciseIds: [], newNames: [cleanQuery] });
+      return;
+    }
+    setNewNames((current) => [...current, cleanQuery]);
+    setQuery('');
+    setError(null);
+  }
+
   return (
     <dialog
       ref={ref}
       className="dialog dialog--tall"
       onCancel={onCancel}
-      aria-labelledby="picker-title"
+      aria-labelledby="exercise-picker-title"
     >
-      <h2 id="picker-title">{t.title}</h2>
+      <h2 id="exercise-picker-title">{title}</h2>
 
       <label className="field">
         <span className="field__label">{t.searchLabel}</span>
@@ -108,8 +136,13 @@ export function ExercisePicker({ open, available, onConfirm, onCancel }: Exercis
       )}
 
       {canCreate && (
-        <button type="button" className="button" onClick={() => void queueNewName()}>
-          {t.create(query.trim().replace(/\s+/g, ' '))}
+        <button
+          type="button"
+          className="button"
+          disabled={busy}
+          onClick={() => void createClicked()}
+        >
+          {t.create(cleanQuery)}
         </button>
       )}
 
@@ -119,7 +152,7 @@ export function ExercisePicker({ open, available, onConfirm, onCancel }: Exercis
             <li key={name} className="list__row">
               <span className="list__main">
                 <span className="list__title">{name}</span>
-                <span className="list__meta">{en.workouts.picker.create(name)}</span>
+                <span className="list__meta">{t.create(name)}</span>
               </span>
               <button
                 type="button"
@@ -140,22 +173,38 @@ export function ExercisePicker({ open, available, onConfirm, onCancel }: Exercis
         <EmptyState>{t.none}</EmptyState>
       )}
 
-      <ul className="list picker__list">
+      <ul className="list exercise-picker__list">
         {shown.map((exercise) => (
           <li key={exercise.id} className="list__row">
-            <label className="list__main picker__choice">
-              <input
-                type="checkbox"
-                checked={selected.includes(exercise.id)}
-                onChange={() => toggle(exercise.id)}
-              />
-              <span>
-                <span className="list__title">{exercise.name}</span>
-                <span className="list__meta">
-                  {en.exercises.step(formatWeight(exercise.stepGrams))}
+            {single ? (
+              <button
+                type="button"
+                className="list__main picker__choice picker__choice--button"
+                disabled={busy}
+                onClick={() => void confirmWith({ exerciseIds: [exercise.id], newNames: [] })}
+              >
+                <span>
+                  <span className="list__title">{exercise.name}</span>
+                  <span className="list__meta">
+                    {en.exercises.step(formatWeight(exercise.stepGrams))}
+                  </span>
                 </span>
-              </span>
-            </label>
+              </button>
+            ) : (
+              <label className="list__main picker__choice">
+                <input
+                  type="checkbox"
+                  checked={selected.includes(exercise.id)}
+                  onChange={() => toggle(exercise.id)}
+                />
+                <span>
+                  <span className="list__title">{exercise.name}</span>
+                  <span className="list__meta">
+                    {en.exercises.step(formatWeight(exercise.stepGrams))}
+                  </span>
+                </span>
+              </label>
+            )}
           </li>
         ))}
       </ul>
@@ -164,14 +213,16 @@ export function ExercisePicker({ open, available, onConfirm, onCancel }: Exercis
         <button type="button" className="button" onClick={onCancel}>
           {en.common.cancel}
         </button>
-        <button
-          type="button"
-          className="button button--primary"
-          disabled={count === 0 || busy}
-          onClick={() => void confirm()}
-        >
-          {t.confirm(count)}
-        </button>
+        {!single && (
+          <button
+            type="button"
+            className="button button--primary"
+            disabled={count === 0 || busy}
+            onClick={() => void confirmWith({ exerciseIds: selected, newNames })}
+          >
+            {t.confirm(count)}
+          </button>
+        )}
       </div>
     </dialog>
   );
