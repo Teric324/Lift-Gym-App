@@ -262,7 +262,7 @@ export function SettingsScreen() {
       {importState.kind === 'done' && <p role="status">{importState.message}</p>}
 
       {importState.kind === 'confirm' && (
-        <div className="confirm" role="alertdialog" aria-labelledby="import-confirm-title">
+        <div className="panel" role="alertdialog" aria-labelledby="import-confirm-title">
           <h3 id="import-confirm-title">{t.importConfirmHeading}</h3>
           <p>{t.importSummary(importState.summary)}</p>
           <p>{t.importExportedOn(localDateString(importState.backup.exportedAt))}</p>
@@ -283,10 +283,10 @@ export function SettingsScreen() {
           )}
           {importState.message && <p role="alert">{importState.message}</p>}
 
-          <div className="actions">
+          <div className="screen__actions">
             <button
               type="button"
-              className="button danger"
+              className="button button--danger"
               disabled={busy || (importState.hasData && !shareMode && !importState.copySaved)}
               onClick={() => void onConfirmReplace()}
             >

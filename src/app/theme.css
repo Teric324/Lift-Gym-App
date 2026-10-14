@@ -1,0 +1,59 @@
+/*
+ * Design tokens and the page base. The visual design pass should only need to change this file,
+ * layout.css (app shell) and src/ui/ui.css (components). Components use classes, never inline
+ * styles, and no colours or sizes are hard-coded outside the variables below.
+ */
+:root {
+  color-scheme: light dark;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+
+  /* colour */
+  --bar-bg: #16181d;
+  --bar-fg: #f2f4f8;
+  --accent: #4cc2ff;
+  --danger: #c0392b;
+  --warning: #d98e04;
+  --warning-bg: rgba(217, 142, 4, 0.12);
+  --border: currentColor;
+
+  /* spacing, shape, type */
+  --gutter: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --radius: 10px;
+  --tap: 48px; /* minimum touch target */
+  --font-small: 0.85rem;
+  --line: 1.4;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  /* The page runs edge to edge (viewport-fit=cover): keep content out of the notch, the home
+     indicator and the rounded corners. */
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
+  padding-bottom: env(safe-area-inset-bottom);
+  line-height: var(--line);
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: var(--space-4) 0 var(--space-2);
+}
+h2 {
+  font-size: 1.1rem;
+  margin: 24px 0 var(--space-1);
+}
+h3 {
+  font-size: 1rem;
+  margin: 0 0 var(--space-2);
+}

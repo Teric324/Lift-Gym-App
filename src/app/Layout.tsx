@@ -14,11 +14,13 @@ export function Layout() {
     <>
       <header className="app-header">
         <strong className="brand">{en.appName}</strong>
-        <nav aria-label={en.nav.label}>
-          <NavLink to="/" end>
+        <nav className="app-header__nav" aria-label={en.nav.label}>
+          <NavLink className="app-header__link" to="/" end>
             {en.nav.home}
           </NavLink>
-          <NavLink to="/settings">{en.nav.settings}</NavLink>
+          <NavLink className="app-header__link" to="/settings">
+            {en.nav.settings}
+          </NavLink>
         </nav>
         {canUpdateNow && (
           <button type="button" className="update-button" onClick={applyUpdate}>
@@ -31,7 +33,7 @@ export function Layout() {
           {en.update.afterWorkout}
         </p>
       )}
-      <main>
+      <main className="app-main">
         <Outlet />
       </main>
     </>

@@ -5,6 +5,17 @@ export const en = {
   appName: 'Lift',
   tagline: 'Your workout tracker',
 
+  common: {
+    cancel: 'Cancel',
+    save: 'Save',
+    add: 'Add',
+    archive: 'Archive',
+    restore: 'Restore',
+    remove: 'Remove',
+    archivedTag: 'Archived',
+    nameRequired: 'Enter a name.',
+  },
+
   nav: { label: 'Main', home: 'Home', settings: 'Settings' },
   home: {
     title: 'Workouts',
