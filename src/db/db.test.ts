@@ -5,6 +5,7 @@ import { getPR } from '../domain/pr';
 import { DEFAULT_STEP_GRAMS } from '../domain/weight';
 import {
   addExercise,
+  findExerciseByName,
   listExercises,
   renameExercise,
   setExerciseArchived,
@@ -35,7 +36,15 @@ import {
   listSetsForSession,
   updateSetValues,
 } from './repo/sets';
-import { createWorkout, listWorkouts, renameWorkout, setWorkoutExercises } from './repo/workouts';
+import {
+  createWorkout,
+  listWorkouts,
+  listWorkoutsUsingExercise,
+  renameWorkout,
+  setWorkoutArchived,
+  setWorkoutExercises,
+  updateWorkoutExercises,
+} from './repo/workouts';
 import { STARTER_EXERCISES, seedStarterExercises } from './seed';
 import { LiftDB } from './schema';
 
@@ -532,5 +541,102 @@ describe('draft plan rows (editable, unchecked until ticked)', () => {
       [80000, 5],
       [82500, 4],
     ]);
+  });
+});
+
+describe('workouts: archive and exercise list edits', () => {
+  it('archiving hides the routine from the default list but keeps it and its sessions', async () => {
+    const a = await addExercise(db, 'A');
+    const push = await createWorkout(db, 'Push', [a.id]);
+    const pull = await createWorkout(db, 'Pull', [a.id]);
+    const { session } = await startSession(db, push.id, T0);
+    await finishSession(db, session.id, T0 + 1);
+
+    await setWorkoutArchived(db, push.id, true);
+
+    expect((await listWorkouts(db)).map((w) => w.id)).toEqual([pull.id]);
+    expect((await listWorkouts(db, { includeArchived: true })).map((w) => w.name)).toEqual([
+      'Pull',
+      'Push',
+    ]);
+    // The old session still resolves its routine.
+    const stored = (await listWorkouts(db, { includeArchived: true })).find(
+      (w) => w.id === session.workoutId,
+    );
+    expect(stored?.archived).toBe(true);
+
+    await setWorkoutArchived(db, push.id, false);
+    expect(await listWorkouts(db)).toHaveLength(2);
+    await expect(setWorkoutArchived(db, 'nope', true)).rejects.toThrow(/not found/);
+  });
+
+  it('updateWorkoutExercises adds, removes and reorders in one step', async () => {
+    const a = await addExercise(db, 'A');
+    const b = await addExercise(db, 'B');
+    const c = await addExercise(db, 'C');
+    const w = await createWorkout(db, 'Day', [a.id, b.id]);
+
+    expect(await updateWorkoutExercises(db, w.id, (ids) => [...ids, c.id])).toEqual([
+      a.id,
+      b.id,
+      c.id,
+    ]);
+    expect(
+      await updateWorkoutExercises(db, w.id, (ids) => ids.filter((id) => id !== b.id)),
+    ).toEqual([a.id, c.id]);
+    expect(await updateWorkoutExercises(db, w.id, (ids) => [...ids].reverse())).toEqual([
+      c.id,
+      a.id,
+    ]);
+    // Duplicates are dropped.
+    expect(await updateWorkoutExercises(db, w.id, (ids) => [...ids, a.id, c.id])).toEqual([
+      c.id,
+      a.id,
+    ]);
+    await expect(updateWorkoutExercises(db, w.id, (ids) => [...ids, 'ghost'])).rejects.toThrow(
+      /Unknown exercise/,
+    );
+    expect((await listWorkouts(db))[0]?.exerciseIds).toEqual([c.id, a.id]);
+  });
+
+  it('listWorkoutsUsingExercise finds routines, optionally including archived ones', async () => {
+    const a = await addExercise(db, 'A');
+    const b = await addExercise(db, 'B');
+    await createWorkout(db, 'One', [a.id, b.id]);
+    const two = await createWorkout(db, 'Two', [a.id]);
+    await createWorkout(db, 'Three', [b.id]);
+    await setWorkoutArchived(db, two.id, true);
+
+    expect((await listWorkoutsUsingExercise(db, a.id)).map((w) => w.name)).toEqual(['One']);
+    expect(
+      (await listWorkoutsUsingExercise(db, a.id, { includeArchived: true })).map((w) => w.name),
+    ).toEqual(['One', 'Two']);
+  });
+});
+
+describe('exercise lookup and archived exercises in sessions', () => {
+  it('findExerciseByName ignores case and spacing and also finds archived exercises', async () => {
+    const e = await addExercise(db, 'Incline press');
+    await setExerciseArchived(db, e.id, true);
+    expect((await findExerciseByName(db, '  incline   PRESS '))?.id).toBe(e.id);
+    expect(await findExerciseByName(db, 'Bench press')).toBeUndefined();
+    expect(await findExerciseByName(db, '   ')).toBeUndefined();
+  });
+
+  it('an archived exercise stays in the routine but is left out of a new session', async () => {
+    const a = await addExercise(db, 'A');
+    const b = await addExercise(db, 'B');
+    const w = await createWorkout(db, 'Day', [a.id, b.id]);
+    await setExerciseArchived(db, a.id, true);
+
+    const { draft } = await startSession(db, w.id, T0);
+    expect(draft.items.map((i) => i.exerciseId)).toEqual([b.id]);
+    expect((await listWorkouts(db))[0]?.exerciseIds).toEqual([a.id, b.id]);
+
+    // Unarchiving brings it back into the next session.
+    await finishSession(db, draft.sessionId, T0 + 1);
+    await setExerciseArchived(db, a.id, false);
+    const next = await startSession(db, w.id, T0 + DAY);
+    expect(next.draft.items.map((i) => i.exerciseId)).toEqual([a.id, b.id]);
   });
 });

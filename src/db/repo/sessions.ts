@@ -37,36 +37,47 @@ export async function startSession(
   workoutId: string,
   now: number = Date.now(),
 ): Promise<{ session: Session; draft: SessionDraft }> {
-  return db.transaction('rw', db.sessions, db.drafts, db.workouts, db.sets, async () => {
-    const active = await getActiveSession(db);
-    if (active) throw new ActiveSessionExistsError(active);
+  return db.transaction(
+    'rw',
+    db.sessions,
+    db.drafts,
+    db.workouts,
+    db.sets,
+    db.exercises,
+    async () => {
+      const active = await getActiveSession(db);
+      if (active) throw new ActiveSessionExistsError(active);
 
-    const workout = await db.workouts.get(workoutId);
-    if (!workout) throw new Error(`Workout ${workoutId} not found`);
-    const planRows = await buildPlanRows(db, workout.exerciseIds);
+      const workout = await db.workouts.get(workoutId);
+      if (!workout) throw new Error(`Workout ${workoutId} not found`);
+      // Archived exercises stay in the routine but are left out of new sessions.
+      const exercises = await db.exercises.bulkGet(workout.exerciseIds);
+      const exerciseIds = workout.exerciseIds.filter((_, i) => exercises[i]?.archived === false);
+      const planRows = await buildPlanRows(db, exerciseIds);
 
-    const session: Session = {
-      id: newId(),
-      workoutId,
-      date: localDateString(now),
-      startedAt: now,
-      finishedAt: null,
-    };
-    const draft: SessionDraft = {
-      sessionId: session.id,
-      items: workout.exerciseIds.map((exerciseId) => ({
-        exerciseId,
-        origin: 'routine',
-        replacesExerciseId: null,
-        skipped: false,
-        rows: planRows.get(exerciseId) ?? [],
-      })),
-      updatedAt: now,
-    };
-    await db.sessions.add(session);
-    await db.drafts.add(draft);
-    return { session, draft };
-  });
+      const session: Session = {
+        id: newId(),
+        workoutId,
+        date: localDateString(now),
+        startedAt: now,
+        finishedAt: null,
+      };
+      const draft: SessionDraft = {
+        sessionId: session.id,
+        items: exerciseIds.map((exerciseId) => ({
+          exerciseId,
+          origin: 'routine',
+          replacesExerciseId: null,
+          skipped: false,
+          rows: planRows.get(exerciseId) ?? [],
+        })),
+        updatedAt: now,
+      };
+      await db.sessions.add(session);
+      await db.drafts.add(draft);
+      return { session, draft };
+    },
+  );
 }
 
 /** Ends the session and drops its draft. Checked sets stay. */

@@ -34,6 +34,13 @@ export async function listExercises(
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+/** Case-insensitive match on the trimmed name, archived exercises included. */
+export async function findExerciseByName(db: LiftDB, name: string): Promise<Exercise | undefined> {
+  const wanted = name.trim().replace(/\s+/g, ' ').toLowerCase();
+  if (wanted === '') return undefined;
+  return db.exercises.filter((e) => e.name.toLowerCase() === wanted).first();
+}
+
 export function getExercise(db: LiftDB, id: string): Promise<Exercise | undefined> {
   return db.exercises.get(id);
 }
