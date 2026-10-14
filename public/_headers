@@ -1,0 +1,8 @@
+# Cloudflare Pages: the service worker and the app shell must always be revalidated,
+# otherwise a new version can be hidden behind a stale cache.
+/sw.js
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Cache-Control: no-cache
