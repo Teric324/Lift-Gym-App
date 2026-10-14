@@ -121,3 +121,24 @@ Related: an active session with no checked sets can be offered as "discard" inst
   Testing Library; `src/test/jsdom-dialog.ts` stands in for the missing `<dialog>.showModal`.
   The dialogs are always in the DOM, so tests wait for `dialog[open]`, not for their text.
 - Session styles live in `src/features/session/session.css` and use the shared tokens.
+
+## Weight picker (step 9)
+
+- The row shows the weight as a button (`.weight-button`, 52 px tall, like the check button);
+  a tap opens `WeightPicker`, a modal `<dialog>` mounted only while open so each opening starts
+  fresh. `WeightField`'s props are unchanged, so `SetRow.tsx` did not change.
+- Maths is in `src/domain/weight-picker.ts` (integers only): `nearestStep`, `pickerStart` (value,
+  else last weight, else first step), `pickerWindow` (30 steps each side, from one step up to
+  500 kg), `jumpCenter`. The list is built by multiplication, like `stepList`.
+- Jump buttons (-25, -10, +10, +25 kg) move the window only; a tap on a value applies it and
+  closes the picker. 0 kg is a separate button because the list starts at one step.
+- Typing in the picker saves every valid value (same rule as before: empty and invalid are never
+  saved, the last valid value stays, over 500 kg shows a note). The field is not focused on open,
+  so the keyboard does not hide the list.
+- iOS keyboard: the dialog is sized from `window.visualViewport` (`--vv-height`, `--vv-top`, set
+  by `WeightPicker`), not from `dvh`, because on iPhone the keyboard shrinks the visual viewport
+  only. The dialog stays inside it, below the status bar (`env(safe-area-inset-top)`), with the
+  title, typing field and Done at the top and the list taking the remaining space.
+- Tests: pure maths (`weight-picker.test.ts`), the component (`weight-field.test.tsx`, including
+  a fake `visualViewport` that shrinks), and the real-database `SetRow` tests. CSS cannot be
+  checked in jsdom; the geometry was checked in a real browser at 375x812 and 375x430.

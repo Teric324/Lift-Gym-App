@@ -118,15 +118,17 @@
 /* Weight picker dialog. Sized from the visual viewport (set by WeightPicker) so the iOS keyboard
    never covers the typing field or the Done button. */
 .picker {
+  /* Room above the dialog: the status bar / notch area on iPhone, else a small margin. */
+  --picker-top: max(var(--space-2), env(safe-area-inset-top));
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
   position: fixed;
-  top: var(--vv-top, var(--space-2));
+  top: calc(var(--vv-top, 0px) + var(--picker-top));
   bottom: auto;
   margin: 0 auto;
-  max-height: calc(var(--vv-height, 100dvh) - 2 * var(--space-2));
-  height: min(40rem, calc(var(--vv-height, 100dvh) - 2 * var(--space-2)));
+  max-height: calc(var(--vv-height, 100dvh) - var(--picker-top) - var(--space-2));
+  height: min(40rem, calc(var(--vv-height, 100dvh) - var(--picker-top) - var(--space-2)));
   overflow: hidden;
 }
 .picker__header {

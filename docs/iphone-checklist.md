@@ -144,6 +144,45 @@ Finish:
       session.
 - [ ] Settings → Export, then Import that file: the finished session's sets are intact.
 
+## 10. Weight picker (step 9)
+
+Do this on the updated app (Settings → bottom line shows the new `Version ...`).
+
+The weight in the row:
+- [ ] In a workout, the weight is a bordered button (for example `82.5 kg`), as tall as the check
+      square next to it. It is easy to hit with a thumb. The row still fits the width of the
+      phone, with no sideways scrolling.
+- [ ] Tap it: a window opens with the weight list. It does **not** open the keyboard by itself.
+
+The list and the jumps:
+- [ ] The list is centred on the current weight (or the nearest step), which is marked "now".
+      Nothing is selected until you tap.
+- [ ] The values follow the exercise's step: with step 2.5 you see 77.5, 80, 82.5, 85 ... With step
+      1.25 (set it on the exercise's screen) you see 3.75, 5, 6.25 ...
+- [ ] Tap a value: it is applied at once and the window closes. The row shows the new weight.
+- [ ] Reach 100 kg: start from a lighter weight, open the picker and tap **+25 kg** a couple of
+      times (and **+10 kg**) until `100 kg` is on screen; tap it. The jumps only move the list.
+      They never change the weight by themselves. **−25 kg** and **−10 kg** go back.
+- [ ] **0 kg · bodyweight** sets 0 in one tap (for pull-ups and similar).
+- [ ] Tap **Done**, or tap outside the window: it closes and nothing changes.
+
+The keyboard (important on iPhone):
+- [ ] In the picker tap **Type a weight (kg)**. The keyboard opens. The typing field, the title and
+      the **Done** button all stay visible above the keyboard, and the list is still scrollable in
+      the remaining space. Nothing is hidden behind the keyboard.
+- [ ] Type `27,5`: the row behind shows `27.5 kg` right away (every valid value is saved as you
+      type). Then type `27,5x`: the field turns red with "Not saved. Keeping 27.5 kg." and the
+      row still shows 27.5.
+- [ ] Type `600`: a yellow note says "Over 500 kg", the value is still kept.
+- [ ] Press **Done** on the keyboard (or the Done button): the window closes.
+- [ ] With the keyboard open, rotate the phone to landscape and back: the window still fits.
+- [ ] Open the picker, type a new weight, leave the keyboard open, swipe the app away from the app
+      switcher, and open it again: the typed weight is saved in the row.
+
+Checked sets:
+- [ ] Change the weight of a checked set from the picker: it stays checked with the new weight.
+- [ ] After Finish, export a backup and import it back: the weights are the same.
+
 ## How to update the installed app
 
 An installed Home Screen app is a separate copy of the site that updates itself in the background.
