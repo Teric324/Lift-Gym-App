@@ -183,6 +183,85 @@ Checked sets:
 - [ ] Change the weight of a checked set from the picker: it stays checked with the new weight.
 - [ ] After Finish, export a backup and import it back: the weights are the same.
 
+## 11. Freedom in the workout (step 10)
+
+Do this on the updated app (Settings → bottom line shows the new `Version ...`). Export a backup
+first. Use a workout with at least two exercises that you have trained before, so they come
+pre-filled.
+
+On each exercise card there are three buttons next to the name: **↑**, **↓** and **⋯**.
+
+After **every** operation below, do the kill test: open the app switcher, swipe the app away, wait
+about 10 seconds, open it again, go to Workouts → **Resume**. The workout must look exactly as it
+did before closing.
+
+Reorder:
+- [ ] Tap **↓** on the first exercise: it swaps with the second. **↑** moves it back. The top
+      exercise's ↑ and the bottom one's ↓ are dimmed.
+- [ ] Check a set of the exercise first, then move it: the set stays checked.
+- [ ] Kill test.
+
+Add an exercise that has no history:
+- [ ] **Add exercise** → search for an exercise you never trained (or type a new name and tap
+      `Create "..."`) → tick it → **Add 1**. A card appears at the bottom with "No sets yet." and
+      **Add set**.
+- [ ] **Add set** adds a blank row; its check square is dimmed until weight and reps are filled in.
+      Set a weight from the picker and reps, then check it.
+- [ ] Exercises already in the workout, and archived ones, are not in the list.
+- [ ] Open the workout's editor (Workouts → the workout): it did **not** get the new exercise
+      (adding is for today only).
+- [ ] Kill test.
+
+Add an exercise that has history:
+- [ ] The card comes with the sets of its last session, unchecked, from whichever workout.
+- [ ] Kill test.
+
+Skip, no checked sets:
+- [ ] **⋯ → Skip this exercise** on an exercise with nothing checked: it disappears at once and
+      "Skipped (1)" appears at the bottom.
+- [ ] Kill test: it is still skipped.
+- [ ] Open "Skipped", tap **Bring back**: it returns to where it was, with its rows.
+
+Skip, with checked sets:
+- [ ] Check two sets of an exercise, then **⋯ → Skip this exercise**. A question appears:
+      "Skipping removes its 2 checked sets from this workout."
+- [ ] **Cancel**: nothing changed, the sets are still checked.
+- [ ] Try again and confirm **Skip and remove sets**: the card moves to "Skipped".
+- [ ] Kill test.
+- [ ] **Bring back**: the exercise returns with the same rows, but **unchecked**. (The sets were
+      removed from the workout.)
+
+Replace with 2 sets already checked (the important one):
+- [ ] On an exercise with 4 planned sets, check 2 of them.
+- [ ] **⋯ → Replace with another exercise…** → choose another exercise (for example Incline
+      press with dumbbells; you can also create it from the search field).
+- [ ] The question reads "Replace Bench press with Incline press?" and says Bench press **keeps
+      its 2 sets already done**. "Only today" is selected by default.
+- [ ] Tap **Replace**. Result: Bench press stays with exactly the 2 checked sets (the 2 unchecked
+      ones are gone); Incline press appears right below it, with the line "Instead of Bench
+      press", and its rows come from its own last session (not Bench's values).
+- [ ] Kill test.
+- [ ] **Finish workout**, then look at the next session of that workout: Bench press prefills
+      from the 2 sets you did; Incline press from what you did on it.
+
+Replace with nothing checked:
+- [ ] On an exercise with no checked sets: **⋯ → Replace…** → choose one. The question says
+      Bench press and its edited values are removed from the workout. After **Replace** the new
+      exercise is in the same place.
+- [ ] Kill test.
+
+Replace and update the workout:
+- [ ] Replace an exercise from the workout and choose **Update the workout**. Open the workout's
+      editor (Workouts → the workout): the exercise is swapped at the same position.
+- [ ] Replace an exercise you **added today**: "Update the workout" is dimmed with an explanation.
+- [ ] Choose an exercise that is already in the workout (but not in today's session, for example
+      because it was archived at the start): "Update the workout" is dimmed, "Only today" works.
+
+Finishing:
+- [ ] Skipped exercises are not counted as "unchecked sets" when you finish.
+- [ ] Export a backup and import it back: the sets of replaced and skipped exercises are as they
+      were when you finished.
+
 ## How to update the installed app
 
 An installed Home Screen app is a separate copy of the site that updates itself in the background.

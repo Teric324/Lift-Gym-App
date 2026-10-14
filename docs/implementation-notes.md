@@ -142,3 +142,33 @@ Related: an active session with no checked sets can be offered as "discard" inst
 - Tests: pure maths (`weight-picker.test.ts`), the component (`weight-field.test.tsx`, including
   a fake `visualViewport` that shrinks), and the real-database `SetRow` tests. CSS cannot be
   checked in jsdom; the geometry was checked in a real browser at 375x812 and 375x430.
+
+## Freedom in the session (step 10)
+
+- No schema change: `DraftItem` already had `skipped`, `origin` and `replacesExerciseId`.
+- Everything is "today only" except replacing with **Update the workout**. All operations are one
+  transaction each (`drafts.ts`), so an app closed in the middle leaves the old or the new state.
+- **Add** (`addExerciseToDraft`): appended, rows from the exercise's own last finished session;
+  archived exercises and exercises already in the session (skipped included) are refused.
+- **Move** (`moveDraftItem` / `moveVisible`): swaps with the next visible exercise; skipped ones keep
+  their slots and come back where they were.
+- **Skip** (`skipDraftItem`): the item stays in the draft with `skipped = true` and its rows. If some
+  rows are checked it needs `removeCheckedSets: true` (the UI asks first): the stored sets are
+  deleted and the rows come back unchecked on **Bring back** (`unskipDraftItem`). Skipped exercises do
+  not count in the finish summary.
+- **Replace** (`replaceDraftExercise`, `applyReplacement`):
+  - nothing checked: the new exercise takes the old one's place; the old one and its unchecked
+    values are dropped;
+  - some checked: the old exercise stays with only its checked rows and the new one is inserted
+    right after it. Checked sets always stay on the exercise that was performed, so history and
+    PR are not touched;
+  - the new exercise's rows come from its own history, never from the replaced exercise's values;
+  - `replacesExerciseId` points at the **routine** exercise being stood in for, also through a
+    chain of replacements (`routineTargetOf`);
+  - "Update the workout" swaps that routine exercise in place. It is refused (and nothing changes)
+    for an item added today, when the routine no longer has the exercise, or when the new exercise
+    is already in the routine. The UI disables the option with the reason.
+- UI: `ExerciseMenu` (⋯), `ReplaceExerciseFlow` (single-choice `ExercisePicker`, then a dialog with
+  "Only today" / "Update the workout"), `AddExerciseButton`, "Skipped" section on `SessionScreen`.
+- Tests: pure helpers (`session-items.test.ts`), repo and edge cases (`session-edit.test.ts`), and
+  screen flows with the real database (`session-edit-ui.test.tsx`).
