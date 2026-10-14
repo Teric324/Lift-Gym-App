@@ -1,7 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { ExerciseListScreen } from '../features/exercises/ExerciseListScreen';
 import { ExerciseScreen } from '../features/exercises/ExerciseScreen';
-import { HomePlaceholder } from '../features/home/HomePlaceholder';
+import { WorkoutEditorScreen } from '../features/workouts/WorkoutEditorScreen';
+import { WorkoutListScreen } from '../features/workouts/WorkoutListScreen';
 import { SettingsScreen } from '../features/settings/SettingsScreen';
 import { Layout } from './Layout';
 
@@ -10,7 +11,8 @@ export function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<HomePlaceholder />} />
+          <Route index element={<WorkoutListScreen />} />
+          <Route path="workouts/:id" element={<WorkoutEditorScreen />} />
           <Route path="exercises" element={<ExerciseListScreen />} />
           <Route path="exercises/:id" element={<ExerciseScreen />} />
           <Route path="settings" element={<SettingsScreen />} />

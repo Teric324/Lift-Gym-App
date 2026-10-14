@@ -16,7 +16,41 @@ export const en = {
     nameRequired: 'Enter a name.',
   },
 
-  nav: { label: 'Main', home: 'Home', exercises: 'Exercises', settings: 'Settings' },
+  nav: { label: 'Main', home: 'Workouts', exercises: 'Exercises', settings: 'Settings' },
+
+  workouts: {
+    title: 'Workouts',
+    intro: 'A workout is a reusable routine. Each time you train it, a new session is recorded.',
+    add: 'New workout',
+    addTitle: 'New workout',
+    nameLabel: 'Workout name',
+    empty: 'No workouts yet. Create your first one, for example "Push".',
+    archivedHeading: (n: number) => `Archived (${n})`,
+    exerciseCount: (n: number) => (n === 1 ? '1 exercise' : `${n} exercises`),
+    notFound: 'This workout does not exist.',
+    back: 'Back to workouts',
+    rename: 'Rename',
+    renameTitle: 'Rename workout',
+    archiveTitle: 'Archive this workout?',
+    archiveBody:
+      'It will be hidden from the list. Past sessions keep it, and you can restore it any time.',
+    archivedNote: 'Archived. Restore it to use it again.',
+    exercisesHeading: 'Exercises',
+    emptyExercises: 'This workout has no exercises yet.',
+    addExercises: 'Add exercises',
+    moveUp: (name: string) => `Move ${name} up`,
+    moveDown: (name: string) => `Move ${name} down`,
+    removeExercise: (name: string) => `Remove ${name}`,
+    archivedExercise: 'Archived exercise: left out of new sessions',
+    picker: {
+      title: 'Add exercises',
+      searchLabel: 'Search or type a new name',
+      none: 'No exercises to add.',
+      create: (name: string) => `Create "${name}"`,
+      confirm: (n: number) => (n === 0 ? 'Add' : `Add ${n}`),
+      allAdded: 'Every exercise is already in this workout.',
+    },
+  },
 
   exercises: {
     title: 'Exercises',
@@ -64,10 +98,6 @@ export const en = {
     archivedNote: 'Archived. Its history and records are kept.',
   },
 
-  home: {
-    title: 'Workouts',
-    placeholder: 'Your workouts will appear here.',
-  },
   update: {
     available: 'Update available',
     afterWorkout: 'An update is ready. It will install after your workout, on the next start.',
