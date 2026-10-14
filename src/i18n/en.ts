@@ -125,6 +125,7 @@ export const en = {
         ? 'You have not exported a backup yet. Export one now.'
         : `It has been ${days} days since your last backup. Export a new one.`,
 
+    version: (build: string) => `Version ${build}`,
     storageHeading: 'Storage',
     storage: {
       granted: 'Protected: the browser will not clear this data on its own.',

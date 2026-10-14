@@ -1,8 +1,23 @@
+import { execSync } from 'node:child_process';
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+/** Short git hash + build time, shown in Settings so an installed copy can be told apart. */
+function buildLabel(): string {
+  let commit = 'dev';
+  try {
+    commit = execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim();
+  } catch {
+    // not a git checkout (e.g. a source archive): keep "dev"
+  }
+  return `${commit} · ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC`;
+}
+
 export default defineConfig({
+  define: { __APP_BUILD__: JSON.stringify(buildLabel()) },
   plugins: [
     react(),
     VitePWA({

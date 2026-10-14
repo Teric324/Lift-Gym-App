@@ -303,6 +303,8 @@ export function SettingsScreen() {
           </div>
         </div>
       )}
+
+      <p className="muted app-version">{t.version(__APP_BUILD__)}</p>
     </section>
   );
 }
