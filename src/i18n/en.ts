@@ -37,6 +37,20 @@ export const en = {
     openWorkout: 'Open it',
     setNumber: (n: number) => `${n}`,
     noSets: 'This workout has no sets.',
+    edit: 'Edit',
+    done: 'Done',
+    editing: 'Editing. Changes are saved at once and update your records.',
+    addSet: 'Add set',
+    removeSet: (n: number) => `Remove set ${n}`,
+    deleteWorkout: 'Delete this workout',
+    deleteTitle: 'Delete this workout?',
+    deleteBody: (sets: number, date: string) =>
+      `${sets === 1 ? '1 set' : `${sets} sets`} of ${date} will be removed from your history. Your records and the next pre-fill update accordingly. This cannot be undone.`,
+    deleteConfirm: 'Delete workout',
+    lastSetTitle: 'Delete the whole workout?',
+    lastSetBody: 'This is the only set. Removing it deletes the whole workout from your history.',
+    lastSetConfirm: 'Delete workout',
+    failed: 'That change could not be made. Nothing was changed.',
   },
 
   start: {
