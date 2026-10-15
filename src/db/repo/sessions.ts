@@ -1,9 +1,11 @@
 import { localDateString } from '../../domain/date';
+import { sortNewestFirst } from '../../domain/history';
 import { endTimeForSession } from '../../domain/session-state';
 import { newId } from '../../domain/id';
 import type { Session, SessionDraft } from '../../domain/types';
 import type { LiftDB } from '../schema';
 import { buildPlanRows } from './drafts';
+import { addSet } from './sets';
 
 export class ActiveSessionExistsError extends Error {
   constructor(public readonly activeSession: Session) {
@@ -150,4 +152,55 @@ export async function getSessionSummary(db: LiftDB, sessionId: string): Promise<
     checkedSets,
     uncheckedRows: rows.filter((r) => r.checkedSetId === null).length,
   };
+}
+
+/** Finished sessions, newest first (the history). The active session is not included. */
+export async function listFinishedSessions(db: LiftDB): Promise<Session[]> {
+  const finished = await db.sessions.filter((s) => s.finishedAt !== null).toArray();
+  return sortNewestFirst(finished);
+}
+
+/**
+ * Adds a set to an exercise of a finished session (history editing). The exercise must already
+ * have sets there. The set gets a moment right after the session's end, not "now", so that
+ * "the oldest identical set stays the record" follows the session's own time.
+ */
+export async function addSetToFinishedSession(
+  db: LiftDB,
+  input: { sessionId: string; exerciseId: string; weightGrams: number; reps: number },
+): Promise<void> {
+  await db.transaction('rw', db.sessions, db.sets, db.exercises, async () => {
+    const session = await db.sessions.get(input.sessionId);
+    if (!session) throw new Error(`Session ${input.sessionId} not found`);
+    if (session.finishedAt === null) throw new Error('The session is still active');
+    const sets = await db.sets.where('sessionId').equals(input.sessionId).toArray();
+    if (!sets.some((s) => s.exerciseId === input.exerciseId)) {
+      throw new Error('The exercise has no sets in this session');
+    }
+    const end = Math.max(session.finishedAt, endTimeForSession(session, sets));
+    await addSet(db, input, end + 1);
+  });
+}
+
+/**
+ * Deletes a set of a finished session. If it was the session's only set, the session is deleted
+ * too (an empty session would only clutter the history). Returns whether it was.
+ */
+export async function deleteSetFromFinishedSession(
+  db: LiftDB,
+  setId: string,
+): Promise<{ sessionDeleted: boolean }> {
+  return db.transaction('rw', db.sessions, db.sets, db.drafts, async () => {
+    const set = await db.sets.get(setId);
+    if (!set) throw new Error(`Set ${setId} not found`);
+    const siblings = await db.sets.where('sessionId').equals(set.sessionId).count();
+    if (siblings <= 1) {
+      await db.drafts.delete(set.sessionId);
+      await db.sets.delete(setId);
+      await db.sessions.delete(set.sessionId);
+      return { sessionDeleted: true };
+    }
+    await db.sets.delete(setId);
+    return { sessionDeleted: false };
+  });
 }
