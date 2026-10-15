@@ -172,3 +172,30 @@ Related: an active session with no checked sets can be offered as "discard" inst
   "Only today" / "Update the workout"), `AddExerciseButton`, "Skipped" section on `SessionScreen`.
 - Tests: pure helpers (`session-items.test.ts`), repo and edge cases (`session-edit.test.ts`), and
   screen flows with the real database (`session-edit-ui.test.tsx`).
+
+## History (step 11)
+
+- No schema change: history is `sessions` with a `finishedAt` plus their `sets`.
+- Routes: `/history` (finished workouts by month, newest first) and `/history/:id` (one workout).
+  The exercise screen has a "History" section (`ExerciseHistory`, first 20, then "Show all").
+- Pure helpers in `src/domain/history.ts`: `sortNewestFirst`, `groupSessionsByMonth`,
+  `orderExercisesInSession`, `sessionsForExercise`, `formatSetLine`, `sessionTimeRange`.
+- The exercise order in a finished workout is the order of its first checked set (the draft with
+  the planned order is deleted at Finish); its sets are in their planned `order`.
+- Editing is behind an "Edit" button and reuses `WeightField` and `RepsField` (the same picker and
+  the same save-at-once rule as in a live workout). Values change with `updateSetValues`, which
+  keeps `createdAt`.
+- Repo (`db/repo/sessions.ts`):
+  - `addSetToFinishedSession`: the exercise must already have sets there; the new set gets a
+    moment right after the workout's end (not "now"), so "the oldest identical set stays the
+    record" follows the workout's own time;
+  - `deleteSetFromFinishedSession`: deleting the only set deletes the session (an empty session
+    would only clutter the history); the UI asks first;
+  - `deleteSession` removes the sets and the session; the routine and the exercises stay.
+- Pre-fill and the record are computed, never stored, so every edit or delete in the history is
+  reflected at once: pre-fill uses the exercise's most recent finished workout, so correcting an
+  older one does not change it, deleting the most recent one makes it fall back to the one before.
+- Header: four equal-width links with short labels, no sideways scrolling down to 320 px; the
+  "Update available" button wraps to a second line instead of squeezing the links.
+- The routine editor shows "A workout is in progress. Changes here apply from the next start." when
+  the active session is of that routine (`useActiveSession`), live.

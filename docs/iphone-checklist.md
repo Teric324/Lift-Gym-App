@@ -262,6 +262,67 @@ Finishing:
 - [ ] Export a backup and import it back: the sets of replaced and skipped exercises are as they
       were when you finished.
 
+## 12. History (step 11)
+
+Do this on the updated app (Settings → bottom line shows the new `Version ...`). **Export a backup
+first**: these tests change and delete old workouts. Use a workout you have finished at least
+twice, so there is something to correct.
+
+The header and the list:
+- [ ] The top bar shows four links, **Workouts, History, Exercises, Settings**, all readable, and
+      does **not** scroll sideways. The brand "Lift" is on the left.
+- [ ] **History**: finished workouts, newest first, grouped by month ("October 2026"). Each row
+      reads like "Mon 12 Oct · Push", with "4 exercises · 14 sets · 18:05 – 19:12".
+- [ ] A workout in progress is **not** in the list (it is on the Workouts tab).
+
+A workout, read-only:
+- [ ] Tap a row: the workout name, date and time range, and each exercise with its sets
+      ("80 kg × 5"). There are no editing controls until you tap **Edit**.
+- [ ] Tap an exercise name: you go to the exercise screen.
+
+Correct a set in an old workout, and the effect on the pre-fill (important):
+- [ ] Open the **most recent** finished workout of an exercise, for example your last Bench press
+      day. Tap **Edit**, tap the weight of the first set, and change it (for example 80 → 82.5, from
+      the list or by typing). Tap **Done**.
+- [ ] The set shows the new weight; leave and come back: it is still changed.
+- [ ] Go to Workouts and **Start** the same workout: that exercise is pre-filled with the
+      **corrected** values. (Then discard the new workout with **Discard workout**, or carry on and
+      train.)
+- [ ] Correct a set in an **older** workout of that exercise: the next pre-fill does **not**
+      change (it still comes from the most recent workout).
+- [ ] If the corrected set was your record, the exercise's best set follows (the record view comes
+      in the next step; for now check the history lines on the exercise screen).
+
+Add and remove sets:
+- [ ] In edit mode **Add set** under an exercise adds a set with the same values as its last one.
+- [ ] **✕** on a set removes it at once when the workout has other sets.
+
+Delete the last set of a workout:
+- [ ] Open a workout that has a single set (log one for the test, or use an old one). Tap **Edit**,
+      **✕** on that set: a question says the whole workout will be deleted. **Cancel** changes
+      nothing. Confirm **Delete workout**: you are back in the History list and it is gone.
+
+Delete a whole workout:
+- [ ] Open a finished workout → **Edit** → **Delete this workout**: the question says how many sets
+      will be removed. Confirm: it is gone from the list; the routine and the exercises are still in
+      the Workouts and Exercises tabs.
+- [ ] The next pre-fill of its exercises comes from the workout before it.
+
+Per exercise:
+- [ ] Exercises → an exercise → **History**: the workouts in which it was done, newest first, each
+      with its sets ("105×3, 90×8"). Tap one: it opens that workout.
+- [ ] An exercise you never did says "Not done in any finished workout yet."
+
+The routine editor note (new):
+- [ ] Start a workout, go to Workouts → open **that routine**: a note says "A workout is in
+      progress. Changes here apply from the next start." It is not shown for other routines.
+- [ ] Finish or discard the workout, open the routine again: the note is gone.
+
+Export and import after these operations:
+- [ ] Settings → **Export backup**, then Settings → **Choose backup file…** and import that same
+      file. The History list, the corrected values, the deleted workouts and the pre-fill are the
+      same as before the import.
+
 ## How to update the installed app
 
 An installed Home Screen app is a separate copy of the site that updates itself in the background.

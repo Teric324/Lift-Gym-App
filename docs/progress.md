@@ -1,9 +1,9 @@
 # Progress and next steps
 
-Last updated: 2026-10-14 (end of the session that built steps 1 to 10).
+Last updated: 2026-10-15 (step 11 built; waiting for the iPhone test).
 
 Live app: https://lift-tracker-dwa.pages.dev (Cloudflare Pages, deploys on every push to `main`).
-Latest commit at the time of writing: `77925da`.
+Latest commit at the time of writing: see `git log`.
 
 ## Done
 
@@ -18,16 +18,14 @@ Latest commit at the time of writing: `77925da`.
 | 7 | Exercise registry and workouts UI, schema v2 (`Workout.archived`), backup format 2 | yes |
 | 8 | Workout session: start, prefill, check sets, finish/discard, stale session dialog | yes |
 | 9 | Weight picker (step list, +10/+25 jumps, free typing, iOS keyboard sizing) | yes |
-| 10 | Freedom in the session: add, move, skip, bring back, replace | **not yet** |
+| 10 | Freedom in the session: add, move, skip, bring back, replace | yes |
+| 11 | History: list by month, one workout (edit, delete), history per exercise | **not yet** |
 
-Step 10 was built and verified in a desktop browser at 375 px, but the iPhone test
-(`docs/iphone-checklist.md`, section 11, including the "close the app after each operation" test)
-has not been done.
+Step 11 was built and verified in a desktop browser at 375 and 320 px, but the iPhone test
+(`docs/iphone-checklist.md`, section 12) has not been done.
 
 ## Next
 
-- **Step 11: history.** Past sessions listed by date; each exercise shows its own history across
-  sessions; edit and delete past sessions (PR recalculates). Propose the structure first.
 - **Step 12: profile.** Every exercise with its PR (best set: heavier weight, then more reps),
   "New PR" badge when a set strictly beats the record.
 - **Then a separate design pass** (colours, layout, finish). Notes are in `docs/design-notes.md`.
