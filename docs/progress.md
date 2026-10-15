@@ -1,6 +1,6 @@
 # Progress and next steps
 
-Last updated: 2026-10-15 (step 11 built; waiting for the iPhone test).
+Last updated: 2026-10-15 (step 11 tested OK; new look, stage 1 built).
 
 Live app: https://lift-tracker-dwa.pages.dev (Cloudflare Pages, deploys on every push to `main`).
 Latest commit at the time of writing: see `git log`.
@@ -19,13 +19,18 @@ Latest commit at the time of writing: see `git log`.
 | 8 | Workout session: start, prefill, check sets, finish/discard, stale session dialog | yes |
 | 9 | Weight picker (step list, +10/+25 jumps, free typing, iOS keyboard sizing) | yes |
 | 10 | Freedom in the session: add, move, skip, bring back, replace | yes |
-| 11 | History: list by month, one workout (edit, delete), history per exercise | **not yet** |
+| 11 | History: list by month, one workout (edit, delete), history per exercise | yes |
+| D1 | New look, stage 1: tokens, Inter and Black Ops One shipped and precached | **not yet** |
 
-Step 11 was built and verified in a desktop browser at 375 and 320 px, but the iPhone test
-(`docs/iphone-checklist.md`, section 12) has not been done.
+The new look is being applied in stages (see `docs/design/README.md`). Stage 1 (tokens, fonts,
+restyled buttons, fields, lists, dialogs) is built; its iPhone test is `docs/iphone-checklist.md`,
+section 13.
 
 ## Next
 
+- **New look, stages 2 to 5** (wordmark, bottom navigation and icon; workout screen and weight
+  sheet; the other screens; polish). Approved mockups and a clickable prototype are in
+  `docs/design/`.
 - **Step 12: profile.** Every exercise with its PR (best set: heavier weight, then more reps),
   "New PR" badge when a set strictly beats the record.
 - **Then a separate design pass** (colours, layout, finish). Notes are in `docs/design-notes.md`.

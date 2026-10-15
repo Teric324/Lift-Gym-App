@@ -323,6 +323,32 @@ Export and import after these operations:
       file. The History list, the corrected values, the deleted workouts and the pre-fill are the
       same as before the import.
 
+## 13. New look, stage 1: colours and fonts (design)
+
+Only the look changed; nothing about how the app works. Update first (Settings → bottom line shows
+`Version ...`). Export a backup before, as always.
+
+- [ ] The background is black (not dark grey or blue); text is white; buttons that start or add
+      something are **yellow with black text**; other buttons are dark grey.
+- [ ] Page titles (WORKOUTS, HISTORY, EXERCISES, SETTINGS and the name of a workout) are in
+      capitals in a stencil-like font (Black Ops One). The rest of the text is a clean sans font
+      (Inter), a little bolder than before.
+- [ ] Numbers line up: weights in a set list, counts in History.
+- [ ] Type a name with Romanian letters in an exercise (for example "Împingeri ș ț ă"): the letters
+      show in the same font, not in a different-looking fallback.
+- [ ] Tap a text field: the page does **not** zoom in.
+- [ ] Open the weight picker, a confirmation (for example Archive on an exercise) and the
+      "Update available" / Start dialogs: they are dark with readable text, not white.
+- [ ] Turn on **Airplane Mode**, close the app completely, open it again: the fonts are still the
+      same (stencil titles, Inter text). They are inside the app.
+- [ ] Do one real action to be sure nothing broke: start a workout, check a set, uncheck it, finish
+      or discard.
+- [ ] Anything hard to read (grey text on black, a button without a visible edge)? Note which
+      screen.
+
+Not changed yet, on purpose (next stages): the top bar and the bottom navigation, the wordmark and
+the icon, the rows of a workout, the weight picker sheet.
+
 ## How to update the installed app
 
 An installed Home Screen app is a separate copy of the site that updates itself in the background.
