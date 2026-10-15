@@ -415,10 +415,13 @@ always a stale cached copy of the app. In this order (each step keeps your data)
    twice: the first start downloads the new version, the second runs it.
 2. Open the same address in **Safari** (not the Home Screen icon). If it works there, the data is
    fine; close the Home Screen app and open it again.
-3. Since the start-up safety net (build after bda047c) the app shows a black screen with
+3. If the app opens but looks unstyled (serif text, purple links, bar not at the bottom), the cached
+   stylesheet is bad. From the build after 5abb8f4 the app notices this itself: it clears the
+   cached app files once and reloads. Nothing is deleted from your workouts.
+4. Since the start-up safety net (build after bda047c) the app shows a black screen with
    **Lift is not starting** after 8 seconds if it cannot start. Tap **Reload**, then, if needed,
    **Refresh app files**. It removes only cached app files, never workouts.
-4. Only if none of this works: Settings → Safari → Advanced → Website Data does **not** need to be
+5. Only if none of this works: Settings → Safari → Advanced → Website Data does **not** need to be
    touched. Deleting the Home Screen app deletes its data on iOS, so first make sure you have a
    backup file (Settings → Export), then delete the icon, add it again from Safari and import.
 

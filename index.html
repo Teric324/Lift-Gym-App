@@ -114,7 +114,9 @@
         document.getElementById('boot-reload').onclick = function () {
           location.reload();
         };
-        document.getElementById('boot-refresh').onclick = function () {
+        // Removes the cached app files (service worker + Cache Storage) and reloads. IndexedDB, where
+        // the workouts live, is not touched.
+        function refreshAppFiles() {
           var jobs = [];
           if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
             jobs.push(
@@ -138,15 +140,39 @@
               }),
             );
           }
-          Promise.all(jobs).then(
-            function () {
-              location.reload();
-            },
-            function () {
-              location.reload();
-            },
-          );
-        };
+          var reload = function () {
+            location.reload();
+          };
+          Promise.all(jobs).then(reload, reload);
+        }
+        document.getElementById('boot-refresh').onclick = refreshAppFiles;
+
+        // If the stylesheet did not apply (a bad copy in the cache), the page is unstyled. Clear the
+        // cached app files once and reload; if it is still unstyled, show the recovery screen.
+        window.addEventListener('load', function () {
+          var styled = getComputedStyle(document.documentElement).getPropertyValue('--bg');
+          if (styled.trim() !== '') {
+            try {
+              sessionStorage.removeItem('liftHealed');
+            } catch (e) {
+              /* storage unavailable: nothing to reset */
+            }
+            return;
+          }
+          var tried = true;
+          try {
+            tried = sessionStorage.getItem('liftHealed') === '1';
+            if (!tried) sessionStorage.setItem('liftHealed', '1');
+          } catch (e) {
+            tried = true; // cannot remember an attempt: never loop, just show the screen
+          }
+          if (!tried) {
+            refreshAppFiles();
+            return;
+          }
+          done = false;
+          show('The app styles did not load.');
+        });
       })();
     </script>
     <script type="module" src="/src/app/main.tsx"></script>
