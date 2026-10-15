@@ -253,6 +253,9 @@ export const en = {
         ? 'It will be hidden from pickers. Its history and records stay.'
         : `It will be hidden from pickers and left out of new sessions of the ${inWorkouts} workout(s) that use it. Its history and records stay, and you can restore it any time.`,
     archivedNote: 'Archived. Its history and records are kept.',
+    historyHeading: 'History',
+    historyEmpty: 'Not done in any finished workout yet.',
+    showAll: (n: number) => `Show all ${n}`,
   },
 
   update: {

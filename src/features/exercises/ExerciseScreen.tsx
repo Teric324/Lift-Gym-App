@@ -12,6 +12,7 @@ import { listWorkoutsUsingExercise } from '../../db/repo/workouts';
 import { en } from '../../i18n/en';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { TextPrompt } from '../../ui/TextPrompt';
+import { ExerciseHistory } from './ExerciseHistory';
 import { StepPicker } from './StepPicker';
 
 const t = en.exercises;
@@ -74,6 +75,8 @@ export function ExerciseScreen() {
 
       <p className="muted">{t.usedIn(workouts.map((w) => w.name))}</p>
       <p className="muted">{t.setsLogged(sets)}</p>
+
+      <ExerciseHistory exerciseId={exercise.id} />
 
       <StepPicker
         stepGrams={exercise.stepGrams}
