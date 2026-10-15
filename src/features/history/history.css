@@ -3,3 +3,33 @@
 .history-month h2 {
   margin-top: var(--space-4);
 }
+
+.history-exercise {
+  margin: var(--space-4) 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+}
+.history-exercise__title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.1rem;
+}
+.history-sets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.history-set {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 40px;
+}
+.history-set__number {
+  flex: none;
+  width: 1.5rem;
+  text-align: right;
+  opacity: 0.7;
+}
+.history-set__line {
+  flex: 1;
+}

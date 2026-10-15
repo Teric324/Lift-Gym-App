@@ -33,6 +33,10 @@ export const en = {
       `${exercises === 1 ? '1 exercise' : `${exercises} exercises`} · ${sets === 1 ? '1 set' : `${sets} sets`}`,
     back: 'Back to history',
     notFound: 'This workout is not in your history (it may have been deleted).',
+    inProgress: 'This workout is still in progress.',
+    openWorkout: 'Open it',
+    setNumber: (n: number) => `${n}`,
+    noSets: 'This workout has no sets.',
   },
 
   start: {
