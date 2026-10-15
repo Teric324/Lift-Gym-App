@@ -16,7 +16,24 @@ export const en = {
     nameRequired: 'Enter a name.',
   },
 
-  nav: { label: 'Main', home: 'Workouts', exercises: 'Exercises', settings: 'Settings' },
+  nav: {
+    label: 'Main',
+    home: 'Workouts',
+    history: 'History',
+    exercises: 'Exercises',
+    settings: 'Settings',
+  },
+
+  history: {
+    title: 'History',
+    intro: 'Your finished workouts, newest first.',
+    empty: 'No finished workouts yet. When you finish one, it shows up here.',
+    unknownWorkout: 'Unknown workout',
+    counts: (exercises: number, sets: number) =>
+      `${exercises === 1 ? '1 exercise' : `${exercises} exercises`} · ${sets === 1 ? '1 set' : `${sets} sets`}`,
+    back: 'Back to history',
+    notFound: 'This workout is not in your history (it may have been deleted).',
+  },
 
   start: {
     button: 'Start',

@@ -1,0 +1,5 @@
+/* History screens. Uses the tokens from src/app/theme.css. */
+
+.history-month h2 {
+  margin-top: var(--space-4);
+}
