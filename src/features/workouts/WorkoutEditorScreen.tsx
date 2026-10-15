@@ -15,6 +15,7 @@ import { en } from '../../i18n/en';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { EmptyState } from '../../ui/EmptyState';
 import { TextPrompt } from '../../ui/TextPrompt';
+import { useActiveSession } from '../session/useActiveSession';
 import { ExercisePicker } from './ExercisePicker';
 
 const t = en.workouts;
@@ -31,6 +32,7 @@ export function WorkoutEditorScreen() {
   const [renaming, setRenaming] = useState(false);
   const [archiving, setArchiving] = useState(false);
   const [picking, setPicking] = useState(false);
+  const activeSession = useActiveSession();
 
   if (data === undefined) return <p>{en.settings.loading}</p>;
   const { workout, exercises } = data;
@@ -59,6 +61,11 @@ export function WorkoutEditorScreen() {
       </p>
       <h1>{workout.name}</h1>
       {workout.archived && <p className="notice">{t.archivedNote}</p>}
+      {activeSession?.workoutId === workout.id && (
+        <p className="notice" role="status">
+          {t.inProgressNote}
+        </p>
+      )}
 
       <div className="screen__actions">
         <button type="button" className="button" onClick={() => setRenaming(true)}>

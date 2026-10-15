@@ -192,6 +192,7 @@ export const en = {
     archiveBody:
       'It will be hidden from the list. Past sessions keep it, and you can restore it any time.',
     archivedNote: 'Archived. Restore it to use it again.',
+    inProgressNote: 'A workout is in progress. Changes here apply from the next start.',
     exercisesHeading: 'Exercises',
     emptyExercises: 'This workout has no exercises yet.',
     addExercises: 'Add exercises',
