@@ -1,0 +1,629 @@
+/* Components of the proposed look, used only by the mockups. */
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01';
+}
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+svg.i {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+/* the phone frame: 375 px wide, status bar on top, home indicator at the bottom */
+.phone {
+  position: relative;
+  width: 375px;
+  min-height: 812px;
+  background: var(--bg);
+  overflow: hidden;
+}
+.statusbar {
+  height: 47px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 28px 6px;
+  font-size: 15px;
+  font-weight: 800;
+  background: var(--bg);
+}
+.statusbar .right {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.statusbar svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+  stroke: none;
+}
+
+/* top bar: wordmark, and the update pill when there is one */
+.topbar {
+  height: 48px;
+  padding: 0 var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg);
+}
+.wordmark {
+  height: 20px;
+  width: auto;
+  display: block;
+}
+.pill {
+  height: 32px;
+  padding: 0 var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--yellow-line);
+  color: var(--yellow);
+  background: var(--yellow-tint);
+  font-size: var(--fs-small);
+  font-weight: 800;
+}
+
+.page {
+  padding: var(--space-2) var(--space-4) calc(var(--space-6) + 92px);
+}
+h1.title {
+  margin: var(--space-3) 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.sub {
+  margin: 0 0 var(--space-4);
+  color: var(--text-2);
+  font-size: var(--fs-small);
+}
+.caption {
+  margin: var(--space-5) 0 var(--space-2);
+  color: var(--text-2);
+  font-size: var(--fs-caption);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* cards */
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-key);
+}
+.card h2 {
+  margin: 0;
+  font-size: var(--fs-heading);
+  line-height: 1.3;
+  font-weight: 900;
+}
+.meta {
+  color: var(--text-2);
+  font-size: var(--fs-small);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-3);
+  color: var(--text-2);
+  font-size: var(--fs-caption);
+  font-weight: 800;
+}
+
+/* buttons */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-m);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-weight: 900;
+}
+.btn--primary {
+  background: var(--yellow);
+  color: var(--on-yellow);
+}
+.btn--ghost {
+  background: transparent;
+  border-color: var(--line);
+}
+.btn--danger {
+  background: var(--danger-tint);
+  color: var(--danger);
+}
+.btn--small {
+  width: auto;
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-pill);
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-m);
+  background: var(--surface-2);
+  color: var(--text);
+  border: 0;
+}
+
+/* banner */
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--yellow-line);
+  border-radius: var(--radius-l);
+  background: var(--yellow-tint);
+}
+.banner .bolt {
+  width: 20px;
+  height: 20px;
+  fill: var(--yellow);
+}
+.banner strong {
+  display: block;
+  font-size: var(--fs-small);
+}
+.banner .meta {
+  font-size: var(--fs-caption);
+}
+.banner .grow {
+  flex: 1;
+}
+
+/* bottom navigation */
+.tabbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 83px;
+  padding: 8px var(--space-2) 28px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: rgba(10, 10, 11, 0.96);
+  border-top: 1px solid var(--line);
+}
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 800;
+}
+.tab--on {
+  color: var(--yellow);
+}
+.homebar {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 134px;
+  height: 5px;
+  margin-left: -67px;
+  border-radius: 3px;
+  background: #f5f5f6;
+  opacity: 0.85;
+}
+
+/* workout screen */
+.progress {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  overflow: hidden;
+  margin: var(--space-2) 0 var(--space-4);
+}
+.progress > span {
+  display: block;
+  height: 100%;
+  background: var(--yellow);
+}
+.ex-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.ex-head .acts {
+  display: flex;
+  gap: var(--space-1);
+}
+.set {
+  display: grid;
+  grid-template-columns: 28px 88px 116px 52px;
+  align-items: center;
+  column-gap: var(--space-2);
+  justify-content: space-between;
+  min-height: 64px;
+  margin: 0 calc(-1 * var(--space-2));
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-m);
+}
+.set--done {
+  background: var(--yellow-tint);
+}
+.set .n {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 900;
+}
+.set--done .n {
+  background: var(--yellow);
+  color: var(--on-yellow);
+}
+.weight {
+  height: 52px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  padding-top: 11px;
+  border-radius: var(--radius-m);
+  background: var(--surface-2);
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 30px;
+}
+.weight small {
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 800;
+}
+.reps {
+  display: grid;
+  grid-template-columns: 36px 1fr 36px;
+  align-items: center;
+  height: 52px;
+  border-radius: var(--radius-m);
+  background: var(--surface-2);
+  font-size: 22px;
+  font-weight: 900;
+  text-align: center;
+}
+.reps .step {
+  height: 52px;
+  display: grid;
+  place-items: center;
+  color: var(--text-2);
+}
+.check {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-m);
+  border: 2px solid var(--line);
+  color: transparent;
+}
+.check--on {
+  border-color: var(--yellow);
+  background: var(--yellow);
+  color: var(--on-yellow);
+}
+.check svg.i {
+  stroke-width: 3;
+}
+.add-set {
+  margin-top: var(--space-3);
+}
+
+/* sheet (weight picker) */
+.dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--surface-1);
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  border-top: 1px solid var(--line);
+  box-shadow: var(--shadow-sheet);
+  padding: var(--space-2) var(--space-4) 34px;
+}
+.grabber {
+  width: 40px;
+  height: 5px;
+  margin: 0 auto var(--space-3);
+  border-radius: 3px;
+  background: var(--surface-3);
+}
+.sheet-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.sheet-head h3 {
+  margin: 0;
+  font-size: var(--fs-heading);
+  font-weight: 900;
+}
+.field {
+  display: flex;
+  align-items: center;
+  height: var(--tap);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-m);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font-size: 18px;
+  font-weight: 800;
+}
+.field .suffix {
+  margin-left: auto;
+  color: var(--text-2);
+  font-weight: 800;
+}
+.field--focus {
+  border-color: var(--yellow);
+}
+.chips-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-2);
+  margin: var(--space-3) 0;
+}
+.chips-row .btn--small {
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  font-size: var(--fs-small);
+}
+.picker-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.picker-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--line);
+  font-size: 18px;
+  font-weight: 800;
+}
+.picker-list li.now {
+  background: var(--yellow-tint);
+  color: var(--yellow);
+}
+.picker-list .tag {
+  height: 22px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--yellow);
+  color: var(--on-yellow);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* history and exercises */
+.row-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+}
+.date-tile {
+  width: 52px;
+  height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: var(--radius-m);
+  background: var(--surface-2);
+}
+.date-tile b {
+  font-size: 20px;
+  line-height: 22px;
+  font-weight: 900;
+}
+.date-tile span {
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+.row-card .main {
+  flex: 1;
+  min-width: 0;
+}
+.row-card .main strong {
+  display: block;
+  font-size: 17px;
+  line-height: 1.3;
+}
+.row-card svg.chev {
+  color: var(--text-3);
+  width: 20px;
+  height: 20px;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--tap);
+  padding: 0 var(--space-4);
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  color: var(--text-2);
+}
+.title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--tap);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-m);
+  color: var(--text-2);
+  font-weight: 800;
+}
+
+/* design boards */
+.board {
+  width: 1120px;
+  padding: 40px;
+  background: var(--bg);
+}
+.board h1 {
+  margin: 0 0 4px;
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.board h2 {
+  margin: 36px 0 12px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.swatch {
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: var(--surface-1);
+}
+.swatch .chipcolor {
+  height: 64px;
+}
+.swatch .info {
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.swatch .info b {
+  display: block;
+  font-size: 14px;
+}
+.swatch code {
+  color: var(--text-2);
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.spec {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-1);
+}
+.spec .label {
+  margin-bottom: 8px;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+table.contrast {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+table.contrast td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+}
+table.contrast td:last-child {
+  text-align: right;
+  font-weight: 900;
+}
+.ok {
+  color: var(--yellow);
+}
+
+.tab--on svg.i {
+  fill: currentColor;
+}
+.wordmark {
+  height: 22px;
+}

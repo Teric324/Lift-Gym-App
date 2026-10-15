@@ -1,0 +1,108 @@
+/* Proposed design tokens for Lift: dark, yellow and black. Mockup copy; the real file would be
+   src/app/theme.css. */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('fonts/inter-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url('fonts/space-grotesk-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url('fonts/space-grotesk-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Black Ops One';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('fonts-display/black-ops-one-latin-400-normal.woff2') format('woff2');
+}
+
+:root {
+  color-scheme: dark;
+
+  /* surfaces */
+  --bg: #0a0a0b;
+  --surface-1: #141416;
+  --surface-2: #1c1c1f;
+  --surface-3: #26262a;
+  --line: #2e2e33;
+
+  /* text */
+  --text: #f5f5f6;
+  --text-2: #a4a4ac;
+  --text-3: #6f6f78; /* decoration only, never for text that must be read */
+
+  /* brand */
+  --yellow: #ffd60a;
+  --yellow-pressed: #e6c000;
+  --on-yellow: #0a0a0b;
+  --yellow-tint: rgba(255, 214, 10, 0.12);
+  --yellow-line: rgba(255, 214, 10, 0.5);
+
+  /* status */
+  --danger: #ff5a52;
+  --danger-tint: rgba(255, 90, 82, 0.14);
+  --warning: #ff9f0a;
+  --warning-tint: rgba(255, 159, 10, 0.14);
+
+  /* shape */
+  --radius-s: 10px;
+  --radius-m: 14px;
+  --radius-l: 20px;
+  --radius-pill: 999px;
+
+  /* depth: no blurs on scrolling content, only on the sheet */
+  --shadow-sheet: 0 -16px 48px rgba(0, 0, 0, 0.55);
+  --shadow-key: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  /* space and sizes */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --tap: 52px; /* main touch targets */
+  --tap-min: 44px;
+
+  /* type */
+  --font-display: 'Black Ops One', 'Inter', system-ui, sans-serif;
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fs-display: 28px;
+  --fs-title: 22px;
+  --fs-heading: 18px;
+  --fs-body: 16px;
+  --fs-small: 14px;
+  --fs-caption: 12px;
+}
