@@ -287,6 +287,9 @@ export const en = {
         : `It has been ${days} days since your last backup. Export a new one.`,
 
     version: (build: string) => `Version ${build}`,
+    screenInfoHeading: 'Screen info',
+    screenInfoShow: 'Show on every page (reload to apply)',
+    screenInfoHide: 'Hide from other pages (reload to apply)',
     storageHeading: 'Storage',
     storage: {
       granted: 'Protected: the browser will not clear this data on its own.',

@@ -103,3 +103,21 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Settings: raw screen measurements, small and quiet. */
+.viewport-info pre {
+  margin: 0;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+}
+.viewport-overlay {
+  position: fixed;
+  top: 38%;
+  left: 8px;
+  right: 8px;
+  z-index: 50;
+  padding: var(--space-2);
+  border-radius: var(--radius-m);
+  background: rgb(0 0 0 / 80%);
+  pointer-events: none;
+}

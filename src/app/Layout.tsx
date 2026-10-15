@@ -4,6 +4,7 @@ import { applyUpdate, useUpdateAvailable } from '../features/pwa/update';
 import { useActiveSession } from '../features/session/useActiveSession';
 import { en } from '../i18n/en';
 import { BoltIcon, HistoryIcon, ListIcon, SlidersIcon } from '../ui/icons';
+import { ScreenInfoOverlay } from '../features/settings/ViewportInfo';
 import { Wordmark } from '../ui/Wordmark';
 
 function Tab({
@@ -58,6 +59,7 @@ export function Layout() {
         <Tab to="/exercises" icon={<ListIcon />} label={en.nav.exercises} />
         <Tab to="/settings" icon={<SlidersIcon />} label={en.nav.settings} />
       </nav>
+      <ScreenInfoOverlay />
     </>
   );
 }

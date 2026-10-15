@@ -17,6 +17,7 @@ import { getPersistRecord, type PersistRecord } from '../../db/persist';
 import { localDateString } from '../../domain/date';
 import { en } from '../../i18n/en';
 import { canShareFile, shareFile } from './share';
+import { ViewportInfo } from './ViewportInfo';
 
 const t = en.settings;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -305,6 +306,7 @@ export function SettingsScreen() {
       )}
 
       <p className="muted app-version">{t.version(__APP_BUILD__)}</p>
+      <ViewportInfo />
     </section>
   );
 }
