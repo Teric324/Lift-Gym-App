@@ -349,6 +349,39 @@ Only the look changed; nothing about how the app works. Update first (Settings �
 Not changed yet, on purpose (next stages): the top bar and the bottom navigation, the wordmark and
 the icon, the rows of a workout, the weight picker sheet.
 
+## 14. New look, stage 2: bottom navigation, wordmark, icon (design)
+
+Update first (Settings → bottom line shows `Version ...`). Export a backup before.
+
+Bottom navigation:
+- [ ] Four tabs at the **bottom**: Workouts (a bolt), History (clock), Exercises (list), Settings
+      (sliders). The labels are short and not cut off. The active tab is yellow, the bolt filled.
+- [ ] The bar sits above the home indicator (the thin line at the bottom of the phone) and nothing is
+      hidden behind it: scroll to the very end of a long list or of a workout and the last button is
+      fully visible above the bar.
+- [ ] Tapping a tab opens that page at once; tapping Workouts while inside a workout screen's page
+      goes to the workout list. The bar stays when the keyboard is closed.
+- [ ] Open a text field (for example Add exercise) and the weight picker: the bar does not cover the
+      dialog or the keyboard's field.
+
+Top bar and wordmark:
+- [ ] At the top, only the **LIFT** wordmark: white letters, the yellow lit bolt where the I is.
+      Under the clock, not touching it. No menu in the top bar any more.
+- [ ] Tapping the wordmark goes to the workout list.
+- [ ] If "Update available" shows, it is in the top bar, on the right.
+
+Colours of the system parts:
+- [ ] The status bar (clock, battery) is white on black, readable. The area under it is black, no
+      stripe of another colour. Rotating the phone to landscape keeps the bar usable.
+
+App icon (only after you reinstall it, optional):
+- [ ] On the Home Screen the old icon may still be there: iOS keeps the icon from the day the app was
+      added. A new install shows the **yellow tile with the black bolt**. If you want the new icon on
+      this phone: first export a backup (Settings → Export backup → save in Files), then remove the
+      app from the Home Screen, open the address in Safari, add it again, and import the backup
+      (Settings → Choose backup file…). Removing the app can remove its data, so do not skip the
+      export.
+
 ## How to update the installed app
 
 An installed Home Screen app is a separate copy of the site that updates itself in the background.

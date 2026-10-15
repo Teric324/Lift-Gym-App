@@ -1,6 +1,6 @@
 # Progress and next steps
 
-Last updated: 2026-10-15 (step 11 tested OK; new look, stage 1 built).
+Last updated: 2026-10-15 (step 11 tested OK; new look stages 1 and 2 built).
 
 Live app: https://lift-tracker-dwa.pages.dev (Cloudflare Pages, deploys on every push to `main`).
 Latest commit at the time of writing: see `git log`.
@@ -20,16 +20,16 @@ Latest commit at the time of writing: see `git log`.
 | 9 | Weight picker (step list, +10/+25 jumps, free typing, iOS keyboard sizing) | yes |
 | 10 | Freedom in the session: add, move, skip, bring back, replace | yes |
 | 11 | History: list by month, one workout (edit, delete), history per exercise | yes |
-| D1 | New look, stage 1: tokens, Inter and Black Ops One shipped and precached | **not yet** |
+| D1 | New look, stage 1: tokens, Inter and Black Ops One shipped and precached | yes (seen on the phone) |
+| D2 | New look, stage 2: bottom navigation, wordmark, flat icon | **not yet** |
 
-The new look is being applied in stages (see `docs/design/README.md`). Stage 1 (tokens, fonts,
-restyled buttons, fields, lists, dialogs) is built; its iPhone test is `docs/iphone-checklist.md`,
-section 13.
+The new look is being applied in stages (see `docs/design/README.md`). Stages 1 (tokens, fonts, restyled
+buttons, fields, lists, dialogs) and 2 (wordmark, bottom navigation, flat icon) are built; the
+iPhone test of stage 2 is `docs/iphone-checklist.md`, section 14.
 
 ## Next
 
-- **New look, stages 2 to 5** (wordmark, bottom navigation and icon; workout screen and weight
-  sheet; the other screens; polish). Approved mockups and a clickable prototype are in
+- **New look, stages 3 to 5** (workout screen and weight sheet; the other screens; polish). Approved mockups and a clickable prototype are in
   `docs/design/`.
 - **Step 12: profile.** Every exercise with its PR (best set: heavier weight, then more reps),
   "New PR" badge when a set strictly beats the record.
