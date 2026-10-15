@@ -5,6 +5,7 @@ import { requestPersistentStorage } from '../db/persist';
 import { seedStarterExercises } from '../db/seed';
 import { initPwaUpdates } from '../features/pwa/update';
 import { App } from './App';
+import './fonts.css';
 import './theme.css';
 import './layout.css';
 import '../ui/ui.css';

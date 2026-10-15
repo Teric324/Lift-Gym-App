@@ -49,7 +49,7 @@ export default defineConfig({
       },
       workbox: {
         // Everything the app needs is precached, so it opens and works fully offline.
-        globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest,woff2}'],
         // Deep links and reloads (/settings) are answered with the app shell, also offline.
         navigateFallback: '/index.html',
         cleanupOutdatedCaches: true,
