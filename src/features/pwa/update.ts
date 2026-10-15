@@ -18,6 +18,9 @@ const CHECK_INTERVAL_MS = 60 * 60 * 1000;
 /** Registers the service worker. Call once at startup. */
 export function initPwaUpdates(): void {
   applyUpdateFn = registerSW({
+    // Register now: the app starts after the window `load` event may already have fired, and
+    // waiting for it would then never register the worker.
+    immediate: true,
     onNeedRefresh() {
       updateAvailable = true;
       emit();

@@ -16,9 +16,139 @@
 
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <style>
+      /* Painted before any script: the app never shows a white screen while it starts. */
+      html,
+      body {
+        margin: 0;
+        background: #0a0a0b;
+        color: #f5f5f6;
+        color-scheme: dark;
+      }
+      #boot-help {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 14px;
+        padding: 24px;
+        background: #0a0a0b;
+        font:
+          16px/1.4 -apple-system,
+          system-ui,
+          sans-serif;
+      }
+      #boot-help h1 {
+        margin: 0;
+        font-size: 22px;
+      }
+      #boot-help p {
+        margin: 0;
+        color: #b4b4ba;
+      }
+      #boot-help button {
+        min-height: 52px;
+        border: 0;
+        border-radius: 14px;
+        background: #ffd60a;
+        color: #0a0a0b;
+        font: inherit;
+        font-weight: 800;
+      }
+      #boot-help button.secondary {
+        background: #26262a;
+        color: #f5f5f6;
+      }
+      #boot-help pre {
+        margin: 0;
+        white-space: pre-wrap;
+        color: #8a8a90;
+        font-size: 12px;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <!-- Start-up safety net, plain JS on purpose: it must work even if the app bundle does not.
+         If the app has not reported "ready" after a few seconds (or throws on start), it shows
+         a recovery screen. The workouts live in IndexedDB and are never touched here. -->
+    <div id="boot-help" role="alert">
+      <h1>Lift is not starting</h1>
+      <p>Your workouts are safe on this phone. Try reloading first.</p>
+      <button type="button" id="boot-reload">Reload</button>
+      <p>If that does not help, refresh the app files. This does not delete any workout.</p>
+      <button type="button" id="boot-refresh" class="secondary">Refresh app files</button>
+      <pre id="boot-detail"></pre>
+    </div>
+    <script>
+      (function () {
+        var help = document.getElementById('boot-help');
+        var detail = document.getElementById('boot-detail');
+        var done = false;
+        var timer = setTimeout(function () {
+          show('No answer from the app after 8 seconds.');
+        }, 8000);
+        function show(why) {
+          if (done) return;
+          detail.textContent = (detail.textContent ? detail.textContent + '\n' : '') + why;
+          help.style.display = 'flex';
+        }
+        window.__liftBoot = {
+          ready: function () {
+            done = true;
+            clearTimeout(timer);
+            help.style.display = 'none';
+          },
+          fail: function (why) {
+            show(String(why));
+          },
+        };
+        window.addEventListener('error', function (e) {
+          if (!/ResizeObserver/.test(e.message || '')) show(e.message || 'Script error');
+        });
+        window.addEventListener('unhandledrejection', function (e) {
+          show((e.reason && e.reason.message) || String(e.reason));
+        });
+        document.getElementById('boot-reload').onclick = function () {
+          location.reload();
+        };
+        document.getElementById('boot-refresh').onclick = function () {
+          var jobs = [];
+          if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+            jobs.push(
+              navigator.serviceWorker.getRegistrations().then(function (regs) {
+                return Promise.all(
+                  regs.map(function (r) {
+                    return r.unregister();
+                  }),
+                );
+              }),
+            );
+          }
+          if (window.caches) {
+            jobs.push(
+              caches.keys().then(function (keys) {
+                return Promise.all(
+                  keys.map(function (k) {
+                    return caches.delete(k);
+                  }),
+                );
+              }),
+            );
+          }
+          Promise.all(jobs).then(
+            function () {
+              location.reload();
+            },
+            function () {
+              location.reload();
+            },
+          );
+        };
+      })();
+    </script>
     <script type="module" src="/src/app/main.tsx"></script>
   </body>
 </html>

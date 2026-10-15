@@ -406,6 +406,22 @@ If the button does not appear:
 - Last resort: delete the app from the Home Screen, open the site in Safari, add it again, and
   import your latest backup (Settings → Choose backup file…).
 
+## If the app shows a white screen or does not start
+
+Your workouts are in the phone's database, not in the app files, so a start problem is almost
+always a stale cached copy of the app. In this order (each step keeps your data):
+
+1. Close the app completely (app switcher, swipe it away), wait 10 seconds, open it again. Do this
+   twice: the first start downloads the new version, the second runs it.
+2. Open the same address in **Safari** (not the Home Screen icon). If it works there, the data is
+   fine; close the Home Screen app and open it again.
+3. Since the start-up safety net (build after bda047c) the app shows a black screen with
+   **Lift is not starting** after 8 seconds if it cannot start. Tap **Reload**, then, if needed,
+   **Refresh app files**. It removes only cached app files, never workouts.
+4. Only if none of this works: Settings → Safari → Advanced → Website Data does **not** need to be
+   touched. Deleting the Home Screen app deletes its data on iOS, so first make sure you have a
+   backup file (Settings → Export), then delete the icon, add it again from Safari and import.
+
 ## Result
 
 Date tested: __________  iOS version: __________  Device: __________
