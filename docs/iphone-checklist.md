@@ -406,6 +406,13 @@ If the button does not appear:
 - Last resort: delete the app from the Home Screen, open the site in Safari, add it again, and
   import your latest backup (Settings → Choose backup file…).
 
+## Bottom bar position
+
+- [ ] The bottom bar is at the very bottom edge on every tab, including the short pages (Workouts
+      with no routines, History with no sessions), the same height on all four tabs.
+- [ ] On long pages (Exercises, Settings) it stays at the bottom while scrolling and nothing is
+      hidden behind it at the end of the page.
+
 ## If the app shows a white screen or does not start
 
 Your workouts are in the phone's database, not in the app files, so a start problem is almost

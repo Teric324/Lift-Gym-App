@@ -47,20 +47,25 @@
 }
 
 .app-main {
+  flex: 1 0 auto;
+  box-sizing: border-box;
+  width: 100%;
   max-width: 32rem;
   margin: 0 auto;
-  /* Room for the fixed bottom bar and the home indicator under the last element. */
-  padding: var(--space-3) 0
-    calc(var(--tabbar-height) + env(safe-area-inset-bottom) + var(--space-5));
+  padding: var(--space-3) 0 var(--space-5);
 }
 
 /* Bottom navigation: four items, equal width, never scrolls. */
 .tabbar {
-  position: fixed;
-  left: 0;
-  right: 0;
+  /* Sticky, not fixed: on iOS a fixed bar floated above the bottom edge on pages too short to
+     scroll. In the page column it is always the last item, and sticks to the edge on long pages. */
+  position: sticky;
   bottom: 0;
   z-index: 20;
+  flex: none;
+  /* Full width even though the body has side padding. */
+  margin: 0 calc(-1 * max(var(--gutter), env(safe-area-inset-right))) 0
+    calc(-1 * max(var(--gutter), env(safe-area-inset-left)));
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   padding: 0 max(var(--space-2), env(safe-area-inset-right)) env(safe-area-inset-bottom)
