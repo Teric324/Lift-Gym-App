@@ -1,66 +1,100 @@
-/* App shell: the top bar and the page column. */
+/* App shell: the top bar, the page column and the bottom navigation. */
 
-/* The status bar is translucent on iOS, so this bar always sits under it, in a dark colour that
-   keeps the white status bar text readable in both light and dark mode. */
+:root {
+  --tabbar-height: 60px;
+}
+
+/* The status bar is translucent on iOS, so this bar always sits under it, in black, which keeps
+   the white status bar text readable. */
 .app-header {
   position: sticky;
   top: 0;
   z-index: 10;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2) var(--space-3);
+  justify-content: space-between;
+  gap: var(--space-3);
   /* Full width even though the body has side padding. */
   margin: 0 calc(-1 * max(var(--gutter), env(safe-area-inset-right))) 0
     calc(-1 * max(var(--gutter), env(safe-area-inset-left)));
   padding: env(safe-area-inset-top) max(var(--gutter), env(safe-area-inset-right)) 0
     max(var(--gutter), env(safe-area-inset-left));
   min-height: calc(var(--tap) + env(safe-area-inset-top));
-  background: var(--bar-bg);
-  color: var(--bar-fg);
+  background: var(--bg);
 }
-.app-header__nav {
-  display: flex;
-  gap: 0;
-  /* A basis (not 0): when the update button joins the bar it wraps to a second line instead of
-     squeezing the four links. */
-  flex: 1 1 15rem;
-  min-width: 0;
-}
-/* Four links share the width equally and never scroll sideways. Labels are short on purpose. */
-.app-header__link {
-  flex: 1 1 0;
-  min-width: 0;
-  padding: var(--space-3) 2px;
-  color: inherit;
-  opacity: 0.7;
-  font-size: 0.875rem;
-  text-align: center;
+.app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--text);
   text-decoration: none;
-  white-space: nowrap;
-}
-.app-header__link.active {
-  opacity: 1;
-  box-shadow: inset 0 -3px var(--accent);
 }
 .update-button {
   min-height: 36px;
-  padding: var(--space-1) 10px;
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--accent);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--yellow-line);
+  border-radius: var(--radius-pill);
+  background: var(--yellow-tint);
+  color: var(--yellow);
   font: inherit;
   font-size: var(--font-small);
+  font-weight: 800;
 }
 .update-note {
   margin: var(--space-2) 0 0;
+  color: var(--text-2);
   font-size: var(--font-small);
-  opacity: 0.8;
 }
 
 .app-main {
   max-width: 32rem;
   margin: 0 auto;
-  padding: var(--space-3) 0 32px;
+  /* Room for the fixed bottom bar and the home indicator under the last element. */
+  padding: var(--space-3) 0
+    calc(var(--tabbar-height) + env(safe-area-inset-bottom) + var(--space-5));
+}
+
+/* Bottom navigation: four items, equal width, never scrolls. */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 0 max(var(--space-2), env(safe-area-inset-right)) env(safe-area-inset-bottom)
+    max(var(--space-2), env(safe-area-inset-left));
+  border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
+}
+.tabbar__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  height: var(--tabbar-height);
+  color: var(--text-2);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.tabbar__link.active {
+  color: var(--yellow);
+}
+.tabbar__link .icon--bolt {
+  fill: none;
+}
+.tabbar__link.active .icon--bolt {
+  fill: currentColor;
+}
+.tabbar__label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
