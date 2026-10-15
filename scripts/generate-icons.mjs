@@ -3,30 +3,42 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
 
-const BACKGROUND = [0x16, 0x18, 0x1d];
-const FOREGROUND = [0xf2, 0xf4, 0xf8];
-const ACCENT = [0x4c, 0xc2, 0xff];
+// Flat design: a black bolt on a yellow tile. No gradients, lights or shadows.
+const BACKGROUND = [0xff, 0xd6, 0x0a];
+const FOREGROUND = [0x0a, 0x0a, 0x0b];
 
-// A barbell, in unit coordinates (0..1): [x0, y0, x1, y1, color]. Symmetric around x = 0.5.
-const BARBELL = [
-  [0.14, 0.47, 0.86, 0.53, FOREGROUND], // bar
-  [0.3, 0.27, 0.38, 0.73, ACCENT], // inner plates
-  [0.62, 0.27, 0.7, 0.73, ACCENT],
-  [0.2, 0.35, 0.28, 0.65, FOREGROUND], // outer plates
-  [0.72, 0.35, 0.8, 0.65, FOREGROUND],
+// The bolt, in a 100 x 100 box (it spans x 14 to 88; docs/design/icon.svg uses the same shape).
+const BOLT = [
+  [46, 0],
+  [78, 0],
+  [58, 36],
+  [88, 36],
+  [30, 100],
+  [44, 58],
+  [14, 58],
 ];
+const BOLT_CENTER_X = 51;
+
+/** Even-odd point-in-polygon test. */
+function inside(polygon, x, y) {
+  let hit = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const [xi, yi] = polygon[i];
+    const [xj, yj] = polygon[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) hit = !hit;
+  }
+  return hit;
+}
 
 function render(size, { scale = 1 } = {}) {
   const pixels = Buffer.alloc(size * size * 4);
   const samples = 4; // 4x4 supersampling for smooth edges
   const colorAt = (u, v) => {
-    // Map the point back into the unscaled artwork space (scaled about the centre).
-    const x = (u - 0.5) / scale + 0.5;
-    const y = (v - 0.5) / scale + 0.5;
-    for (const [x0, y0, x1, y1, color] of BARBELL) {
-      if (x >= x0 && x <= x1 && y >= y0 && y <= y1) return color;
-    }
-    return BACKGROUND;
+    // Map the point back into the 100 x 100 bolt box: the artwork is `scale` of the tile,
+    // centred, with the bolt's own horizontal centre on the middle of the tile.
+    const x = ((u - 0.5) / scale) * 100 + BOLT_CENTER_X;
+    const y = ((v - 0.5) / scale) * 100 + 50;
+    return inside(BOLT, x, y) ? FOREGROUND : BACKGROUND;
   };
   for (let py = 0; py < size; py++) {
     for (let px = 0; px < size; px++) {
@@ -91,12 +103,12 @@ function png(size, rgba) {
 }
 
 const outputs = [
-  ['pwa-192x192.png', 192, 1],
-  ['pwa-512x512.png', 512, 1],
+  ['pwa-192x192.png', 192, 0.62],
+  ['pwa-512x512.png', 512, 0.62],
   // Maskable: content stays inside the central safe zone, the background fills the full square.
-  ['pwa-maskable-512x512.png', 512, 0.8],
-  ['apple-touch-icon.png', 180, 0.9],
-  ['favicon-32x32.png', 32, 1],
+  ['pwa-maskable-512x512.png', 512, 0.5],
+  ['apple-touch-icon.png', 180, 0.62],
+  ['favicon-32x32.png', 32, 0.7],
 ];
 
 mkdirSync('public', { recursive: true });
