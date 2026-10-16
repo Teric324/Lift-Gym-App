@@ -6,26 +6,6 @@ export function visibleItems(items: readonly DraftItem[]): DraftItem[] {
 }
 
 /**
- * Moves an exercise one place up (-1) or down (+1) among the *visible* exercises, by swapping it
- * with its visible neighbour. Skipped exercises keep their slots, so they come back where they
- * were. Moving past either end changes nothing.
- */
-export function moveVisible(
-  items: readonly DraftItem[],
-  exerciseId: string,
-  direction: -1 | 1,
-): DraftItem[] {
-  const slots = items.flatMap((item, index) => (item.skipped ? [] : [index]));
-  const position = slots.findIndex((index) => items[index]?.exerciseId === exerciseId);
-  const neighbour = slots[position + direction];
-  const own = slots[position];
-  const copy = [...items];
-  if (position === -1 || own === undefined || neighbour === undefined) return copy;
-  [copy[own], copy[neighbour]] = [copy[neighbour]!, copy[own]!];
-  return copy;
-}
-
-/**
  * Moves an exercise to `toIndex` among the *visible* exercises (the position it ends up at).
  * Skipped exercises keep their slots in the full list, so they come back where they were. An
  * unknown exercise or an index outside the list is clamped / ignored.

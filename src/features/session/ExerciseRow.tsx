@@ -3,7 +3,9 @@ import { itemProgress } from '../../domain/session-items';
 import type { DraftItem, Exercise } from '../../domain/types';
 import { formatWeight } from '../../domain/weight';
 import { en } from '../../i18n/en';
-import { CheckIcon, GripIcon } from '../../ui/icons';
+import { DragHandle, type DragHandleBindings } from '../../ui/drag/DragHandle';
+import type { ReorderRowProps } from '../../ui/drag/useReorderableList';
+import { CheckIcon } from '../../ui/icons';
 
 const t = en.session;
 
@@ -12,27 +14,12 @@ interface ExerciseRowProps {
   item: DraftItem;
   /** Name of the routine exercise this one replaces today, when it is a replacement. */
   insteadOfName: string | null;
-  /** The row being dragged, or the amount it is pushed aside while another one is. */
-  dragging: boolean;
-  offsetPx: number;
-  rowRef: (element: HTMLElement | null) => void;
-  handleProps: Record<string, unknown>;
-  onHandleKeyDown: (event: React.KeyboardEvent<HTMLButtonElement>) => void;
-  handleRef: (element: HTMLButtonElement | null) => void;
+  row: ReorderRowProps;
+  handle: DragHandleBindings;
 }
 
 /** One exercise in the overview: tap to open it, drag the handle to move it. */
-export function ExerciseRow({
-  exercise,
-  item,
-  insteadOfName,
-  dragging,
-  offsetPx,
-  rowRef,
-  handleProps,
-  onHandleKeyDown,
-  handleRef,
-}: ExerciseRowProps) {
+export function ExerciseRow({ exercise, item, insteadOfName, row, handle }: ExerciseRowProps) {
   const progress = itemProgress(item);
   const detail = [
     progress.last ? t.lastSet(formatWeight(progress.last.weightGrams), progress.last.reps) : null,
@@ -41,9 +28,9 @@ export function ExerciseRow({
 
   return (
     <li
-      ref={rowRef}
-      className={`session-row${progress.done ? ' session-row--done' : ''}${dragging ? ' session-row--dragging' : ''}`}
-      style={{ '--drag-y': `${offsetPx}px` } as React.CSSProperties}
+      ref={row.ref}
+      className={`session-row drag-row${progress.done ? ' session-row--done' : ''}${row.dragging ? ' drag-row--dragging' : ''}`}
+      style={row.style}
     >
       <Link className="session-row__main" to={`/session/${exercise.id}`} draggable={false}>
         <span className="session-row__text">
@@ -59,17 +46,7 @@ export function ExerciseRow({
           {t.setsProgress(progress.checked, progress.total)}
         </span>
       </Link>
-      <button
-        type="button"
-        className="session-row__handle"
-        aria-label={t.reorder(exercise.name)}
-        aria-keyshortcuts="ArrowUp ArrowDown"
-        ref={handleRef}
-        onKeyDown={onHandleKeyDown}
-        {...handleProps}
-      >
-        <GripIcon />
-      </button>
+      <DragHandle label={t.reorder(exercise.name)} {...handle} />
     </li>
   );
 }

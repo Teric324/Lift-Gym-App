@@ -7,7 +7,6 @@ import {
   checkDraftRow,
   getDraft,
   ItemHasCheckedSetsError,
-  moveDraftItem,
   moveDraftItemTo,
   replaceDraftExercise,
   skipDraftItem,
@@ -129,29 +128,29 @@ describe('adding an exercise', () => {
 });
 
 describe('reordering', () => {
-  it('moves an exercise up and down and keeps the rows and checked sets', async () => {
+  it('moves an exercise down and up and keeps the rows and checked sets', async () => {
     const w = await world();
     const { sessionId, draft } = await begin(w);
     await checkAll(sessionId, w.bench.id, [draft.items[0]!.rows[0]!.id]);
 
-    await moveDraftItem(db, sessionId, w.bench.id, 1, T0 + 10);
+    await moveDraftItemTo(db, sessionId, w.bench.id, 1, T0 + 10);
     let current = await getDraft(db, sessionId);
     expect(order(current)).toEqual([w.fly.id, w.bench.id]);
     expect(rowsOf(current, w.bench.id)[0]!.checkedSetId).not.toBeNull();
     expect(await listSetsForSession(db, sessionId)).toHaveLength(1);
 
-    await moveDraftItem(db, sessionId, w.bench.id, -1);
+    await moveDraftItemTo(db, sessionId, w.bench.id, 0);
     current = await getDraft(db, sessionId);
     expect(order(current)).toEqual([w.bench.id, w.fly.id]);
   });
 
-  it('does nothing at the ends and never touches the routine', async () => {
+  it('does nothing when dropped in place or past the end, and never touches the routine', async () => {
     const w = await world();
     const { sessionId } = await begin(w);
-    await moveDraftItem(db, sessionId, w.bench.id, -1);
-    await moveDraftItem(db, sessionId, w.fly.id, 1);
+    await moveDraftItemTo(db, sessionId, w.bench.id, 0);
+    await moveDraftItemTo(db, sessionId, w.fly.id, 5);
     expect(order(await getDraft(db, sessionId))).toEqual([w.bench.id, w.fly.id]);
-    await moveDraftItem(db, sessionId, w.bench.id, 1);
+    await moveDraftItemTo(db, sessionId, w.bench.id, 1);
     expect((await getWorkout(db, w.push.id))?.exerciseIds).toEqual([w.bench.id, w.fly.id]);
   });
 
@@ -160,7 +159,7 @@ describe('reordering', () => {
     const { sessionId } = await begin(w);
     await addExerciseToDraft(db, sessionId, w.incline.id);
     await skipDraftItem(db, sessionId, w.fly.id);
-    await moveDraftItem(db, sessionId, w.incline.id, -1);
+    await moveDraftItemTo(db, sessionId, w.incline.id, 0);
     expect(order(await getDraft(db, sessionId))).toEqual([w.incline.id, w.fly.id, w.bench.id]);
     await unskipDraftItem(db, sessionId, w.fly.id);
     expect(order(await getDraft(db, sessionId))).toEqual([w.incline.id, w.fly.id, w.bench.id]);

@@ -1,0 +1,39 @@
+/* Drag-to-reorder: the handle and the row that follows the finger (see useReorderableList). */
+.drag-row {
+  position: relative;
+  transform: translateY(var(--drag-y, 0px));
+}
+.drag-row--dragging {
+  z-index: 2;
+  border: 1px solid var(--yellow-line);
+  border-radius: var(--radius-m);
+  background: var(--surface-2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.drag-list--dragging {
+  -webkit-user-select: none;
+  user-select: none;
+}
+.drag-handle {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--tap-min);
+  min-height: var(--tap-min);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  /* The drag is ours, not a scroll: the rest of the row still scrolls the list. */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: grab;
+}
+.drag-row--dragging .drag-handle {
+  color: var(--yellow);
+  cursor: grabbing;
+}

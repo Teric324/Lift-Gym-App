@@ -10,6 +10,7 @@ import './fonts.css';
 import './theme.css';
 import './layout.css';
 import '../ui/ui.css';
+import '../ui/drag/drag.css';
 
 // Set by the start-up safety net in index.html (shows a recovery screen if we never get ready).
 declare global {

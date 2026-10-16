@@ -1,11 +1,6 @@
 import { newId } from '../../domain/id';
 import { prefillForExercises } from '../../domain/prefill';
-import {
-  applyReplacement,
-  moveVisible,
-  moveVisibleTo,
-  routineTargetOf,
-} from '../../domain/session-items';
+import { applyReplacement, moveVisibleTo, routineTargetOf } from '../../domain/session-items';
 import { assertValidPartialSetValues, assertValidSetValues } from '../../domain/set-values';
 import type { DraftItem, DraftRow, SessionDraft, SessionSet } from '../../domain/types';
 import type { LiftDB } from '../schema';
@@ -257,27 +252,6 @@ export class ItemHasCheckedSetsError extends Error {
     super(`The exercise has ${checkedSets} checked set(s)`);
     this.name = 'ItemHasCheckedSetsError';
   }
-}
-
-/** Moves an exercise one place up (-1) or down (+1) among the visible ones. Today only. */
-export async function moveDraftItem(
-  db: LiftDB,
-  sessionId: string,
-  exerciseId: string,
-  direction: -1 | 1,
-  now: number = Date.now(),
-): Promise<void> {
-  await db.transaction('rw', db.drafts, db.sessions, async () => {
-    const draft = await loadActiveDraft(db, sessionId);
-    if (!draft.items.some((i) => i.exerciseId === exerciseId)) {
-      throw new Error(`Exercise ${exerciseId} is not in this session`);
-    }
-    await db.drafts.put({
-      ...draft,
-      items: moveVisible(draft.items, exerciseId, direction),
-      updatedAt: now,
-    });
-  });
 }
 
 /** Moves an exercise to a position among the visible ones (drag and drop). Today only. */

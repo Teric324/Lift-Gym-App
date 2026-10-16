@@ -5,15 +5,17 @@ import { db } from '../../db/instance';
 import { addExercise, listExercises } from '../../db/repo/exercises';
 import {
   getWorkout,
+  moveWorkoutExercise,
   renameWorkout,
   setWorkoutArchived,
   setWorkoutIcon,
   updateWorkoutExercises,
 } from '../../db/repo/workouts';
-import { moveItem } from '../../domain/list';
 import { WORKOUT_ICONS, type Exercise } from '../../domain/types';
 import { en } from '../../i18n/en';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
+import { DragHandle } from '../../ui/drag/DragHandle';
+import { useReorderableList } from '../../ui/drag/useReorderableList';
 import { EmptyState } from '../../ui/EmptyState';
 import { TextPrompt } from '../../ui/TextPrompt';
 import { WorkoutIconView } from '../../ui/workout-icons';
@@ -21,6 +23,7 @@ import { useActiveSession } from '../session/useActiveSession';
 import { ExercisePicker } from './ExercisePicker';
 
 const t = en.workouts;
+const NO_IDS: readonly string[] = [];
 
 export function WorkoutEditorScreen() {
   const { id = '' } = useParams();
@@ -35,6 +38,9 @@ export function WorkoutEditorScreen() {
   const [archiving, setArchiving] = useState(false);
   const [picking, setPicking] = useState(false);
   const activeSession = useActiveSession();
+  const list = useReorderableList(data?.workout?.exerciseIds ?? NO_IDS, (exerciseId, to) =>
+    moveWorkoutExercise(db, id, exerciseId, to),
+  );
 
   if (data === undefined) return <p>{en.settings.loading}</p>;
   const { workout, exercises } = data;
@@ -51,7 +57,6 @@ export function WorkoutEditorScreen() {
   const byId = new Map<string, Exercise>(exercises.map((e) => [e.id, e]));
   const inWorkout = new Set(workout.exerciseIds);
   const available = exercises.filter((e) => !e.archived && !inWorkout.has(e.id));
-  const last = workout.exerciseIds.length - 1;
 
   const edit = (update: (ids: readonly string[]) => readonly string[]) =>
     void updateWorkoutExercises(db, workout.id, update);
@@ -115,14 +120,22 @@ export function WorkoutEditorScreen() {
       <h2>{t.exercisesHeading}</h2>
       {workout.exerciseIds.length === 0 && <EmptyState>{t.emptyExercises}</EmptyState>}
 
-      <ol className="list">
-        {workout.exerciseIds.map((exerciseId, index) => {
+      {list.failed && (
+        <p className="field__error" role="alert">
+          {t.editFailed}
+        </p>
+      )}
+      <ol className={`list${list.dragging ? ' drag-list--dragging' : ''}`}>
+        {list.shownIds.map((exerciseId, index) => {
           const exercise = byId.get(exerciseId);
           const name = exercise?.name ?? exerciseId;
+          const row = list.rowProps(exerciseId, index);
           return (
             <li
               key={exerciseId}
-              className={`list__row${exercise?.archived ? ' list__row--muted' : ''}`}
+              ref={row.ref}
+              style={row.style}
+              className={`list__row drag-row${exercise?.archived ? ' list__row--muted' : ''}${row.dragging ? ' drag-row--dragging' : ''}`}
             >
               <span className="list__main">
                 <span className="list__title">{name}</span>
@@ -136,30 +149,13 @@ export function WorkoutEditorScreen() {
                 <button
                   type="button"
                   className="button button--small"
-                  aria-label={t.moveUp(name)}
-                  disabled={index === 0}
-                  onClick={() => edit((ids) => moveItem(ids, index, index - 1))}
-                >
-                  ↑
-                </button>
-                <button
-                  type="button"
-                  className="button button--small"
-                  aria-label={t.moveDown(name)}
-                  disabled={index === last}
-                  onClick={() => edit((ids) => moveItem(ids, index, index + 1))}
-                >
-                  ↓
-                </button>
-                <button
-                  type="button"
-                  className="button button--small"
                   aria-label={t.removeExercise(name)}
                   onClick={() => edit((ids) => ids.filter((x) => x !== exerciseId))}
                 >
                   ✕
                 </button>
               </span>
+              <DragHandle label={t.reorder(name)} {...list.handleProps(exerciseId)} />
             </li>
           );
         })}

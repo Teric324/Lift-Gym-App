@@ -139,7 +139,7 @@ describe('overview: the rows', () => {
     for (const name of ['Bench press', 'Cable fly']) {
       const handle = within(rowFor(name)).getByLabelText(`Reorder ${name}`);
       expect(handle.tagName).toBe('BUTTON');
-      expect(handle.classList.contains('session-row__handle')).toBe(true);
+      expect(handle.classList.contains('drag-handle')).toBe(true);
       expect(rowFor(name).querySelector('a')!.contains(handle)).toBe(false);
     }
   });
@@ -191,7 +191,7 @@ describe('overview: reordering', () => {
     await waitForRows(['Bench press', 'Cable fly']);
     layOut();
     fireEvent.pointerDown(handleOf('Bench press'), { clientY: 30, ...touch });
-    expect(rowFor('Bench press').classList.contains('session-row--dragging')).toBe(true);
+    expect(rowFor('Bench press').classList.contains('drag-row--dragging')).toBe(true);
     fireEvent.pointerMove(handleOf('Bench press'), { clientY: 50, ...touch });
     // Not past the other row's middle yet: it stays where it is.
     expect(dragY('Bench press')).toBe('20px');
@@ -263,7 +263,7 @@ describe('overview: reordering', () => {
       pointerId: 8,
       pointerType: 'touch',
     });
-    expect(rowFor('Cable fly').classList.contains('session-row--dragging')).toBe(false);
+    expect(rowFor('Cable fly').classList.contains('drag-row--dragging')).toBe(false);
     fireEvent.pointerCancel(handleOf('Bench press'), { clientY: 30, ...touch });
   });
 });

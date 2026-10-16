@@ -1,4 +1,5 @@
 import { newId } from '../../domain/id';
+import { moveItem } from '../../domain/list';
 import type { Workout, WorkoutIcon } from '../../domain/types';
 import type { LiftDB } from '../schema';
 
@@ -103,6 +104,28 @@ export async function updateWorkoutExercises(
     if (!workout) throw new Error(`Workout ${id} not found`);
     const next = [...new Set(update(workout.exerciseIds))];
     await assertExercisesExist(db, next);
+    await db.workouts.update(id, { exerciseIds: next });
+    return next;
+  });
+}
+
+/**
+ * Moves one exercise of a routine to `toIndex` (drag and drop). An index outside the list is
+ * clamped; an exercise that is not in the routine is an error. Past sessions are not affected.
+ */
+export async function moveWorkoutExercise(
+  db: LiftDB,
+  id: string,
+  exerciseId: string,
+  toIndex: number,
+): Promise<string[]> {
+  return db.transaction('rw', db.workouts, async () => {
+    const workout = await db.workouts.get(id);
+    if (!workout) throw new Error(`Workout ${id} not found`);
+    const from = workout.exerciseIds.indexOf(exerciseId);
+    if (from === -1) throw new Error(`Exercise ${exerciseId} is not in this workout`);
+    const to = Math.min(Math.max(Math.trunc(toIndex), 0), workout.exerciseIds.length - 1);
+    const next = moveItem(workout.exerciseIds, from, to);
     await db.workouts.update(id, { exerciseIds: next });
     return next;
   });

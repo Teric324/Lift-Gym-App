@@ -49,6 +49,7 @@ import {
   renameWorkout,
   setWorkoutArchived,
   setWorkoutExercises,
+  moveWorkoutExercise,
   updateWorkoutExercises,
 } from './repo/workouts';
 import { STARTER_EXERCISES, seedStarterExercises } from './seed';
@@ -603,6 +604,22 @@ describe('workouts: archive and exercise list edits', () => {
       /Unknown exercise/,
     );
     expect((await listWorkouts(db))[0]?.exerciseIds).toEqual([c.id, a.id]);
+  });
+
+  it('moveWorkoutExercise moves one exercise to an index and clamps it', async () => {
+    const a = await addExercise(db, 'A');
+    const b = await addExercise(db, 'B');
+    const c = await addExercise(db, 'C');
+    const w = await createWorkout(db, 'Day', [a.id, b.id, c.id]);
+
+    expect(await moveWorkoutExercise(db, w.id, a.id, 2)).toEqual([b.id, c.id, a.id]);
+    expect(await moveWorkoutExercise(db, w.id, a.id, 0)).toEqual([a.id, b.id, c.id]);
+    expect(await moveWorkoutExercise(db, w.id, c.id, 1)).toEqual([a.id, c.id, b.id]);
+    expect(await moveWorkoutExercise(db, w.id, a.id, 99)).toEqual([c.id, b.id, a.id]);
+    expect(await moveWorkoutExercise(db, w.id, a.id, -5)).toEqual([a.id, c.id, b.id]);
+    expect((await listWorkouts(db))[0]?.exerciseIds).toEqual([a.id, c.id, b.id]);
+    await expect(moveWorkoutExercise(db, w.id, 'ghost', 0)).rejects.toThrow(/not in this/);
+    await expect(moveWorkoutExercise(db, 'nope', a.id, 0)).rejects.toThrow(/not found/);
   });
 
   it('listWorkoutsUsingExercise finds routines, optionally including archived ones', async () => {

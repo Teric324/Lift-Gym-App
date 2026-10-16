@@ -210,8 +210,8 @@ export const en = {
     exercisesHeading: 'Exercises',
     emptyExercises: 'This workout has no exercises yet.',
     addExercises: 'Add exercises',
-    moveUp: (name: string) => `Move ${name} up`,
-    moveDown: (name: string) => `Move ${name} down`,
+    reorder: (name: string) => `Reorder ${name}`,
+    editFailed: 'Could not save the change. Try again.',
     removeExercise: (name: string) => `Remove ${name}`,
     archivedExercise: 'Archived exercise: left out of new sessions',
     picker: {

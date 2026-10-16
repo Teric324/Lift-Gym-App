@@ -3,7 +3,6 @@ import {
   applyReplacement,
   hasCheckedRows,
   itemProgress,
-  moveVisible,
   moveVisibleTo,
   routineTargetOf,
   visibleItems,
@@ -32,34 +31,6 @@ describe('visibleItems', () => {
   it('leaves out skipped exercises and keeps the order', () => {
     const items = [item('a'), item('b', { skipped: true }), item('c')];
     expect(ids(visibleItems(items))).toEqual(['a', 'c']);
-  });
-});
-
-describe('moveVisible', () => {
-  const items = [item('a'), item('b'), item('c')];
-
-  it('moves down and up by one', () => {
-    expect(ids(moveVisible(items, 'a', 1))).toEqual(['b', 'a', 'c']);
-    expect(ids(moveVisible(items, 'c', -1))).toEqual(['a', 'c', 'b']);
-  });
-
-  it('does nothing at the ends or for an unknown exercise', () => {
-    expect(ids(moveVisible(items, 'a', -1))).toEqual(['a', 'b', 'c']);
-    expect(ids(moveVisible(items, 'c', 1))).toEqual(['a', 'b', 'c']);
-    expect(ids(moveVisible(items, 'zzz', 1))).toEqual(['a', 'b', 'c']);
-  });
-
-  it('swaps with the next visible exercise and leaves skipped ones in their slots', () => {
-    const withSkipped = [item('a'), item('s', { skipped: true }), item('b')];
-    const moved = moveVisible(withSkipped, 'b', -1);
-    expect(ids(moved)).toEqual(['b', 's', 'a']);
-    expect(moved[1]?.skipped).toBe(true);
-  });
-
-  it('does not change the input array', () => {
-    const input = [item('a'), item('b')];
-    moveVisible(input, 'a', 1);
-    expect(ids(input)).toEqual(['a', 'b']);
   });
 });
 
