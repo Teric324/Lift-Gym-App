@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react';
-import { dropIndex } from '../../domain/reorder';
+import { clampDragOffset, dropIndex } from '../../domain/reorder';
 
 /** Distance (px) from the scroll area's top or bottom edge where dragging starts to scroll it. */
 const EDGE_PX = 72;
-/** Fastest auto-scroll, px per frame. */
-const MAX_SCROLL_PX = 14;
+/** Fastest auto-scroll, px per second (frame rate independent: phones run at 60 or 120 Hz). */
+const MAX_SCROLL_PX_PER_S = 600;
 
 export interface DragState {
   id: string;
@@ -70,8 +70,9 @@ export function useDragReorder(ids: readonly string[], onDrop: (id: string, to: 
     const s = session.current;
     if (!s) return;
     const scrolled = (s.scroller?.scrollTop ?? 0) - s.startScroll;
-    const dy = s.clientY - s.startY + scrolled;
-    const to = dropIndex(s.centers, s.from, s.centers[s.from]! + dy);
+    const rawDy = s.clientY - s.startY + scrolled;
+    const to = dropIndex(s.centers, s.from, s.centers[s.from]! + rawDy);
+    const dy = clampDragOffset(s.centers, s.from, rawDy);
     latest.current = { id: s.id, from: s.from, to, dy, height: s.height };
     setState(latest.current);
   }, []);
@@ -87,13 +88,17 @@ export function useDragReorder(ids: readonly string[], onDrop: (id: string, to: 
   const startScrolling = useCallback(() => {
     const s = session.current;
     if (!s || s.frame !== 0) return;
-    const step = () => {
+    let last: number | null = null;
+    const step = (now: number) => {
       const current = session.current;
       if (!current || !current.scroller || current.velocity === 0) {
         if (current) current.frame = 0;
         return;
       }
-      current.scroller.scrollTop += current.velocity;
+      // Time since the last frame (capped, so a stalled frame does not make a big jump).
+      const elapsed = last === null ? 16 : Math.min(now - last, 50);
+      last = now;
+      current.scroller.scrollTop += (current.velocity * elapsed) / 1000;
       update();
       current.frame = requestAnimationFrame(step);
     };
@@ -160,8 +165,9 @@ export function useDragReorder(ids: readonly string[], onDrop: (id: string, to: 
           const box = s.scroller.getBoundingClientRect();
           const intoTop = box.top + EDGE_PX - event.clientY;
           const intoBottom = event.clientY - (box.bottom - EDGE_PX);
-          if (intoTop > 0) velocity = -Math.min(1, intoTop / EDGE_PX) * MAX_SCROLL_PX;
-          else if (intoBottom > 0) velocity = Math.min(1, intoBottom / EDGE_PX) * MAX_SCROLL_PX;
+          if (intoTop > 0) velocity = -Math.min(1, intoTop / EDGE_PX) * MAX_SCROLL_PX_PER_S;
+          else if (intoBottom > 0)
+            velocity = Math.min(1, intoBottom / EDGE_PX) * MAX_SCROLL_PX_PER_S;
         }
         s.velocity = velocity;
         update();

@@ -105,6 +105,7 @@
 .back-link {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-1);
   min-height: var(--tap-min);
   font-weight: 800;
   text-decoration: none;
@@ -189,6 +190,12 @@
    dialog inside it) all the time. */
 .set-row--shifted {
   transform: translateX(var(--swipe-x));
+}
+/* No text selection while a finger or the mouse drags the row (never set otherwise: iOS Safari
+   can refuse typing in inputs under user-select: none). */
+.set-row--dragging {
+  -webkit-user-select: none;
+  user-select: none;
 }
 .set-row__number {
   flex: none;

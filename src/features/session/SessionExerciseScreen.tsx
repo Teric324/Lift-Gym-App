@@ -38,7 +38,8 @@ function ExerciseView({ exerciseId }: { exerciseId: string }) {
   // that must not send the user back to the overview on the way to the new exercise.
   const [leaving, setLeaving] = useState(false);
 
-  if (view === undefined || registry === undefined) return <p>{en.settings.loading}</p>;
+  // Blank rather than "Loading...": the read takes a moment on every step to another exercise.
+  if (view === undefined || registry === undefined) return null;
 
   const item = view?.draft.items.find((i) => i.exerciseId === exerciseId && !i.skipped);
   const exercise = registry.find((e) => e.id === exerciseId);
@@ -85,7 +86,7 @@ function ExerciseView({ exerciseId }: { exerciseId: string }) {
   return (
     <section>
       <Link className="back-link" to="/session">
-        <span aria-hidden="true">‹ </span>
+        <span aria-hidden="true">‹</span>
         {t.backToWorkoutLink}
       </Link>
 

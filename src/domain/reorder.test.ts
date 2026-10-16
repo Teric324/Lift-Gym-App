@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dropIndex, shiftFor } from './reorder';
+import { clampDragOffset, dropIndex, shiftFor } from './reorder';
 
 describe('dropIndex', () => {
   const centers = [50, 150, 250, 350];
@@ -31,5 +31,22 @@ describe('shiftFor', () => {
 
   it('shifts nothing when the row is back where it was', () => {
     expect([0, 1, 2].map((i) => shiftFor(i, 1, 1))).toEqual([0, 0, 0]);
+  });
+});
+
+describe('clampDragOffset', () => {
+  const centers = [50, 150, 250];
+
+  it('keeps the dragged centre between the first and last row centres', () => {
+    expect(clampDragOffset(centers, 1, 30)).toBe(30);
+    expect(clampDragOffset(centers, 1, 500)).toBe(100);
+    expect(clampDragOffset(centers, 1, -500)).toBe(-100);
+    expect(clampDragOffset(centers, 0, -40)).toBe(0);
+    expect(clampDragOffset(centers, 2, 40)).toBe(0);
+  });
+
+  it('leaves the offset alone for an unknown row', () => {
+    expect(clampDragOffset(centers, 7, 123)).toBe(123);
+    expect(clampDragOffset([], 0, 5)).toBe(5);
   });
 });

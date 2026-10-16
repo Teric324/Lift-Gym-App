@@ -61,7 +61,7 @@ export function SetRow({ sessionId, exercise, row, number }: SetRowProps) {
       </button>
       <div
         ref={contentRef}
-        className={`set-row${checked ? ' set-row--done' : ''}${swipe.offset !== 0 ? ' set-row--shifted' : ''}`}
+        className={`set-row${checked ? ' set-row--done' : ''}${swipe.offset !== 0 ? ' set-row--shifted' : ''}${swipe.dragging ? ' set-row--dragging' : ''}`}
         style={{ '--swipe-x': `${swipe.offset}px` } as React.CSSProperties}
       >
         <span className="set-row__number">{number}</span>

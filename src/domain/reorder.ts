@@ -26,3 +26,16 @@ export function shiftFor(index: number, from: number, to: number): -1 | 0 | 1 {
   if (from > to && index >= to && index < from) return 1;
   return 0;
 }
+
+/**
+ * Limits how far the dragged row is drawn from its resting place: its centre stays between the
+ * first and the last row's centre. Without it a row dragged past the end would stretch the
+ * scrolling area, which auto-scroll would then keep following.
+ */
+export function clampDragOffset(centers: readonly number[], from: number, dy: number): number {
+  const own = centers[from];
+  const first = centers[0];
+  const last = centers.at(-1);
+  if (own === undefined || first === undefined || last === undefined) return dy;
+  return Math.min(Math.max(dy, first - own), last - own);
+}

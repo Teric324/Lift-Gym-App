@@ -197,7 +197,9 @@ describe('overview: reordering', () => {
     expect(dragY('Bench press')).toBe('20px');
     expect(dragY('Cable fly')).toBe('0px');
     fireEvent.pointerMove(handleOf('Bench press'), { clientY: 100, ...touch });
-    expect(dragY('Bench press')).toBe('70px');
+    // The row is drawn no further than the last row's place (60 px down), though the finger
+    // is 70 px down, so the scrolling area never grows under a drag.
+    expect(dragY('Bench press')).toBe('60px');
     // Past the middle of Cable fly: it makes room (moves up by the dragged row's height).
     expect(dragY('Cable fly')).toBe('-60px');
 
