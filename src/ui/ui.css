@@ -130,6 +130,36 @@
   color: var(--on-yellow);
 }
 
+/* back link: a small "‹ Back" control at the top of a screen (see BackLink.tsx) */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap-min);
+  margin: 0 0 var(--space-1);
+  color: var(--text-2);
+  font-weight: 700;
+}
+.back-link:active {
+  color: var(--yellow);
+}
+.back-link__chevron {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* a name inside a heading that opens that item (History: the exercise of a set group) */
+.inline-link {
+  color: inherit;
+}
+.inline-link::after {
+  content: ' ›';
+  color: var(--text-2);
+}
+.inline-link:active {
+  color: var(--yellow);
+}
+
 /* lists */
 .list {
   margin: var(--space-2) 0;
@@ -137,6 +167,7 @@
   list-style: none;
 }
 .list__row {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -149,6 +180,23 @@
   min-width: 0;
   color: var(--text);
   text-decoration: none;
+}
+.list__row > a.list__main {
+  /* The whole row is the tap target (its padding belongs to the link), pressed state included. */
+  align-self: stretch;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: calc(-1 * var(--space-3)) calc(-1 * var(--space-1));
+  padding: var(--space-3) var(--space-1);
+  -webkit-touch-callout: none;
+}
+.list__row > a.list__main--icon {
+  flex-direction: row;
+}
+.list__row > a.list__main:active {
+  background: var(--surface-1);
 }
 .list__title {
   display: block;

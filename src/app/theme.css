@@ -122,8 +122,12 @@ body {
   padding-right: max(var(--gutter), env(safe-area-inset-right));
 }
 
+/* No link looks like a raw HTML link: no underline, no browser blue. Links that need a look get
+   a class (.back-link, .list__main rows, .button, .history-exercise__link). */
 a {
-  color: var(--yellow);
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1 {

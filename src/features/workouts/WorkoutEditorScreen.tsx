@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { db } from '../../db/instance';
 import { addExercise, listExercises } from '../../db/repo/exercises';
 import {
@@ -22,6 +22,7 @@ import { WorkoutIconView } from '../../ui/workout-icons';
 import { useActiveSession } from '../session/useActiveSession';
 import { ExercisePicker } from './ExercisePicker';
 import { DisplayTitle } from '../../ui/DisplayTitle';
+import { BackLink } from '../../ui/BackLink';
 
 const t = en.workouts;
 const NO_IDS: readonly string[] = [];
@@ -50,7 +51,7 @@ export function WorkoutEditorScreen() {
     return (
       <section>
         <DisplayTitle>{t.notFound}</DisplayTitle>
-        <Link to="/">{t.back}</Link>
+        <BackLink to="/">{t.back}</BackLink>
       </section>
     );
   }
@@ -64,9 +65,7 @@ export function WorkoutEditorScreen() {
 
   return (
     <section>
-      <p>
-        <Link to="/">{t.back}</Link>
-      </p>
+      <BackLink to="/">{t.back}</BackLink>
       <DisplayTitle>{workout.name}</DisplayTitle>
       {workout.archived && <p className="notice">{t.archivedNote}</p>}
       {activeSession?.workoutId === workout.id && (

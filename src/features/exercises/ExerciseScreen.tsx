@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { db } from '../../db/instance';
 import { getExercise, renameExercise, setExerciseArchived } from '../../db/repo/exercises';
 import { listWorkoutsUsingExercise } from '../../db/repo/workouts';
@@ -9,6 +9,7 @@ import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { TextPrompt } from '../../ui/TextPrompt';
 import { ExerciseHistory } from './ExerciseHistory';
 import { DisplayTitle } from '../../ui/DisplayTitle';
+import { BackLink } from '../../ui/BackLink';
 
 const t = en.exercises;
 
@@ -32,16 +33,14 @@ export function ExerciseScreen() {
     return (
       <section>
         <DisplayTitle>{t.notFound}</DisplayTitle>
-        <Link to="/exercises">{t.back}</Link>
+        <BackLink to="/exercises">{t.back}</BackLink>
       </section>
     );
   }
 
   return (
     <section>
-      <p>
-        <Link to="/exercises">{t.back}</Link>
-      </p>
+      <BackLink to="/exercises">{t.back}</BackLink>
       <DisplayTitle>{exercise.name}</DisplayTitle>
       {exercise.archived && <p className="notice">{t.archivedNote}</p>}
 

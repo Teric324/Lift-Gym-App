@@ -13,6 +13,7 @@ import { SetRow } from './SetRow';
 import './session.css';
 import { useSessionView } from './useSessionView';
 import { DisplayTitle } from '../../ui/DisplayTitle';
+import { BackLink } from '../../ui/BackLink';
 
 const t = en.session;
 
@@ -85,10 +86,7 @@ function ExerciseView({ exerciseId }: { exerciseId: string }) {
 
   return (
     <section>
-      <Link className="back-link" to="/session">
-        <span aria-hidden="true">‹</span>
-        {t.backToWorkoutLink}
-      </Link>
+      <BackLink to="/session">{t.backToWorkoutLink}</BackLink>
 
       <header className="exercise-head">
         <div className="exercise-head__text">
