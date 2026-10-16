@@ -54,12 +54,16 @@
   align-items: center;
   gap: var(--space-1);
 }
-.field-inline__input {
-  width: 5.5rem;
+.field-inline .field-inline__input {
+  /* Room for "102.5" (6ch with slack). The shared field padding is 16px a side, which left too
+     little for the text, so it is smaller here; widths are in ch so the digits always fit. */
+  width: calc(6ch + 2 * var(--space-2) + 2px + var(--space-1));
+  padding-inline: var(--space-2);
   text-align: right;
 }
-.reps-field .field-inline__input {
-  width: 3rem;
+.field-inline.reps-field .field-inline__input {
+  /* Room for "100" (reps go 1 to 100). */
+  width: calc(3ch + 2 * var(--space-2) + 2px + var(--space-1));
   text-align: center;
 }
 .reps-field__step {
