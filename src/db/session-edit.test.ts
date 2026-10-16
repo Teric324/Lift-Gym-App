@@ -8,6 +8,7 @@ import {
   getDraft,
   ItemHasCheckedSetsError,
   moveDraftItem,
+  moveDraftItemTo,
   replaceDraftExercise,
   skipDraftItem,
   unskipDraftItem,
@@ -163,6 +164,36 @@ describe('reordering', () => {
     expect(order(await getDraft(db, sessionId))).toEqual([w.incline.id, w.fly.id, w.bench.id]);
     await unskipDraftItem(db, sessionId, w.fly.id);
     expect(order(await getDraft(db, sessionId))).toEqual([w.incline.id, w.fly.id, w.bench.id]);
+  });
+});
+
+describe('moving an exercise to a position', () => {
+  it('drops it at the index among visible exercises, keeping checked sets and skipped slots', async () => {
+    const w = await world();
+    const { sessionId, draft } = await begin(w);
+    await addExerciseToDraft(db, sessionId, w.incline.id);
+    await checkAll(sessionId, w.bench.id, [draft.items[0]!.rows[0]!.id]);
+    await skipDraftItem(db, sessionId, w.fly.id);
+
+    // Visible: bench, incline (fly is skipped in slot 1).
+    await moveDraftItemTo(db, sessionId, w.bench.id, 1, T0 + 10);
+    let current = await getDraft(db, sessionId);
+    expect(order(current)).toEqual([w.incline.id, w.fly.id, w.bench.id]);
+    expect(rowsOf(current, w.bench.id)[0]!.checkedSetId).not.toBeNull();
+    expect(await listSetsForSession(db, sessionId)).toHaveLength(1);
+
+    await moveDraftItemTo(db, sessionId, w.bench.id, 0);
+    current = await getDraft(db, sessionId);
+    expect(order(current)).toEqual([w.bench.id, w.fly.id, w.incline.id]);
+  });
+
+  it('rejects an exercise that is not in the session and never touches the routine', async () => {
+    const w = await world();
+    const { sessionId } = await begin(w);
+    await expect(moveDraftItemTo(db, sessionId, w.squat.id, 0)).rejects.toThrow();
+    await moveDraftItemTo(db, sessionId, w.fly.id, 0);
+    expect(order(await getDraft(db, sessionId))).toEqual([w.fly.id, w.bench.id]);
+    expect((await getWorkout(db, w.push.id))?.exerciseIds).toEqual([w.bench.id, w.fly.id]);
   });
 });
 

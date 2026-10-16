@@ -3,6 +3,7 @@ import {
   applyReplacement,
   hasCheckedRows,
   moveVisible,
+  moveVisibleTo,
   routineTargetOf,
   visibleItems,
 } from './session-items';
@@ -132,5 +133,35 @@ describe('hasCheckedRows', () => {
     expect(hasCheckedRows(item('a', { rows: [row('1'), row('2', true)] }))).toBe(true);
     expect(hasCheckedRows(item('a', { rows: [row('1')] }))).toBe(false);
     expect(hasCheckedRows(item('a'))).toBe(false);
+  });
+});
+
+describe('moveVisibleTo', () => {
+  const items = [item('a'), item('b'), item('c'), item('d')];
+
+  it('moves an exercise to a position, up or down', () => {
+    expect(ids(moveVisibleTo(items, 'a', 2))).toEqual(['b', 'c', 'a', 'd']);
+    expect(ids(moveVisibleTo(items, 'd', 0))).toEqual(['d', 'a', 'b', 'c']);
+    expect(ids(moveVisibleTo(items, 'b', 1))).toEqual(['a', 'b', 'c', 'd']);
+  });
+
+  it('clamps an index outside the list and ignores an unknown exercise', () => {
+    expect(ids(moveVisibleTo(items, 'a', 99))).toEqual(['b', 'c', 'd', 'a']);
+    expect(ids(moveVisibleTo(items, 'd', -3))).toEqual(['d', 'a', 'b', 'c']);
+    expect(ids(moveVisibleTo(items, 'zzz', 1))).toEqual(['a', 'b', 'c', 'd']);
+  });
+
+  it('counts only visible exercises and leaves skipped ones in their slots', () => {
+    const withSkipped = [item('a'), item('s', { skipped: true }), item('b'), item('c')];
+    // Visible: a, b, c. Move a to the end of the visible list.
+    expect(ids(moveVisibleTo(withSkipped, 'a', 2))).toEqual(['b', 's', 'c', 'a']);
+    expect(ids(moveVisibleTo(withSkipped, 'c', 0))).toEqual(['c', 's', 'a', 'b']);
+  });
+
+  it('does not change the input or the rows', () => {
+    const before = ids(items);
+    const moved = moveVisibleTo(items, 'a', 3);
+    expect(ids(items)).toEqual(before);
+    expect(moved[3]).toBe(items[0]);
   });
 });

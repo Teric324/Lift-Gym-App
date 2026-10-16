@@ -26,6 +26,30 @@ export function moveVisible(
 }
 
 /**
+ * Moves an exercise to `toIndex` among the *visible* exercises (the position it ends up at).
+ * Skipped exercises keep their slots in the full list, so they come back where they were. An
+ * unknown exercise or an index outside the list is clamped / ignored.
+ */
+export function moveVisibleTo(
+  items: readonly DraftItem[],
+  exerciseId: string,
+  toIndex: number,
+): DraftItem[] {
+  const slots = items.flatMap((item, index) => (item.skipped ? [] : [index]));
+  const visible = slots.map((index) => items[index]!);
+  const from = visible.findIndex((item) => item.exerciseId === exerciseId);
+  const copy = [...items];
+  if (from === -1) return copy;
+  const to = Math.min(Math.max(Math.trunc(toIndex), 0), visible.length - 1);
+  const [moved] = visible.splice(from, 1);
+  visible.splice(to, 0, moved!);
+  slots.forEach((slot, i) => {
+    copy[slot] = visible[i]!;
+  });
+  return copy;
+}
+
+/**
  * The routine exercise a session item stands for, or null when it is not from the routine
  * (it was added today). A replacement stands for the exercise it replaced, however many times
  * it was replaced in a row.
