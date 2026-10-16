@@ -18,6 +18,8 @@
     calc(-1 * max(var(--gutter), env(safe-area-inset-left)));
   padding: env(safe-area-inset-top) max(var(--gutter), env(safe-area-inset-right)) 0
     max(var(--gutter), env(safe-area-inset-left));
+  /* border-box, so min-height includes the safe-area padding: inset + one tap-height row. */
+  box-sizing: border-box;
   min-height: calc(var(--tap) + env(safe-area-inset-top));
   background: var(--bg);
 }
