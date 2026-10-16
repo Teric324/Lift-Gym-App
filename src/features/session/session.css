@@ -176,10 +176,11 @@
   /* The weight button, the reps input and their messages are the row's own flex items. */
   display: contents;
 }
-.set-row .weight-button {
+.set-row .weight-field .field-inline__input {
+  /* The weight takes the room the row has left; the unit sits right after it. */
   flex: 1 1 0;
+  width: auto;
   min-width: 0;
-  text-align: center;
 }
 .set-row .field__warning,
 .set-row .field__error {
@@ -188,14 +189,14 @@
   margin: 0 0 var(--space-1);
   padding-left: calc(1.25rem + var(--space-2));
 }
-.set-row--done .weight-button,
 .set-row--done .field-inline__input {
   border-color: var(--yellow-line);
 }
 
-.set-row__unit {
+.weight-field__unit {
   flex: none;
-  opacity: 0.8;
+  color: var(--text-2);
+  font-weight: 700;
 }
 .field-inline {
   display: inline-flex;
@@ -268,108 +269,6 @@
   margin-top: var(--space-4);
   padding-top: var(--space-3);
   border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent);
-}
-
-/* Weight picker dialog. Sized from the visual viewport (set by WeightPicker) so the iOS keyboard
-   never covers the typing field or the Done button. */
-.picker {
-  /* Room above the dialog: the status bar / notch area on iPhone, else a small margin. */
-  --picker-top: max(var(--space-2), env(safe-area-inset-top));
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  position: fixed;
-  top: calc(var(--vv-top, 0px) + var(--picker-top));
-  bottom: auto;
-  margin: 0 auto;
-  max-height: calc(var(--vv-height, 100dvh) - var(--picker-top) - var(--space-2));
-  height: min(40rem, calc(var(--vv-height, 100dvh) - var(--picker-top) - var(--space-2)));
-  overflow: hidden;
-}
-.picker__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-.picker__title {
-  margin: 0;
-  font-size: 1.1rem;
-}
-.picker__sub {
-  margin: 0;
-  font-size: var(--font-small);
-}
-.picker__tools {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-}
-.picker__tools .button {
-  margin: 0;
-}
-.picker__jumps {
-  display: flex;
-  gap: var(--space-1);
-  margin-left: auto;
-}
-.picker__list {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  border-top: 1px solid color-mix(in srgb, currentColor 20%, transparent);
-}
-.picker__value {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-  width: 100%;
-  min-height: var(--tap);
-  padding: var(--space-2) var(--space-3);
-  border: 0;
-  border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-}
-.picker__value--now {
-  font-weight: 600;
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
-}
-
-.picker__type {
-  display: block;
-}
-.picker__type .field__error,
-.picker__type .field__warning {
-  display: block;
-  margin-top: var(--space-1);
-}
-
-/* The weight in a set row: a button as tall as the check button. */
-.weight-button {
-  box-sizing: border-box;
-  min-width: 5.5rem;
-  min-height: 52px;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: 1rem;
-  text-align: right;
-}
-.weight-button__unit {
-  opacity: 0.7;
 }
 
 .exercise-card__heading {

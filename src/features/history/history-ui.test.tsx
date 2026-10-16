@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
 import '../../test/jsdom-dialog';
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { db } from '../../db/instance';
@@ -154,16 +154,12 @@ describe('HistorySessionScreen: editing', () => {
     return session;
   }
 
-  it('correcting a weight in the picker saves at once and keeps the reps', async () => {
+  it('correcting a weight in its input saves at once and keeps the reps', async () => {
     const session = await openEditing([
       [bench, 80, 5],
       [bench, 82.5, 4],
     ]);
-    fireEvent.click(screen.getAllByRole('button', { name: 'Weight (kg)' })[0]!);
-    await waitFor(() => expect(openDialog()).toBeTruthy());
-    fireEvent.change(within(openDialog()!).getByLabelText('Type a weight (kg)'), {
-      target: { value: '85' },
-    });
+    fireEvent.change(screen.getAllByLabelText('Weight (kg)')[0]!, { target: { value: '85' } });
     await waitFor(async () => {
       const sets = await listSetsForSession(db, session.id);
       expect(sets.map((s) => [s.weightGrams, s.reps]).sort()).toEqual([

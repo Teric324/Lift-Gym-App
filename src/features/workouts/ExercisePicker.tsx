@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { findExerciseByName } from '../../db/repo/exercises';
 import { db } from '../../db/instance';
 import type { Exercise } from '../../domain/types';
-import { formatWeight } from '../../domain/weight';
 import { en } from '../../i18n/en';
 import { EmptyState } from '../../ui/EmptyState';
 
@@ -183,12 +182,7 @@ export function ExercisePicker({
                 disabled={busy}
                 onClick={() => void confirmWith({ exerciseIds: [exercise.id], newNames: [] })}
               >
-                <span>
-                  <span className="list__title">{exercise.name}</span>
-                  <span className="list__meta">
-                    {en.exercises.step(formatWeight(exercise.stepGrams))}
-                  </span>
-                </span>
+                <span className="list__title">{exercise.name}</span>
               </button>
             ) : (
               <label className="list__main picker__choice">
@@ -197,12 +191,7 @@ export function ExercisePicker({
                   checked={selected.includes(exercise.id)}
                   onChange={() => toggle(exercise.id)}
                 />
-                <span>
-                  <span className="list__title">{exercise.name}</span>
-                  <span className="list__meta">
-                    {en.exercises.step(formatWeight(exercise.stepGrams))}
-                  </span>
-                </span>
+                <span className="list__title">{exercise.name}</span>
               </label>
             )}
           </li>

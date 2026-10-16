@@ -41,12 +41,10 @@ afterEach(async () => {
 });
 
 const storedRow = async () => (await getDraft(db, sessionId))!.items[0]!.rows[0]!;
-const weightButton = () => screen.getByRole('button', { name: 'Weight (kg)' });
-const weightText = () => weightButton().textContent?.replace(/\s+/g, ' ').trim();
-/** Types into the picker's field, opening the picker first if it is closed. */
+const weightInput = () => screen.getByLabelText('Weight (kg)') as HTMLInputElement;
+const weightText = () => weightInput().value;
 function typeWeight(text: string) {
-  if (!document.querySelector('dialog[open]')) fireEvent.click(weightButton());
-  fireEvent.change(screen.getByLabelText('Type a weight (kg)'), { target: { value: text } });
+  fireEvent.change(weightInput(), { target: { value: text } });
 }
 const reps = () => screen.getByLabelText('Reps') as HTMLInputElement;
 
@@ -61,7 +59,7 @@ function renderRow() {
 describe('SetRow with the real database', () => {
   it('starts with the pre-filled values, unchecked', () => {
     renderRow();
-    expect(weightText()).toBe('80 kg');
+    expect(weightText()).toBe('80');
     expect(reps().value).toBe('5');
     const check = screen.getByLabelText('Mark set as done') as HTMLButtonElement;
     expect(check.disabled).toBe(false);
@@ -76,8 +74,8 @@ describe('SetRow with the real database', () => {
     await waitFor(async () => expect((await storedRow()).weightGrams).toBe(82000));
     typeWeight('82,5');
     await waitFor(async () => expect((await storedRow()).weightGrams).toBe(82500));
-    // The picker is still open and nothing was confirmed, yet the value is in the database.
-    expect(document.querySelector('dialog[open]')).toBeTruthy();
+    // Nothing was confirmed with a blur or a button, yet the value is already saved.
+    expect(weightInput().value).toBe('82,5');
   });
 
   it('keeps the last valid value in the draft when the text becomes invalid', async () => {
@@ -117,7 +115,7 @@ describe('SetRow with the real database', () => {
     row = await storedRow();
     cleanup();
     renderRow();
-    expect(weightText()).toBe('85 kg');
+    expect(weightText()).toBe('85');
     typeWeight('86');
     await waitFor(async () => {
       const [updated] = await listSetsForSession(db, sessionId);
@@ -237,18 +235,13 @@ describe('SetRow: swipe left to delete', () => {
   it('the tap that ends a swipe, or the next tap on an open row, only closes it', () => {
     renderRow();
     swipe(-70);
-    fireEvent.click(weightButton()); // the click a browser sends after the finger lifts
-    expect(document.querySelector('dialog[open]')).toBeNull();
+    fireEvent.click(weightInput()); // the click a browser sends after the finger lifts
     expect(isOpen()).toBe(false);
 
     swipe(-70);
     expect(isOpen()).toBe(true);
-    fireEvent.click(weightButton());
-    expect(document.querySelector('dialog[open]')).toBeNull();
+    fireEvent.click(weightInput());
     expect(isOpen()).toBe(false);
-    // Closed again, the weight button works as usual.
-    fireEvent.click(weightButton());
-    expect(document.querySelector('dialog[open]')).toBeTruthy();
   });
 
   it('the Delete button works from the keyboard: focusing it slides the row open', async () => {

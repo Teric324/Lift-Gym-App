@@ -2,18 +2,12 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { db } from '../../db/instance';
-import {
-  getExercise,
-  renameExercise,
-  setExerciseArchived,
-  setExerciseStep,
-} from '../../db/repo/exercises';
+import { getExercise, renameExercise, setExerciseArchived } from '../../db/repo/exercises';
 import { listWorkoutsUsingExercise } from '../../db/repo/workouts';
 import { en } from '../../i18n/en';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { TextPrompt } from '../../ui/TextPrompt';
 import { ExerciseHistory } from './ExerciseHistory';
-import { StepPicker } from './StepPicker';
 
 const t = en.exercises;
 
@@ -77,11 +71,6 @@ export function ExerciseScreen() {
       <p className="muted">{t.setsLogged(sets)}</p>
 
       <ExerciseHistory exerciseId={exercise.id} />
-
-      <StepPicker
-        stepGrams={exercise.stepGrams}
-        onChange={(grams) => setExerciseStep(db, exercise.id, grams)}
-      />
 
       <TextPrompt
         open={renaming}

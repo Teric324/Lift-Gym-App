@@ -5,7 +5,6 @@ import { db } from '../../db/instance';
 import { addDraftRow, ItemHasCheckedSetsError, skipDraftItem } from '../../db/repo/drafts';
 import { listExercises } from '../../db/repo/exercises';
 import { visibleItems } from '../../domain/session-items';
-import { formatWeight } from '../../domain/weight';
 import { en } from '../../i18n/en';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { ExerciseMenu } from './ExerciseMenu';
@@ -94,7 +93,6 @@ function ExerciseView({ exerciseId }: { exerciseId: string }) {
         <div className="exercise-head__text">
           <h1 className="exercise-head__title">{exercise.name}</h1>
           <p className="exercise-head__meta">
-            <span className="tag">{t.stepNote(formatWeight(exercise.stepGrams))}</span>
             {insteadOfName && <span className="muted">{t.insteadOf(insteadOfName)}</span>}
           </p>
         </div>

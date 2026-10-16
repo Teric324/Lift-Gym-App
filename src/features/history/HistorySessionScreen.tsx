@@ -17,7 +17,6 @@ import {
   sessionTimeRange,
   summarizeSessionSets,
 } from '../../domain/history';
-import { DEFAULT_STEP_GRAMS } from '../../domain/weight';
 import { en } from '../../i18n/en';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { EmptyState } from '../../ui/EmptyState';
@@ -156,7 +155,6 @@ export function HistorySessionScreen() {
                   key={set.id}
                   set={set}
                   number={index + 1}
-                  stepGrams={exercise?.stepGrams ?? DEFAULT_STEP_GRAMS}
                   editing={editing}
                   onRemove={() => void removeSet(set.id)}
                 />

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatWeight, parseWeight, stepList } from './weight';
+import { formatWeight, parseWeight } from './weight';
 
 const grams = (input: string) => {
   const result = parseWeight(input);
@@ -82,42 +82,6 @@ describe('parseWeight: confirm flag above 500 kg', () => {
     expect(parseWeight('500.25')).toEqual({ ok: true, grams: 500250, needsConfirm: true });
     expect(parseWeight('501')).toEqual({ ok: true, grams: 501000, needsConfirm: true });
     expect(parseWeight('10000')).toEqual({ ok: true, grams: 10_000_000, needsConfirm: true });
-  });
-});
-
-describe('stepList', () => {
-  it('step 0.25 gives exact multiples, no float noise', () => {
-    const list = stepList(250, 8);
-    expect(list).toEqual([250, 500, 750, 1000, 1250, 1500, 1750, 2000]);
-    expect(list.map(formatWeight)).toEqual([
-      '0.25',
-      '0.5',
-      '0.75',
-      '1',
-      '1.25',
-      '1.5',
-      '1.75',
-      '2',
-    ]);
-  });
-
-  it('step 2.5 and step 1', () => {
-    expect(stepList(2500, 4).map(formatWeight)).toEqual(['2.5', '5', '7.5', '10']);
-    expect(stepList(1000, 4).map(formatWeight)).toEqual(['1', '2', '3', '4']);
-  });
-
-  it('only produces integers, even far into the list', () => {
-    for (const step of [250, 500, 1000, 2000, 2500, 4000, 5000, 1250]) {
-      expect(stepList(step, 400).every(Number.isInteger)).toBe(true);
-    }
-    expect(stepList(250, 400)[399]).toBe(100000);
-  });
-
-  it('handles a count of 0 and rejects invalid steps', () => {
-    expect(stepList(250, 0)).toEqual([]);
-    expect(() => stepList(0, 3)).toThrow(RangeError);
-    expect(() => stepList(-250, 3)).toThrow(RangeError);
-    expect(() => stepList(0.25, 3)).toThrow(RangeError);
   });
 });
 

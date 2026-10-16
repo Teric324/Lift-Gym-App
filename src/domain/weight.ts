@@ -42,13 +42,8 @@ export function formatWeight(grams: number): string {
   return fraction ? `${whole}.${fraction}` : String(whole);
 }
 
-/** step, 2*step, 3*step, ... up to `count` entries, built by integer multiplication. */
-export function stepList(stepGrams: number, count: number): number[] {
-  if (!Number.isInteger(stepGrams) || stepGrams <= 0) {
-    throw new RangeError('stepGrams must be a positive integer');
-  }
-  return Array.from({ length: Math.max(0, count) }, (_, i) => stepGrams * (i + 1));
-}
-
-/** Step given to a new exercise: 2.5 kg. */
+/**
+ * Stored on every exercise (`stepGrams`) but no longer used by the UI: weights are typed freely.
+ * Kept so the schema and the backup format stay as they are. 2.5 kg.
+ */
 export const DEFAULT_STEP_GRAMS = 2500;

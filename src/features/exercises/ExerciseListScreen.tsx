@@ -9,7 +9,6 @@ import {
   setExerciseArchived,
 } from '../../db/repo/exercises';
 import type { Exercise } from '../../domain/types';
-import { formatWeight } from '../../domain/weight';
 import { en } from '../../i18n/en';
 import { CollapsibleSection } from '../../ui/CollapsibleSection';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
@@ -66,7 +65,6 @@ export function ExerciseListScreen() {
           <li key={exercise.id} className="list__row">
             <Link className="list__main" to={`/exercises/${exercise.id}`}>
               <span className="list__title">{exercise.name}</span>
-              <span className="list__meta">{t.step(formatWeight(exercise.stepGrams))}</span>
             </Link>
           </li>
         ))}

@@ -73,11 +73,6 @@ export async function renameExercise(db: LiftDB, id: string, name: string): Prom
   });
 }
 
-export function setExerciseStep(db: LiftDB, id: string, stepGrams: number): Promise<void> {
-  assertStep(stepGrams);
-  return update(db, id, { stepGrams });
-}
-
 /** Archive hides the exercise from pickers; its sets, history and PR are untouched. */
 export function setExerciseArchived(db: LiftDB, id: string, archived: boolean): Promise<void> {
   return update(db, id, { archived });

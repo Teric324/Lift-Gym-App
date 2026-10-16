@@ -274,7 +274,7 @@ describe('exercise screen', () => {
     await openExercise('Bench press');
     expect(setRowCount()).toBe(2);
     expect(screen.getByRole('link', { name: /Workout/ }).getAttribute('href')).toBe('/session');
-    expect(screen.getByText('Step 2.5 kg', { selector: '.tag' })).toBeTruthy();
+    expect(screen.queryByText(/Step/)).toBeNull(); // no weight step on the screen
     expect(screen.getByRole('link', { name: 'Next: Cable fly →' })).toBeTruthy();
     expect(screen.queryByRole('link', { name: 'Back to workout' })).toBeNull();
     expect(screen.getByLabelText('More actions for Bench press')).toBeTruthy();
@@ -477,7 +477,7 @@ describe('exercise screen: replacing an exercise', () => {
     expect(path()).toBe(`/session/${incline.id}`);
     expect(document.body.textContent).toMatch(/Instead of Bench press/);
     const weight = await screen.findByLabelText('Weight (kg)');
-    expect(weight.textContent).toMatch(/^30\s+kg$/); // its own last session, not bench's 80
+    expect((weight as HTMLInputElement).value).toBe('30'); // its own last session, not bench's 80
     expect((await getWorkout(db, push.id))?.exerciseIds).toEqual([bench.id, fly.id]);
 
     fireEvent.click(screen.getByRole('link', { name: /Workout/ }));

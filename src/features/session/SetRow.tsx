@@ -23,7 +23,7 @@ interface SetRowProps {
 }
 
 /**
- * One planned or done set, on one line: number, weight (opens the picker), reps, check. Every
+ * One planned or done set, on one line: number, weight (typed), reps, check. Every
  * change is written to the database at once. Ticking the check button creates the stored set;
  * ticking it again removes it. Swiping the row to the left shows a Delete button behind it (also
  * reachable with the keyboard or a screen reader, where focusing it slides the row open).
@@ -67,8 +67,6 @@ export function SetRow({ sessionId, exercise, row, number }: SetRowProps) {
         <span className="set-row__number">{number}</span>
         <WeightField
           valueGrams={row.weightGrams}
-          stepGrams={exercise.stepGrams}
-          lastGrams={row.weightGrams}
           onChange={(weightGrams) =>
             updateDraftRow(db, sessionId, exercise.id, row.id, { weightGrams })
           }

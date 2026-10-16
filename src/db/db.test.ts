@@ -9,7 +9,6 @@ import {
   listExercises,
   renameExercise,
   setExerciseArchived,
-  setExerciseStep,
 } from './repo/exercises';
 import {
   addDraftRow,
@@ -137,12 +136,11 @@ describe('exercises', () => {
     await expect(addExercise(db, 'Y', 2.5)).rejects.toThrow(RangeError);
   });
 
-  it('renames, changes the step and keeps the id', async () => {
+  it('renames and keeps the id and the stored step', async () => {
     const e = await addExercise(db, 'Row');
     await renameExercise(db, e.id, 'Barbell row');
-    await setExerciseStep(db, e.id, 1250);
     const [stored] = await listExercises(db);
-    expect(stored).toEqual({ id: e.id, name: 'Barbell row', stepGrams: 1250, archived: false });
+    expect(stored).toEqual({ id: e.id, name: 'Barbell row', stepGrams: 2500, archived: false });
     await expect(renameExercise(db, 'nope', 'Z')).rejects.toThrow(/not found/);
   });
 

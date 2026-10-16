@@ -1,39 +1,28 @@
 import { useId, useRef, useState } from 'react';
+import { readWeightText } from '../../domain/field-input';
 import { CONFIRM_ABOVE_GRAMS, formatWeight } from '../../domain/weight';
 import { en } from '../../i18n/en';
-import { WeightPicker } from './WeightPicker';
 
 const t = en.session;
 
 export interface WeightFieldProps {
   /** The stored weight in grams; null while the row is still blank. */
   valueGrams: number | null;
-  /** The exercise's weight step: the picker lists its multiples. */
-  stepGrams: number;
-  /** A weight to start near when the picker opens if the row has none (the pre-filled value). */
-  lastGrams: number | null;
-  /** Called with every new valid weight: a tap in the picker, or each valid value typed. */
+  /** Called with every new valid weight as the user types. */
   onChange: (grams: number) => unknown;
   label?: string;
 }
 
 /**
- * Weight of a set. It shows the value as a button; tapping it opens the picker (step list, jump
- * buttons, free typing). Every valid value is saved at once, so nothing is lost if the app is
- * closed with the picker open. An invalid or empty text is never saved.
- *
- * The props are the contract `SetRow` relies on; they did not change when the text field was
- * replaced by the picker.
+ * Weight of a set: a plain input with the unit "kg" after it. The user types the weight
+ * (`27.3` or `27,3`) and every valid value is saved at once, so nothing is lost if the app is
+ * closed while typing. An invalid text is marked and never saved; an empty one is ignored. The
+ * text is selected when the field gets focus, so typing replaces it. Above 500 kg a note asks
+ * "are you sure" but the value is still saved.
  */
-export function WeightField({
-  valueGrams,
-  stepGrams,
-  lastGrams,
-  onChange,
-  label = t.weightLabel,
-}: WeightFieldProps) {
-  const warnId = useId();
-  const [open, setOpen] = useState(false);
+export function WeightField({ valueGrams, onChange, label = t.weightLabel }: WeightFieldProps) {
+  const messageId = useId();
+  const [text, setText] = useState<string | null>(null);
   // The value being written right now, so a second identical value (typing "27" then "27,")
   // is not written twice before the stored value has come back.
   const inFlight = useRef<number | null>(null);
@@ -46,42 +35,57 @@ export function WeightField({
     });
   }
 
-  const warn = valueGrams !== null && valueGrams > CONFIRM_ABOVE_GRAMS;
+  const shown = text ?? (valueGrams === null ? '' : formatWeight(valueGrams));
+  const reading = text === null ? null : readWeightText(text);
+  const invalid = reading?.state === 'invalid';
+  const warn =
+    reading?.state === 'valid'
+      ? reading.warn
+      : valueGrams !== null && valueGrams > CONFIRM_ABOVE_GRAMS;
+
+  function handleChange(next: string) {
+    setText(next);
+    const read = readWeightText(next);
+    if (read.state === 'valid') save(read.value);
+  }
+
+  function handleBlur() {
+    const read = text === null ? null : readWeightText(text);
+    if (read === null || read.state !== 'invalid') setText(null);
+  }
 
   return (
-    <span className="field-inline">
-      <button
-        type="button"
-        className="weight-button"
+    <span className="field-inline weight-field">
+      <input
+        className={`field__input field-inline__input${invalid ? ' field__input--invalid' : ''}`}
+        type="text"
+        inputMode="decimal"
+        enterKeyHint="done"
+        autoComplete="off"
+        placeholder="0"
         aria-label={label}
-        aria-haspopup="dialog"
-        aria-describedby={warn ? warnId : undefined}
-        onClick={() => setOpen(true)}
-      >
-        {valueGrams === null ? (
-          <span className="muted">{t.setWeight}</span>
-        ) : (
-          <>
-            {formatWeight(valueGrams)} <span className="weight-button__unit">{t.kg}</span>
-          </>
-        )}
-      </button>
-      {warn && (
-        <span id={warnId} className="field__warning" role="status">
-          {t.overWeight}
+        aria-invalid={invalid}
+        aria-describedby={invalid || warn ? messageId : undefined}
+        value={shown}
+        onChange={(e) => handleChange(e.target.value)}
+        onFocus={(e) => e.currentTarget.select()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') e.currentTarget.blur();
+        }}
+        onBlur={handleBlur}
+      />
+      <span className="weight-field__unit">{t.kg}</span>
+      {invalid && (
+        <span id={messageId} className="field__error" role="status">
+          {`${t.fieldError[reading.error]} ${
+            valueGrams === null ? t.notSavedBlank : t.notSaved(`${formatWeight(valueGrams)} kg`)
+          }`}
         </span>
       )}
-
-      {open && (
-        <WeightPicker
-          title={label}
-          valueGrams={valueGrams}
-          stepGrams={stepGrams}
-          lastGrams={lastGrams}
-          onSelect={save}
-          onType={save}
-          onClose={() => setOpen(false)}
-        />
+      {!invalid && warn && (
+        <span id={messageId} className="field__warning" role="status">
+          {t.overWeight}
+        </span>
       )}
     </span>
   );
