@@ -412,6 +412,19 @@ If the button does not appear:
       with no routines, History with no sessions), the same height on all four tabs.
 - [ ] On long pages (Exercises, Settings) it stays at the bottom while scrolling and nothing is
       hidden behind it at the end of the page.
+- [ ] Cold start (the app is a fixed-height shell now: the page itself no longer scrolls, only the
+      area between the top bar and the bottom bar does). Swipe the app away in the app switcher,
+      reopen it, and without touching the screen check that the bottom bar is at the bottom edge,
+      above the home indicator and not floating. Repeat once starting on each of the four tabs
+      (open the app on a tab, swipe it away, reopen). If it floats, turn on Settings → Screen info
+      and note the `root`, `main` and `bottom bar` lines.
+- [ ] A long workout (many exercises), scrolled to the end: the last set and the Finish button are
+      reachable and not hidden behind the bottom bar; the top bar stays at the top.
+- [ ] Keyboard open in Add exercise (type in the name field) and in the weight picker (type a
+      weight): the field and the Done button stay visible. In a set row of the last exercise, tap
+      the reps field: it scrolls into view above the keyboard. Close the keyboard: the layout
+      returns to normal and the bottom bar is at the edge again.
+- [ ] Changing tab starts the new page at its top.
 
 ## If the app shows a white screen or does not start
 

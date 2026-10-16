@@ -7,14 +7,13 @@
 /* The status bar is translucent on iOS, so this bar always sits under it, in black, which keeps
    the white status bar text readable. */
 .app-header {
-  position: sticky;
-  top: 0;
+  flex: none;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  /* Full width even though the body has side padding. */
+  /* Full width even though #root has side padding. */
   margin: 0 calc(-1 * max(var(--gutter), env(safe-area-inset-right))) 0
     calc(-1 * max(var(--gutter), env(safe-area-inset-left)));
   padding: env(safe-area-inset-top) max(var(--gutter), env(safe-area-inset-right)) 0
@@ -41,13 +40,24 @@
   font-weight: 800;
 }
 .update-note {
+  flex: none;
   margin: var(--space-2) 0 0;
   color: var(--text-2);
   font-size: var(--font-small);
 }
 
+/* The scroll container of the app. The window does not scroll. */
 .app-main {
-  flex: 1 0 auto;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  /* Room for the on-screen keyboard (set by Layout), so the focused field can scroll into view. */
+  padding-bottom: var(--keyboard-inset, 0px);
+}
+.app-page {
   box-sizing: border-box;
   width: 100%;
   max-width: 32rem;
@@ -57,13 +67,10 @@
 
 /* Bottom navigation: four items, equal width, never scrolls. */
 .tabbar {
-  /* Sticky, not fixed: on iOS a fixed bar floated above the bottom edge on pages too short to
-     scroll. In the page column it is always the last item, and sticks to the edge on long pages. */
-  position: sticky;
-  bottom: 0;
+  /* A normal flex item at the bottom of the fixed app shell (#root). */
   z-index: 20;
   flex: none;
-  /* Full width even though the body has side padding. */
+  /* Full width even though #root has side padding. */
   margin: 0 calc(-1 * max(var(--gutter), env(safe-area-inset-right))) 0
     calc(-1 * max(var(--gutter), env(safe-area-inset-left)));
   display: grid;

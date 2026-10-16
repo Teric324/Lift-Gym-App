@@ -68,12 +68,17 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* The window itself never scrolls: #root is the app shell and the main area scrolls inside it
+   (see layout.css). */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
-  /* The page runs edge to edge (viewport-fit=cover): keep content out of the notch, the home
-     indicator and the rounded corners. */
-  padding-left: max(var(--gutter), env(safe-area-inset-left));
-  padding-right: max(var(--gutter), env(safe-area-inset-right));
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-text);
@@ -84,14 +89,19 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* The page is a column at least a screen tall: the bottom bar is its last item (sticky), so it
-   sits at the bottom edge on short pages and on long ones alike. The bar carries the home
-   indicator padding itself. */
+/* The app shell: a column pinned to the window edges with position: fixed, so its height does
+   not depend on vh / dvh / innerHeight, which iOS can report wrongly at launch in the Home
+   Screen app. Header on top, scrolling main area, bottom bar. The page runs edge to edge
+   (viewport-fit=cover): the side padding keeps content out of the notch and rounded corners. The
+   bottom bar carries the home indicator padding itself. */
 #root {
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
 }
 
 a {

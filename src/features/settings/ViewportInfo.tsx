@@ -22,6 +22,8 @@ function measure(probe: HTMLElement | null): string {
     `screen     ${screen.width} x ${screen.height}`,
     `document   ${document.documentElement.clientHeight} high, scrolled ${round(window.scrollY)}`,
     `safe area  top ${style?.paddingTop ?? '?'}  bottom ${style?.paddingBottom ?? '?'}`,
+    `root       ${rect('#root')}`,
+    `main       ${rect('.app-main')}  scrolled ${round(document.querySelector('.app-main')?.scrollTop ?? 0)}`,
     `top bar    ${rect('.app-header')}`,
     `bottom bar ${rect('.tabbar')}`,
     `app mode   ${standalone ? 'home screen' : 'browser'}`,
