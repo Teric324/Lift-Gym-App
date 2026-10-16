@@ -23,6 +23,7 @@ function measure(probe: HTMLElement | null): string {
     `document   ${document.documentElement.clientHeight} high, scrolled ${round(window.scrollY)}`,
     `safe area  top ${style?.paddingTop ?? '?'}  bottom ${style?.paddingBottom ?? '?'}`,
     `app height ${document.documentElement.style.getPropertyValue('--app-height') || '-'}  from ${document.documentElement.dataset.appHeightSource ?? '-'}`,
+    `viewport fix  ${document.documentElement.dataset.viewportFixInfo ?? '-'}`,
     `root       ${rect('#root')}`,
     `main       ${rect('.app-main')}  scrolled ${round(document.querySelector('.app-main')?.scrollTop ?? 0)}`,
     `top bar    ${rect('.app-header')}`,
