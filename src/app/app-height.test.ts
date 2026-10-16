@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { decideAppHeight, describeViewportFix, viewportIsRight } from './app-height';
+import { decideAppHeight } from './app-height';
 
-const base = { standalone: true, innerWidth: 393, innerHeight: 793, screenHeight: 852, safeTop: 59 };
+const base = {
+  standalone: true,
+  innerWidth: 393,
+  innerHeight: 793,
+  screenHeight: 852,
+  safeTop: 59,
+};
 
 describe('decideAppHeight', () => {
   it('uses the screen height when iOS is short by the top safe area at launch', () => {
@@ -22,7 +28,13 @@ describe('decideAppHeight', () => {
   });
   it('uses innerHeight in landscape', () => {
     expect(
-      decideAppHeight({ ...base, innerWidth: 793, innerHeight: 393, screenHeight: 852, safeTop: 0 }),
+      decideAppHeight({
+        ...base,
+        innerWidth: 793,
+        innerHeight: 393,
+        screenHeight: 852,
+        safeTop: 0,
+      }),
     ).toEqual({ height: 393, source: 'innerHeight' });
   });
   it('does not mistake a keyboard-sized or unrelated difference for the safe area', () => {
@@ -30,18 +42,5 @@ describe('decideAppHeight', () => {
   });
   it('uses innerHeight when there is no safe area', () => {
     expect(decideAppHeight({ ...base, safeTop: 0 }).source).toBe('innerHeight');
-  });
-});
-
-describe('viewport fix helpers', () => {
-  it('judges the viewport right within 2px of the screen height', () => {
-    expect(viewportIsRight(852, 852)).toBe(true);
-    expect(viewportIsRight(850, 852)).toBe(true);
-    expect(viewportIsRight(793, 852)).toBe(false);
-  });
-  it('describes the outcome', () => {
-    expect(describeViewportFix('scroll', 793, 852)).toBe('scroll (793 -> 852)');
-    expect(describeViewportFix('none', 793, 793)).toBe('none (793 -> 793)');
-    expect(describeViewportFix('not-needed')).toBe('not needed');
   });
 });

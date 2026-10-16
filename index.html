@@ -16,6 +16,15 @@
 
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <script>
+      // Must run before first layout: marks the Home Screen app for the html height rule below.
+      try {
+        if (navigator.standalone === true)
+          document.documentElement.setAttribute('data-standalone', '');
+      } catch (e) {
+        /* not available: the display-mode media query still applies */
+      }
+    </script>
     <style>
       /* Painted before any script: the app never shows a white screen while it starts. */
       html,
@@ -24,6 +33,16 @@
         background: #0a0a0b;
         color: #f5f5f6;
         color-scheme: dark;
+      }
+      /* iOS 26 Home Screen app: at cold launch the window is short by the top safe area unless
+         html is 100vh, which is the full screen there. Must be in place at first layout. */
+      @media (display-mode: standalone) {
+        html {
+          height: 100vh;
+        }
+      }
+      html[data-standalone] {
+        height: 100vh;
       }
       #boot-help {
         position: fixed;

@@ -76,136 +76,13 @@ export function updateAppHeight(): void {
   root.dataset.appHeightSource = source;
 }
 
-export type ViewportFix = 'meta' | 'scroll' | 'height' | 'none' | 'not-needed';
-
-/** True when the window is as tall as the screen (the launch bug is gone). */
-export function viewportIsRight(innerHeight: number, screenHeight: number): boolean {
-  return Math.abs(screenHeight - innerHeight) <= TOLERANCE;
-}
-
-/** Text for the Screen info line, e.g. "scroll (793 -> 852)". */
-export function describeViewportFix(fix: ViewportFix, before?: number, after?: number): string {
-  if (fix === 'not-needed') return 'not needed';
-  return `${fix} (${before ?? '?'} -> ${after ?? '?'})`;
-}
-
-const frames = (n: number) =>
-  new Promise<void>((resolve) => {
-    const step = (left: number) =>
-      left <= 0 ? window.setTimeout(resolve, 60) : requestAnimationFrame(() => step(left - 1));
-    step(n);
-  });
-
-/** Whether the launch bug is currently present (same condition as decideAppHeight). */
-function bugPresent(): boolean {
-  const standalone = (navigator as Navigator & { standalone?: boolean }).standalone === true;
-  if (!standalone) return false;
-  return (
-    decideAppHeight({
-      standalone,
-      innerWidth: window.innerWidth,
-      innerHeight: window.innerHeight,
-      screenHeight: window.screen.height,
-      safeTop: readSafeTop(),
-    }).source === 'screen'
-  );
-}
-
-const rightNow = () => viewportIsRight(window.innerHeight, window.screen.height);
-
-async function remedyMeta(): Promise<void> {
-  const meta = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
-  if (!meta) return;
-  const original = meta.getAttribute('content') ?? '';
-  meta.setAttribute('content', `${original}, height=device-height`);
-  await frames(2);
-  meta.setAttribute('content', original);
-  await frames(2);
-}
-
-async function remedyScroll(): Promise<void> {
-  const html = document.documentElement;
-  const body = document.body;
-  const savedHtml = html.style.cssText;
-  const savedBody = body.style.cssText;
-  html.style.overflow = 'visible';
-  body.style.overflow = 'visible';
-  html.style.height = 'calc(100% + 1px)';
-  body.style.height = 'calc(100% + 1px)';
-  try {
-    window.scrollTo(0, 1);
-    await frames(1);
-    window.scrollTo(0, 0);
-    await frames(2);
-  } finally {
-    html.style.cssText = savedHtml;
-    body.style.cssText = savedBody;
-  }
-}
-
-async function remedyHeight(): Promise<void> {
-  const html = document.documentElement;
-  const saved = html.style.height;
-  html.style.height = '100.1%';
-  await frames(2);
-  html.style.height = saved;
-  await frames(2);
-}
-
-let fixRunning = false;
-
-/**
- * When the launch bug is present, tries to make iOS recompute the viewport. Stops at the first
- * remedy that makes innerHeight equal screen.height; records the outcome in data-viewport-fix.
- */
-export async function runViewportFix(): Promise<void> {
-  if (fixRunning) return;
-  const root = document.documentElement;
-  if (!bugPresent()) {
-    if (!root.dataset.viewportFix) {
-      root.dataset.viewportFix = 'not-needed';
-      root.dataset.viewportFixInfo = describeViewportFix('not-needed');
-    }
-    return;
-  }
-  fixRunning = true;
-  const before = window.innerHeight;
-  let result: ViewportFix = 'none';
-  try {
-    const remedies: [ViewportFix, () => Promise<void>][] = [
-      ['meta', remedyMeta],
-      ['scroll', remedyScroll],
-      ['height', remedyHeight],
-    ];
-    for (const [name, run] of remedies) {
-      try {
-        await run();
-      } catch {
-        // A failing remedy just counts as not working.
-      }
-      updateAppHeight();
-      if (rightNow()) {
-        result = name;
-        break;
-      }
-    }
-  } finally {
-    fixRunning = false;
-  }
-  root.dataset.viewportFix = result;
-  root.dataset.viewportFixInfo = describeViewportFix(result, before, window.innerHeight);
-  updateAppHeight();
-}
-
 /** Starts keeping --app-height up to date. Returns a function that stops it. */
 export function startAppHeight(): () => void {
   updateAppHeight();
-  void runViewportFix();
   // The viewport can be corrected a moment after launch without any event.
   const timers = [0, 300, 1000].map((ms) => window.setTimeout(updateAppHeight, ms));
   const onShow = () => {
     updateAppHeight();
-    void runViewportFix();
   };
   const onVisible = () => {
     if (document.visibilityState === 'visible') onShow();

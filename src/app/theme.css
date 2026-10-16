@@ -77,6 +77,20 @@ body {
   overscroll-behavior: none;
 }
 
+/* iOS 26 Home Screen app: at cold launch the layout window is short by the top safe area (793
+   instead of 852) until a real scroll. With html at 100vh in standalone mode WebKit gives the app
+   the full screen from the first frame. index.html repeats this rule so it applies at first
+   paint; data-standalone is set there by a synchronous script (navigator.standalone), covering
+   iOS versions where the display-mode query is false. */
+@media (display-mode: standalone) {
+  html {
+    height: 100vh;
+  }
+}
+html[data-standalone] {
+  height: 100vh;
+}
+
 body {
   margin: 0;
   background: var(--bg);

@@ -419,6 +419,11 @@ If the button does not appear:
       above the home indicator and not floating. Repeat once starting on each of the four tabs
       (open the app on a tab, swipe it away, reopen). If it floats, turn on Settings → Screen info
       and note the `root`, `main` and `bottom bar` lines.
+- [ ] Cold-launch height fix (`html { height: 100vh }` in the Home Screen app): right after a cold
+      start, without touching the screen, the tab labels are visible and Settings → Screen info
+      shows `window ... x 852` (not 793). On the `html` line note which of `standalone attr` and
+      `display-mode` says yes, and that the html height is 852. If the window still reads 793,
+      report the `html` and `app height` lines.
 - [ ] The top bar is the status bar area plus one row (about 111 pt in total on an iPhone 393x852,
       not 170), with the LIFT wordmark vertically centred in that row.
 - [ ] A long workout (many exercises), scrolled to the end: the last set and the Finish button are
