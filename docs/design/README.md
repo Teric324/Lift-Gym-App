@@ -18,6 +18,20 @@ app's CSS tokens are in `src/app/theme.css`.
 - **Weights picker:** bottom sheet that follows the visual viewport (same logic as today).
 - **Motion:** none beyond a short press state. Inputs stay at 16 px or more.
 
+## The overhaul (system)
+
+- **Type:** tokens `--text-xs` ... `--text-2xl` in `theme.css`, Inter weights 500 / 700 / 800.
+  `h2` is a small spaced capital label in the secondary colour. Numbers are tabular and bold.
+  Black Ops One is only on `h1` and `.display-text` (`DisplayTitle`, `DisplayText`).
+- **Buttons** (`ui.css`): primary (yellow), secondary (default), ghost, danger, icon (round 44 px),
+  small, block. Pressed = darker + `scale(0.97)` over `--press` (100 ms), the only motion.
+- **Fields:** filled `--surface-2`, 1 px transparent border that turns yellow with a soft glow
+  on focus, 14 px radius, 52 px tall, 17 px bold. Set fields are cells (`weight-field__cell`, the
+  reps input) that are centred, 22 px, with a quiet unit.
+- **Cards and lists:** `.card`, `.list__row`, `.workout-card`, `.session-row`, date tile, chevrons.
+  Done rows use `--yellow-solid` (the yellow tint over the page background, opaque, so the swipe
+  Delete button stays hidden behind the row).
+
 ## Files
 
 - `shots/`: PNG captures at 375 px of the approved mockups (workouts, workout, picker,
@@ -33,8 +47,9 @@ app's CSS tokens are in `src/app/theme.css`.
 
 1. Tokens and fonts (`theme.css`, `fonts.css`, precache). No markup changes.
 2. Wordmark, bottom navigation, top bar, PWA icons, `theme-color`.
-3. The workout screen and the weight picker sheet.
-4. Workouts, History, Exercises, Settings, editors, dialogs, empty states.
-5. Polish: 320 px, landscape with the keyboard, this folder's notes.
+3. The workout screen (the weight picker sheet is gone: weights are typed). Done.
+4. Workouts, History, Exercises, Settings, editors, dialogs, empty states. Done: the design
+   overhaul (see below), checked at 375 and 320 px; iPhone checklist section 18.
+5. Polish: 320 px done; landscape with the keyboard and the final iPhone pass remain.
 
 Each stage ends with a test on the iPhone (see `docs/iphone-checklist.md`).

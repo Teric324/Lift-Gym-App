@@ -553,6 +553,52 @@ Update first (Settings → bottom line shows `Version ...`).
 - [ ] List rows (Workouts, Exercises, History, an exercise's history) highlight when pressed
       anywhere on the row, including the empty space to the right of the name.
 
+## 18. Design overhaul: buttons, fields, cards, dialogs
+
+Update first (Settings → bottom line shows `Version ...`). The look is meant to match the
+captures in `docs/design/shots/`.
+
+**Buttons and fields**
+
+- [ ] Yellow buttons (Start, Finish workout, Next, Add set area) are tall, full width in their card
+      or screen, with black bold text. Pressing one makes it a little darker and slightly
+      smaller for an instant, then back. Nothing else animates.
+- [ ] Grey buttons (Rename, Edit, Add exercise, Cancel) have a quiet outline; the red one
+      (Archive, Delete) is red text on a red tint. Round grey buttons (`⋯`, `✕`) are easy to hit.
+- [ ] Tap a text field (New workout name, the Exercises search): it gets a yellow outline and a soft
+      glow, 17 px bold text, no zoom. The search field has a magnifier inside.
+- [ ] In a set row the weight cell shows the number big and bold with a quiet `kg`, the reps cell
+      is centred, the check is a big square: outlined when not done, yellow with a tick when
+      done. A done row has a yellow tint and a yellow number badge. All of it stays on ONE line
+      at 320 px (and 375 / 430 px), with 102.5 and 100 reps too.
+
+**Screens**
+
+- [ ] Workouts: each routine is a card: icon tile, its name in big letters, `N exercises · Last
+      done Mon 12 Oct` (or `Not done yet`), the first exercise names, and a full-width Start.
+      The card's top part (icon, name) opens the editor. `New workout` is a grey full-width
+      button under the cards. While a workout is open, a yellow-tinted `Workout in progress`
+      card with a Resume pill sits on top.
+- [ ] Workout overview: a progress line (`3 of 7 sets done`, percent, yellow bar), then one card per
+      exercise with a thin bar; a finished exercise is yellow-tinted with a tick. The three-bar
+      handle still drags a card. `Finish workout` is full width at the bottom.
+- [ ] Exercise screen: the exercise name in big letters, a round `⋯` button, set rows as above,
+      `Add set` (grey) and `Next: ...` (yellow), both full width.
+- [ ] History: month labels in small spaced capitals, one card per workout with a date tile
+      (`12 MON`), the name, counts and times, and a `›`. One workout: exercises as cards with
+      numbered sets; Edit turns each set into one line (weight, ×, reps, `✕`).
+- [ ] Exercises: `Add` pill next to the title, a search field, one card per exercise with `Last
+      done ...` or `Not done yet`. Archived is a quiet row with a chevron that turns when open.
+- [ ] Settings: Backup, Storage and Restore are cards under small capital headings; the export
+      button is yellow and full width. The tab bar shows a short yellow bar over the active tab.
+- [ ] Dialogs (New workout, Add exercises, ⋯ menu, Finish, Archive, a workout already in
+      progress): rounded sheet, clear title, two equal buttons side by side (or stacked when
+      there are three or more). Checkboxes and radios are outlined and turn yellow with a tick.
+- [ ] Empty lists (a new routine with no exercises, History with nothing) show a small icon and a
+      short grey line, centred.
+- [ ] Only two fonts: big capitals (Black Ops One) for page titles and routine names, Inter for
+      everything else. No text is underlined or in a browser link colour anywhere.
+
 ## How to update the installed app
 
 An installed Home Screen app is a separate copy of the site that updates itself in the background.
