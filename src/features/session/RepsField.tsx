@@ -11,10 +11,20 @@ export interface RepsFieldProps {
   /** Called with every new valid value as the user types or taps - / +. */
   onChange: (reps: number) => unknown;
   label?: string;
+  /** Show the - and + buttons around the input (the history editor does; the workout does not). */
+  showSteppers?: boolean;
 }
 
-/** Reps input with - and + buttons. Saves every valid value at once, like `WeightField`. */
-export function RepsField({ value, onChange, label = t.repsLabel }: RepsFieldProps) {
+/**
+ * Reps: a plain numeric input, with optional - and + buttons. Saves every valid value at once,
+ * like `WeightField`. The text is selected when the field gets focus, so typing replaces it.
+ */
+export function RepsField({
+  value,
+  onChange,
+  label = t.repsLabel,
+  showSteppers = false,
+}: RepsFieldProps) {
   const errorId = useId();
   const [text, setText] = useState<string | null>(null);
   // The value being written right now (see WeightField).
@@ -52,36 +62,46 @@ export function RepsField({ value, onChange, label = t.repsLabel }: RepsFieldPro
 
   return (
     <span className="field-inline reps-field">
-      <button
-        type="button"
-        className="button button--small reps-field__step"
-        aria-label={t.repsMinus}
-        disabled={value !== null && value <= MIN_REPS}
-        onClick={() => step(-1)}
-      >
-        −
-      </button>
+      {showSteppers && (
+        <button
+          type="button"
+          className="button button--small reps-field__step"
+          aria-label={t.repsMinus}
+          disabled={value !== null && value <= MIN_REPS}
+          onClick={() => step(-1)}
+        >
+          −
+        </button>
+      )}
       <input
         className={`field__input field-inline__input${invalid ? ' field__input--invalid' : ''}`}
         type="text"
         inputMode="numeric"
+        pattern="[0-9]*"
+        enterKeyHint="done"
         autoComplete="off"
         aria-label={label}
         aria-invalid={invalid}
         aria-describedby={invalid ? errorId : undefined}
         value={shown}
         onChange={(e) => handleChange(e.target.value)}
+        onFocus={(e) => e.currentTarget.select()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') e.currentTarget.blur();
+        }}
         onBlur={handleBlur}
       />
-      <button
-        type="button"
-        className="button button--small reps-field__step"
-        aria-label={t.repsPlus}
-        disabled={value !== null && value >= MAX_REPS}
-        onClick={() => step(1)}
-      >
-        +
-      </button>
+      {showSteppers && (
+        <button
+          type="button"
+          className="button button--small reps-field__step"
+          aria-label={t.repsPlus}
+          disabled={value !== null && value >= MAX_REPS}
+          onClick={() => step(1)}
+        >
+          +
+        </button>
+      )}
       {invalid && (
         <span id={errorId} className="field__error" role="status">
           {`${t.fieldError[reading.error]} ${

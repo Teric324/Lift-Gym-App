@@ -1,19 +1,150 @@
 /* Session screen. Uses the tokens from src/app/theme.css. */
 
-.exercise-card {
-  margin: var(--space-4) 0;
-  padding: var(--space-3) 0 var(--space-2);
-  border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+/* Overview: one compact row per exercise. */
+.session-list {
+  margin: var(--space-3) 0;
+  padding: 0;
+  list-style: none;
 }
-.exercise-card__header {
+.session-row {
+  position: relative;
   display: flex;
-  align-items: baseline;
+  align-items: stretch;
+  min-height: var(--tap);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+  transform: translateY(var(--drag-y, 0px));
+}
+.session-row--done {
+  background: var(--yellow-tint);
+}
+.session-row--dragging {
+  z-index: 2;
+  border: 1px solid var(--yellow-line);
+  border-radius: var(--radius-m);
+  background: var(--surface-2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.session-list--dragging {
+  -webkit-user-select: none;
+  user-select: none;
+}
+.session-row__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-1);
+  color: var(--text);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+.session-row__main:active {
+  background: var(--surface-1);
+}
+.session-row__text {
+  min-width: 0;
+}
+.session-row__name {
+  display: block;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+.session-row__meta {
+  display: block;
+  color: var(--text-2);
+  font-size: var(--font-small);
+}
+.session-row__progress {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-2);
+  font-size: var(--font-small);
+  font-weight: 700;
+}
+.session-row--done .session-row__progress {
+  color: var(--yellow);
+}
+.session-row__check {
+  display: inline-flex;
+}
+.session-row__check .icon {
+  width: 18px;
+  height: 18px;
+}
+.session-row__handle {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--tap-min);
+  min-height: var(--tap-min);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  /* The drag is ours, not a scroll: the rest of the row still scrolls the list. */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: grab;
+}
+.session-row--dragging .session-row__handle {
+  color: var(--yellow);
+  cursor: grabbing;
+}
+
+/* Exercise screen. */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  font-weight: 800;
+  text-decoration: none;
+}
+.exercise-head {
+  display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-3);
 }
-.exercise-card__title {
+.exercise-head__text {
+  flex: 1;
+  min-width: 0;
+}
+.exercise-head__title {
+  margin-top: 0;
+}
+.exercise-head__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
   margin: 0;
-  font-size: 1.1rem;
+  font-size: var(--font-small);
+}
+.exercise-head__more {
+  flex: none;
+  min-width: var(--tap-min);
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-pill);
+}
+.add-set,
+.next-exercise {
+  display: flex;
+  width: 100%;
+  margin-right: 0;
+}
+.next-exercise {
+  margin-top: var(--space-4);
 }
 
 .set-list {
@@ -21,29 +152,77 @@
   padding: 0;
   list-style: none;
 }
+/* A set: number, weight, x, reps, check - always on one line (320 px and up). Messages about the
+   weight or the reps (over 500 kg, not saved) wrap onto a line of their own below. */
+.set-swipe {
+  position: relative;
+  overflow: hidden;
+  /* The browser keeps the vertical pan; a horizontal move is ours (swipe to delete). */
+  touch-action: pan-y;
+}
+.set-swipe__delete {
+  position: absolute;
+  top: var(--space-1);
+  right: 0;
+  bottom: var(--space-1);
+  box-sizing: border-box;
+  width: 80px; /* REVEAL_PX in domain/gesture.ts */
+  border: 0;
+  border-radius: var(--radius-m);
+  background: var(--danger);
+  color: var(--bg);
+  font: inherit;
+  font-weight: 800;
+}
 .set-row {
+  position: relative;
+  z-index: 1;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
-  min-height: 56px;
+  column-gap: var(--space-2);
+  min-height: 60px;
   padding: var(--space-1) 0;
+  background: var(--bg);
+}
+/* Only while slid: a transform on the row would otherwise stay on it (and on the weight picker
+   dialog inside it) all the time. */
+.set-row--shifted {
+  transform: translateX(var(--swipe-x));
 }
 .set-row__number {
   flex: none;
-  width: 1.5rem;
-  text-align: right;
-  opacity: 0.7;
+  width: 1.25rem;
+  text-align: center;
+  color: var(--text-2);
+  font-size: var(--font-small);
+  font-weight: 700;
 }
-.set-row__values {
-  flex: 1;
+.set-row__times {
+  flex: none;
+  color: var(--text-2);
 }
-.set-row--done .set-row__values {
-  font-weight: 600;
+.set-row .field-inline {
+  /* The weight button, the reps input and their messages are the row's own flex items. */
+  display: contents;
+}
+.set-row .weight-button {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+}
+.set-row .field__warning,
+.set-row .field__error {
+  order: 10;
+  flex-basis: 100%;
+  margin: 0 0 var(--space-1);
+  padding-left: calc(1.25rem + var(--space-2));
+}
+.set-row--done .weight-button,
+.set-row--done .field-inline__input {
+  border-color: var(--yellow-line);
 }
 
-.set-row {
-  flex-wrap: wrap;
-}
 .set-row__unit {
   flex: none;
   opacity: 0.8;
@@ -66,6 +245,9 @@
   width: calc(3ch + 2 * var(--space-2) + 2px + var(--space-1));
   text-align: center;
 }
+.set-row .field-inline.reps-field .field-inline__input {
+  flex: none;
+}
 .reps-field__step {
   min-width: 36px;
   padding: 0;
@@ -87,7 +269,6 @@
   box-sizing: border-box;
   width: 52px;
   height: 52px;
-  margin-left: auto;
   border: 2px solid currentColor;
   border-radius: var(--radius);
   background: transparent;

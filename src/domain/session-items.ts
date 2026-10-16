@@ -49,6 +49,32 @@ export function moveVisibleTo(
   return copy;
 }
 
+export interface ItemProgress {
+  /** Rows that are checked (stored sets). */
+  checked: number;
+  total: number;
+  /** The last checked row in row order, or null when none is checked. */
+  last: { weightGrams: number; reps: number } | null;
+  /** At least one row and all of them checked. */
+  done: boolean;
+}
+
+/** What the overview shows for an exercise: how far along it is, and its last checked set. */
+export function itemProgress(item: DraftItem): ItemProgress {
+  const checkedRows = item.rows.filter((row) => row.checkedSetId !== null);
+  const lastRow = checkedRows.at(-1);
+  const last =
+    lastRow && lastRow.weightGrams !== null && lastRow.reps !== null
+      ? { weightGrams: lastRow.weightGrams, reps: lastRow.reps }
+      : null;
+  return {
+    checked: checkedRows.length,
+    total: item.rows.length,
+    last,
+    done: item.rows.length > 0 && checkedRows.length === item.rows.length,
+  };
+}
+
 /**
  * The routine exercise a session item stands for, or null when it is not from the routine
  * (it was added today). A replacement stands for the exercise it replaced, however many times

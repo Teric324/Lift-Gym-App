@@ -9,8 +9,8 @@ import { en } from '../../i18n/en';
 import { CollapsibleSection } from '../../ui/CollapsibleSection';
 import { EmptyState } from '../../ui/EmptyState';
 import { AddExerciseButton } from './AddExerciseButton';
+import { ExerciseList } from './ExerciseList';
 import { FinishBar } from './FinishBar';
-import { SessionExerciseCard } from './SessionExerciseCard';
 import './session.css';
 import { useSessionView } from './useSessionView';
 
@@ -33,44 +33,24 @@ export function SessionScreen() {
     );
   }
 
-  const { session, workout, draft } = view;
+  const { session, draft } = view;
   const byId = new Map(registry.map((exercise) => [exercise.id, exercise]));
   const items = visibleItems(draft.items);
   const skipped = draft.items.filter((item) => item.skipped);
-  const inSession = new Set(draft.items.map((item) => item.exerciseId));
-  const replacementChoices = registry.filter((e) => !e.archived && !inSession.has(e.id));
-  const routineExerciseIds = workout?.exerciseIds ?? [];
+  const rows = items.flatMap((item) => item.rows);
+  const doneSets = rows.filter((row) => row.checkedSetId !== null).length;
 
   return (
     <section>
-      <h1>{workout?.name ?? t.title}</h1>
+      <h1>{view.workout?.name ?? t.title}</h1>
       <p className="muted">
         {t.started(formatSessionDate(session.date), localTimeString(session.startedAt))}
+        {rows.length > 0 && ` · ${t.progress(doneSets, rows.length)}`}
       </p>
 
       {items.length === 0 && <EmptyState>{t.noExercises}</EmptyState>}
 
-      {items.map((item, index) => {
-        const exercise = byId.get(item.exerciseId);
-        if (!exercise) return null;
-        const insteadOf =
-          item.origin === 'replacement' && item.replacesExerciseId
-            ? (byId.get(item.replacesExerciseId)?.name ?? null)
-            : null;
-        return (
-          <SessionExerciseCard
-            key={item.exerciseId}
-            sessionId={session.id}
-            exercise={exercise}
-            item={item}
-            insteadOfName={insteadOf}
-            canMoveUp={index > 0}
-            canMoveDown={index < items.length - 1}
-            routineExerciseIds={routineExerciseIds}
-            replacementChoices={replacementChoices}
-          />
-        );
-      })}
+      <ExerciseList sessionId={session.id} items={items} exercises={byId} />
 
       <AddExerciseButton sessionId={session.id} draft={draft} />
 

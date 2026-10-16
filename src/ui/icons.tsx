@@ -53,3 +53,20 @@ export function SlidersIcon() {
     </Icon>
   );
 }
+
+/** Three bars: the handle to drag a row by. */
+export function GripIcon() {
+  return (
+    <Icon className="icon">
+      <path d="M5 8h14M5 12h14M5 16h14" />
+    </Icon>
+  );
+}
+
+export function CheckIcon() {
+  return (
+    <Icon className="icon" strokeWidth="3">
+      <path d="M5 12.5l4.5 4.5L19 7.5" />
+    </Icon>
+  );
+}

@@ -26,10 +26,6 @@ export function swipeOffset(wasOpen: boolean, dx: number, reveal: number = REVEA
 }
 
 /** Whether the row ends up open when the finger is lifted at `offset`. */
-export function settleOpen(
-  wasOpen: boolean,
-  offset: number,
-  reveal: number = REVEAL_PX,
-): boolean {
+export function settleOpen(wasOpen: boolean, offset: number, reveal: number = REVEAL_PX): boolean {
   return wasOpen ? offset <= -(reveal - CLOSE_AT_PX) : offset <= -OPEN_AT_PX;
 }

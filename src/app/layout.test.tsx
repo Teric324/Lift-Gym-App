@@ -22,6 +22,8 @@ function renderAt(path: string) {
           <Route path="history" element={<p>History page</p>} />
           <Route path="exercises" element={<p>Exercises page</p>} />
           <Route path="settings" element={<p>Settings page</p>} />
+          <Route path="session" element={<p>Workout page</p>} />
+          <Route path="session/:exerciseId" element={<p>Exercise page</p>} />
         </Route>
       </Routes>
     </MemoryRouter>,
@@ -77,6 +79,20 @@ describe('app shell', () => {
       'page',
     );
   });
+
+  it.each(['/session', '/session/abc'])(
+    'Workouts stays active on the workout in progress (%s)',
+    (path) => {
+      renderAt(path);
+      const active = tabs()
+        .getAllByRole('link')
+        .filter((a) => a.getAttribute('aria-current') === 'page');
+      expect(active.map((a) => a.textContent)).toEqual(['Workouts']);
+      expect(tabs().getByRole('link', { name: 'Workouts' }).classList.contains('active')).toBe(
+        true,
+      );
+    },
+  );
 
   it('tapping a tab shows its page and moves the active mark', () => {
     renderAt('/');

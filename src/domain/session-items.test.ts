@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   applyReplacement,
   hasCheckedRows,
+  itemProgress,
   moveVisible,
   moveVisibleTo,
   routineTargetOf,
@@ -163,5 +164,36 @@ describe('moveVisibleTo', () => {
     const moved = moveVisibleTo(items, 'a', 3);
     expect(ids(items)).toEqual(before);
     expect(moved[3]).toBe(items[0]);
+  });
+});
+
+describe('itemProgress', () => {
+  it('counts checked rows and reports the last checked one', () => {
+    const p = itemProgress(
+      item('a', {
+        rows: [row('1', true), { ...row('2', true), weightGrams: 82500, reps: 4 }, row('3')],
+      }),
+    );
+    expect(p).toEqual({
+      checked: 2,
+      total: 3,
+      last: { weightGrams: 82500, reps: 4 },
+      done: false,
+    });
+  });
+
+  it('is done only with at least one row and all of them checked', () => {
+    expect(itemProgress(item('a', { rows: [row('1', true), row('2', true)] })).done).toBe(true);
+    expect(itemProgress(item('a', { rows: [row('1', true), row('2')] })).done).toBe(false);
+    expect(itemProgress(item('a', { rows: [] }))).toEqual({
+      checked: 0,
+      total: 0,
+      last: null,
+      done: false,
+    });
+  });
+
+  it('has no last set while nothing is checked', () => {
+    expect(itemProgress(item('a', { rows: [row('1')] })).last).toBeNull();
   });
 });

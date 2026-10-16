@@ -19,6 +19,8 @@ interface ReplaceExerciseFlowProps {
   /** Exercises that may take the place (not in the session, not archived). */
   choices: Exercise[];
   onClose: () => void;
+  /** Called with the new exercise's id once the replacement is saved (before `onClose`). */
+  onReplaced?: (newExerciseId: string) => void;
 }
 
 type Chosen = { exercise: Exercise } | { newName: string };
@@ -50,6 +52,7 @@ export function ReplaceExerciseFlow({
   routineExerciseIds,
   choices,
   onClose,
+  onReplaced,
 }: ReplaceExerciseFlowProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const groupName = useId();
@@ -95,6 +98,7 @@ export function ReplaceExerciseFlow({
       await replaceDraftExercise(db, sessionId, oldExercise.id, exercise.id, {
         updateWorkout: scope === 'workout' && blocker === null,
       });
+      onReplaced?.(exercise.id);
       close();
     } catch (e) {
       setError(e instanceof Error ? e.message : en.session.editFailed);

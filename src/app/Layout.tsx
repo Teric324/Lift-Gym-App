@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { Link, NavLink, Outlet, useLocation } from 'react-router';
+import { Link, Outlet, useLocation } from 'react-router';
 import { applyUpdate, useUpdateAvailable } from '../features/pwa/update';
 import { useActiveSession } from '../features/session/useActiveSession';
 import { en } from '../i18n/en';
@@ -7,22 +7,37 @@ import { BoltIcon, HistoryIcon, ListIcon, SlidersIcon } from '../ui/icons';
 import { ScreenInfoOverlay } from '../features/settings/ViewportInfo';
 import { Wordmark } from '../ui/Wordmark';
 
+/** Does `pathname` belong to the tab at `to` (or to one of the extra path prefixes)? */
+function isTabActive(pathname: string, to: string, extraPrefixes: readonly string[]): boolean {
+  if (to === '/') {
+    return pathname === '/' || extraPrefixes.some((prefix) => pathname.startsWith(prefix));
+  }
+  return pathname === to || pathname.startsWith(`${to}/`);
+}
+
 function Tab({
   to,
-  end,
+  also = [],
   icon,
   label,
 }: {
   to: string;
-  end?: boolean;
+  /** Other paths (prefixes) that keep this tab lit, such as the workout in progress. */
+  also?: readonly string[];
   icon: ReactNode;
   label: string;
 }) {
+  const { pathname } = useLocation();
+  const active = isTabActive(pathname, to, also);
   return (
-    <NavLink className="tabbar__link" to={to} end={end}>
+    <Link
+      className={`tabbar__link${active ? ' active' : ''}`}
+      to={to}
+      aria-current={active ? 'page' : undefined}
+    >
       {icon}
       <span className="tabbar__label">{label}</span>
-    </NavLink>
+    </Link>
   );
 }
 
@@ -89,7 +104,7 @@ export function Layout() {
         </div>
       </main>
       <nav className="tabbar" aria-label={en.nav.label}>
-        <Tab to="/" end icon={<BoltIcon />} label={en.nav.home} />
+        <Tab to="/" also={['/session']} icon={<BoltIcon />} label={en.nav.home} />
         <Tab to="/history" icon={<HistoryIcon />} label={en.nav.history} />
         <Tab to="/exercises" icon={<ListIcon />} label={en.nav.exercises} />
         <Tab to="/settings" icon={<SlidersIcon />} label={en.nav.settings} />

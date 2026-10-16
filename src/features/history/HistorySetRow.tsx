@@ -42,6 +42,7 @@ export function HistorySetRow({ set, number, stepGrams, editing, onRemove }: His
       />
       <span className="set-row__unit">kg ×</span>
       <RepsField
+        showSteppers
         value={set.reps}
         onChange={(reps) => updateSetValues(db, set.id, { weightGrams: set.weightGrams, reps })}
       />
