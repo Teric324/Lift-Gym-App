@@ -65,14 +65,6 @@
   height: 18px;
 }
 /* Exercise screen. */
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-height: var(--tap-min);
-  font-weight: 800;
-  text-decoration: none;
-}
 .exercise-head {
   display: flex;
   align-items: flex-start;
@@ -218,10 +210,6 @@
 }
 .set-row .field-inline.reps-field .field-inline__input {
   flex: none;
-}
-.reps-field__step {
-  min-width: 36px;
-  padding: 0;
 }
 .field__input--invalid {
   border-color: var(--danger);

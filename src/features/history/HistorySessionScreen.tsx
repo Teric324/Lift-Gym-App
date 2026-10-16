@@ -23,6 +23,7 @@ import { EmptyState } from '../../ui/EmptyState';
 import { HistorySetRow } from './HistorySetRow';
 import './history.css';
 import { DisplayTitle } from '../../ui/DisplayTitle';
+import { BackLink } from '../../ui/BackLink';
 
 const t = en.history;
 
@@ -52,9 +53,7 @@ export function HistorySessionScreen() {
   if (data.session === null) {
     return (
       <section>
-        <p>
-          <Link to="/history">{t.back}</Link>
-        </p>
+        <BackLink to="/history">{t.back}</BackLink>
         <DisplayTitle>{t.notFound}</DisplayTitle>
       </section>
     );
@@ -65,9 +64,7 @@ export function HistorySessionScreen() {
   if (session.finishedAt === null) {
     return (
       <section>
-        <p>
-          <Link to="/history">{t.back}</Link>
-        </p>
+        <BackLink to="/history">{t.back}</BackLink>
         <DisplayTitle>{workout?.name ?? t.unknownWorkout}</DisplayTitle>
         <p className="notice">{t.inProgress}</p>
         <Link className="button button--primary" to="/session">
@@ -112,9 +109,7 @@ export function HistorySessionScreen() {
 
   return (
     <section>
-      <p>
-        <Link to="/history">{t.back}</Link>
-      </p>
+      <BackLink to="/history">{t.back}</BackLink>
       <DisplayTitle>{workout?.name ?? t.unknownWorkout}</DisplayTitle>
       <p className="muted">
         {formatSessionDate(session.date)} · {sessionTimeRange(session)}
@@ -145,7 +140,7 @@ export function HistorySessionScreen() {
         return (
           <article key={group.exerciseId} className="history-exercise">
             <h2 className="history-exercise__title">
-              <Link to={`/exercises/${group.exerciseId}`}>
+              <Link className="inline-link" to={`/exercises/${group.exerciseId}`}>
                 {exercise?.name ?? group.exerciseId}
               </Link>
               {exercise?.archived && <span className="tag"> {en.common.archivedTag}</span>}

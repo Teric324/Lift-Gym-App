@@ -62,7 +62,6 @@ export function WeightField({ valueGrams, onChange, label = t.weightLabel }: Wei
         inputMode="decimal"
         enterKeyHint="done"
         autoComplete="off"
-        placeholder="0"
         aria-label={label}
         aria-invalid={invalid}
         aria-describedby={invalid || warn ? messageId : undefined}

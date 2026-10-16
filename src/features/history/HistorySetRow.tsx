@@ -40,7 +40,6 @@ export function HistorySetRow({ set, number, editing, onRemove }: HistorySetRowP
         ×
       </span>
       <RepsField
-        showSteppers
         value={set.reps}
         onChange={(reps) => updateSetValues(db, set.id, { weightGrams: set.weightGrams, reps })}
       />

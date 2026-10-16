@@ -153,8 +153,6 @@ export const en = {
     notSaved: (kept: string) => `Not saved. Keeping ${kept}.`,
     notSavedBlank: 'Not saved. Enter a value.',
     overWeight: 'Over 500 kg. Make sure that is right.',
-    repsMinus: 'One rep less',
-    repsPlus: 'One rep more',
     fieldError: {
       empty: 'Enter a value.',
       invalid: 'Enter a number like 27.5 or 27,5.',

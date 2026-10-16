@@ -10,13 +10,13 @@ const type = (input: HTMLInputElement, text: string) =>
   fireEvent.change(input, { target: { value: text } });
 
 describe('RepsField', () => {
-  function renderReps(value: number | null = 5, showSteppers = false) {
+  function renderReps(value: number | null = 5) {
     const onChange = vi.fn();
-    render(<RepsField value={value} onChange={onChange} showSteppers={showSteppers} />);
+    render(<RepsField value={value} onChange={onChange} />);
     return onChange;
   }
 
-  it('is a plain numeric input, with no - and + buttons unless asked for', () => {
+  it('is a plain numeric input, with no - and + buttons', () => {
     renderReps(5);
     expect(reps().getAttribute('inputmode')).toBe('numeric');
     expect(reps().getAttribute('pattern')).toBe('[0-9]*');
@@ -69,26 +69,5 @@ describe('RepsField', () => {
     expect(onChange).not.toHaveBeenCalled();
     expect(reps().getAttribute('aria-invalid')).toBe('true');
     expect(screen.getByRole('status').textContent).toMatch(/Keeping 8/);
-  });
-
-  it('with steppers, - and + change the value by one and stop at the limits', () => {
-    const onChange = renderReps(5, true);
-    fireEvent.click(screen.getByLabelText('One rep more'));
-    fireEvent.click(screen.getByLabelText('One rep less'));
-    expect(onChange.mock.calls.map((c) => c[0])).toEqual([6, 4]);
-    cleanup();
-
-    renderReps(1, true);
-    expect((screen.getByLabelText('One rep less') as HTMLButtonElement).disabled).toBe(true);
-    cleanup();
-
-    renderReps(100, true);
-    expect((screen.getByLabelText('One rep more') as HTMLButtonElement).disabled).toBe(true);
-  });
-
-  it('with steppers, + on a blank row starts at 1', () => {
-    const onChange = renderReps(null, true);
-    fireEvent.click(screen.getByLabelText('One rep more'));
-    expect(onChange).toHaveBeenCalledWith(1);
   });
 });

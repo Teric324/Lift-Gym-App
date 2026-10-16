@@ -169,12 +169,14 @@ describe('HistorySessionScreen: editing', () => {
     });
   });
 
-  it('changing the reps with + saves at once', async () => {
+  it('typing new reps saves at once and keeps the weight', async () => {
     const session = await openEditing([[bench, 80, 5]]);
-    fireEvent.click(screen.getByRole('button', { name: 'One rep more' }));
+    expect(screen.queryByRole('button', { name: /One rep/ })).toBeNull(); // no - / + buttons
+    fireEvent.change(screen.getByLabelText('Reps'), { target: { value: '6' } });
     await waitFor(async () => {
       expect((await listSetsForSession(db, session.id))[0]!.reps).toBe(6);
     });
+    expect((await listSetsForSession(db, session.id))[0]!.weightGrams).toBe(80000);
   });
 
   it('Add set copies the last set of the exercise and goes after it', async () => {
