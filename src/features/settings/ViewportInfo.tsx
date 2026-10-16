@@ -91,7 +91,7 @@ export function ViewportInfo({ compact = false }: { compact?: boolean }) {
       {!compact && (
         <button
           type="button"
-          className="button"
+          className="button button--block"
           onClick={() => {
             setScreenInfoOn(!on);
             setOn(!on);

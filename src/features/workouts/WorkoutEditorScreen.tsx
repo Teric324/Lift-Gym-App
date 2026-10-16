@@ -17,6 +17,7 @@ import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { DragHandle } from '../../ui/drag/DragHandle';
 import { useReorderableList } from '../../ui/drag/useReorderableList';
 import { EmptyState } from '../../ui/EmptyState';
+import { CloseIcon, ListIcon, PlusIcon } from '../../ui/icons';
 import { TextPrompt } from '../../ui/TextPrompt';
 import { WorkoutIconView } from '../../ui/workout-icons';
 import { useActiveSession } from '../session/useActiveSession';
@@ -74,7 +75,7 @@ export function WorkoutEditorScreen() {
         </p>
       )}
 
-      <div className="screen__actions">
+      <div className="screen__actions screen__actions--stretch">
         <button type="button" className="button" onClick={() => setRenaming(true)}>
           {t.rename}
         </button>
@@ -118,7 +119,9 @@ export function WorkoutEditorScreen() {
       </div>
 
       <h2>{t.exercisesHeading}</h2>
-      {workout.exerciseIds.length === 0 && <EmptyState>{t.emptyExercises}</EmptyState>}
+      {workout.exerciseIds.length === 0 && (
+        <EmptyState icon={<ListIcon />}>{t.emptyExercises}</EmptyState>
+      )}
 
       {list.failed && (
         <p className="field__error" role="alert">
@@ -148,11 +151,11 @@ export function WorkoutEditorScreen() {
               <span className="list__actions">
                 <button
                   type="button"
-                  className="button button--small"
+                  className="button button--icon"
                   aria-label={t.removeExercise(name)}
                   onClick={() => edit((ids) => ids.filter((x) => x !== exerciseId))}
                 >
-                  ✕
+                  <CloseIcon />
                 </button>
               </span>
               <DragHandle label={t.reorder(name)} {...list.handleProps(exerciseId)} />
@@ -161,11 +164,14 @@ export function WorkoutEditorScreen() {
         })}
       </ol>
 
-      <div className="screen__actions">
-        <button type="button" className="button button--primary" onClick={() => setPicking(true)}>
-          {t.addExercises}
-        </button>
-      </div>
+      <button
+        type="button"
+        className="button button--primary button--block button--after"
+        onClick={() => setPicking(true)}
+      >
+        <PlusIcon />
+        {t.addExercises}
+      </button>
 
       <ExercisePicker
         open={picking}

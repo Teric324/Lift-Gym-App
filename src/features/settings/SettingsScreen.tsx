@@ -206,105 +206,139 @@ export function SettingsScreen() {
       <DisplayTitle>{t.title}</DisplayTitle>
 
       <h2>{t.backupHeading}</h2>
-      <p>{t.backupIntro}</p>
+      <div className="card settings-card">
+        <p>{t.backupIntro}</p>
 
-      {status === null || prepared === null ? (
-        <p>{t.loading}</p>
-      ) : (
-        <>
-          <p>
-            {lastExport === null
-              ? t.lastBackupNever
-              : t.lastBackup(localDateString(lastExport), daysSince ?? 0)}
-          </p>
-          {status.reminderDue && <p className="notice">{t.reminder(daysSince)}</p>}
+        {status === null || prepared === null ? (
+          <p className="muted">{t.loading}</p>
+        ) : (
+          <>
+            <p className="muted">
+              {lastExport === null
+                ? t.lastBackupNever
+                : t.lastBackup(localDateString(lastExport), daysSince ?? 0)}
+            </p>
+            {status.reminderDue && (
+              <p className="notice notice--warning">{t.reminder(daysSince)}</p>
+            )}
 
-          {shareMode ? (
-            <button type="button" className="button" onClick={() => void onExportShare()}>
-              {t.exportButton}
-            </button>
-          ) : (
-            <a
-              className="button"
-              href={downloadUrl ?? undefined}
-              download={prepared.name}
-              onClick={() => void onDownloadClick()}
-            >
-              {t.exportLink}
-            </a>
-          )}
-          {exportMessage && <p role="status">{exportMessage}</p>}
-        </>
-      )}
+            {shareMode ? (
+              <button
+                type="button"
+                className="button button--primary button--block"
+                onClick={() => void onExportShare()}
+              >
+                {t.exportButton}
+              </button>
+            ) : (
+              <a
+                className="button button--primary button--block"
+                href={downloadUrl ?? undefined}
+                download={prepared.name}
+                onClick={() => void onDownloadClick()}
+              >
+                {t.exportLink}
+              </a>
+            )}
+            {exportMessage && (
+              <p className="settings-card__status" role="status">
+                {exportMessage}
+              </p>
+            )}
+          </>
+        )}
+      </div>
 
       <h2>{t.storageHeading}</h2>
-      {persist !== undefined && (
-        <p>{persist === null ? t.storage.unknown : t.storage[persist.status]}</p>
-      )}
+      <div className="card settings-card">
+        {persist !== undefined && (
+          <p>{persist === null ? t.storage.unknown : t.storage[persist.status]}</p>
+        )}
+      </div>
 
       <h2>{t.importHeading}</h2>
-      <p>{t.importIntro}</p>
+      <div className="card settings-card">
+        <p>{t.importIntro}</p>
 
-      {(importState.kind === 'idle' ||
-        importState.kind === 'error' ||
-        importState.kind === 'done') && (
-        <label className="button">
-          {t.importButton}
-          <input
-            type="file"
-            accept="application/json,.json"
-            hidden
-            onChange={(e) => void onFilePicked(e)}
-          />
-        </label>
-      )}
+        {(importState.kind === 'idle' ||
+          importState.kind === 'error' ||
+          importState.kind === 'done') && (
+          <label className="button button--block">
+            {t.importButton}
+            <input
+              type="file"
+              accept="application/json,.json"
+              hidden
+              onChange={(e) => void onFilePicked(e)}
+            />
+          </label>
+        )}
 
-      {importState.kind === 'reading' && <p>{t.importReading}</p>}
-      {importState.kind === 'error' && <p role="alert">{importState.message}</p>}
-      {importState.kind === 'done' && <p role="status">{importState.message}</p>}
+        {importState.kind === 'reading' && <p className="muted">{t.importReading}</p>}
+        {importState.kind === 'error' && (
+          <p className="field__error" role="alert">
+            {importState.message}
+          </p>
+        )}
+        {importState.kind === 'done' && (
+          <p className="settings-card__status" role="status">
+            {importState.message}
+          </p>
+        )}
 
-      {importState.kind === 'confirm' && (
-        <div className="panel" role="alertdialog" aria-labelledby="import-confirm-title">
-          <h3 id="import-confirm-title">{t.importConfirmHeading}</h3>
-          <p>{t.importSummary(importState.summary)}</p>
-          <p>{t.importExportedOn(localDateString(importState.backup.exportedAt))}</p>
+        {importState.kind === 'confirm' && (
+          <div
+            className="settings-confirm"
+            role="alertdialog"
+            aria-labelledby="import-confirm-title"
+          >
+            <h3 id="import-confirm-title">{t.importConfirmHeading}</h3>
+            <p>{t.importSummary(importState.summary)}</p>
+            <p className="muted">
+              {t.importExportedOn(localDateString(importState.backup.exportedAt))}
+            </p>
 
-          {importState.hasData && <p>{shareMode ? t.importHasData : t.importHasDataLink}</p>}
-          {importState.hasData && !shareMode && prepared && (
-            <a
-              className="button"
-              href={downloadUrl ?? undefined}
-              download={prepared.name}
-              onClick={() => {
-                void recordExport(db, Date.now());
-                setImportState({ ...importState, copySaved: true, message: undefined });
-              }}
-            >
-              {t.importSaveCurrent}
-            </a>
-          )}
-          {importState.message && <p role="alert">{importState.message}</p>}
+            {importState.hasData && <p>{shareMode ? t.importHasData : t.importHasDataLink}</p>}
+            {importState.hasData && !shareMode && prepared && (
+              <a
+                className="button button--block"
+                href={downloadUrl ?? undefined}
+                download={prepared.name}
+                onClick={() => {
+                  void recordExport(db, Date.now());
+                  setImportState({ ...importState, copySaved: true, message: undefined });
+                }}
+              >
+                {t.importSaveCurrent}
+              </a>
+            )}
+            {importState.message && (
+              <p className="field__error" role="alert">
+                {importState.message}
+              </p>
+            )}
 
-          <div className="screen__actions">
-            <button
-              type="button"
-              className="button button--danger"
-              disabled={busy || (importState.hasData && !shareMode && !importState.copySaved)}
-              onClick={() => void onConfirmReplace()}
-            >
-              {t.importConfirm}
-            </button>
-            <button
-              type="button"
-              className="button"
-              disabled={busy}
-              onClick={() => setImportState({ kind: 'idle' })}
-            >
-              {t.importCancel}
-            </button>
+            <div className="screen__actions screen__actions--stretch">
+              <button
+                type="button"
+                className="button"
+                disabled={busy}
+                onClick={() => setImportState({ kind: 'idle' })}
+              >
+                {t.importCancel}
+              </button>
+              <button
+                type="button"
+                className="button button--danger"
+                disabled={busy || (importState.hasData && !shareMode && !importState.copySaved)}
+                onClick={() => void onConfirmReplace()}
+              >
+                {t.importConfirm}
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <p className="muted app-version">{t.version(__APP_BUILD__)}</p>
       <ViewportInfo />

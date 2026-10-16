@@ -137,7 +137,7 @@ export function ExercisePicker({
       {canCreate && (
         <button
           type="button"
-          className="button"
+          className="button button--block"
           disabled={busy}
           onClick={() => void createClicked()}
         >
