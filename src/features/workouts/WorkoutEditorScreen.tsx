@@ -7,14 +7,16 @@ import {
   getWorkout,
   renameWorkout,
   setWorkoutArchived,
+  setWorkoutIcon,
   updateWorkoutExercises,
 } from '../../db/repo/workouts';
 import { moveItem } from '../../domain/list';
-import type { Exercise } from '../../domain/types';
+import { WORKOUT_ICONS, type Exercise } from '../../domain/types';
 import { en } from '../../i18n/en';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { EmptyState } from '../../ui/EmptyState';
 import { TextPrompt } from '../../ui/TextPrompt';
+import { WorkoutIconView } from '../../ui/workout-icons';
 import { useActiveSession } from '../session/useActiveSession';
 import { ExercisePicker } from './ExercisePicker';
 
@@ -88,6 +90,26 @@ export function WorkoutEditorScreen() {
             {en.common.archive}
           </button>
         )}
+      </div>
+
+      <h2 id="workout-icon-label">{t.iconLabel}</h2>
+      <div className="icon-picker" role="radiogroup" aria-labelledby="workout-icon-label">
+        {WORKOUT_ICONS.map((icon) => {
+          const selected = workout.icon === icon;
+          return (
+            <button
+              key={icon}
+              type="button"
+              role="radio"
+              aria-checked={selected}
+              aria-label={t.icons[icon]}
+              className={selected ? 'icon-picker__tile is-selected' : 'icon-picker__tile'}
+              onClick={() => void setWorkoutIcon(db, workout.id, icon)}
+            >
+              <WorkoutIconView icon={icon} />
+            </button>
+          );
+        })}
       </div>
 
       <h2>{t.exercisesHeading}</h2>

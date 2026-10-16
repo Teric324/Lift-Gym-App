@@ -382,6 +382,26 @@ App icon (only after you reinstall it, optional):
       (Settings → Choose backup file…). Removing the app can remove its data, so do not skip the
       export.
 
+## 15. Icon per workout
+
+Update first (Settings → bottom line shows `Version ...`). Export a backup before.
+
+- [ ] After the update, every workout you already had shows the **dumbbell** (generic) icon in the
+      Workouts list, in a dark rounded square, left of the name. Nothing else changed (names,
+      exercise counts, history, Start button).
+- [ ] Open a workout: an **Icon** row shows five large tiles (dumbbell, push, pull, legs, full
+      body). The current one has a yellow border. Tiles are easy to hit with a thumb.
+- [ ] Tap another tile: it turns yellow at once. Go back to the list: that workout shows the new
+      icon. Close and reopen the app: it is still there.
+- [ ] Each of the five icons is readable at the size in the list (dumbbell, bar with arrow up, bar
+      with arrow down, leg, standing figure).
+- [ ] A new workout starts with the dumbbell and can be changed the same way.
+- [ ] An archived workout still shows its icon (dimmed) in the Archived list.
+- [ ] Settings → Export backup, then Choose backup file… and import it: the icons you picked are
+      still there. An older backup file (from before this update) imports fine and its workouts show
+      the dumbbell.
+- [ ] Update keeps data: all history, sets and exercises are still there after the update.
+
 ## How to update the installed app
 
 An installed Home Screen app is a separate copy of the site that updates itself in the background.

@@ -22,6 +22,7 @@ Latest commit at the time of writing: see `git log`.
 | 11 | History: list by month, one workout (edit, delete), history per exercise | yes |
 | D1 | New look, stage 1: tokens, Inter and Black Ops One shipped and precached | yes (seen on the phone) |
 | D2 | New look, stage 2: bottom navigation, wordmark, flat icon | **not yet** |
+| 13 | Icon per workout (5 choices), schema v3 (`Workout.icon`), backup format 3 | **not yet** (checklist section 15) |
 
 The new look is being applied in stages (see `docs/design/README.md`). Stages 1 (tokens, fonts, restyled
 buttons, fields, lists, dialogs) and 2 (wordmark, bottom navigation, flat icon) are built; the

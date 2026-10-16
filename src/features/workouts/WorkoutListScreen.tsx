@@ -7,6 +7,7 @@ import { en } from '../../i18n/en';
 import { CollapsibleSection } from '../../ui/CollapsibleSection';
 import { EmptyState } from '../../ui/EmptyState';
 import { TextPrompt } from '../../ui/TextPrompt';
+import { WorkoutIconView } from '../../ui/workout-icons';
 import { ResumeBanner } from '../session/ResumeBanner';
 import { StartWorkoutButton } from '../session/StartWorkoutButton';
 
@@ -39,9 +40,14 @@ export function WorkoutListScreen() {
       <ul className="list">
         {active.map((workout) => (
           <li key={workout.id} className="list__row">
-            <Link className="list__main" to={`/workouts/${workout.id}`}>
-              <span className="list__title">{workout.name}</span>
-              <span className="list__meta">{t.exerciseCount(workout.exerciseIds.length)}</span>
+            <Link className="list__main list__main--icon" to={`/workouts/${workout.id}`}>
+              <span className="workout-tile">
+                <WorkoutIconView icon={workout.icon} />
+              </span>
+              <span className="list__text">
+                <span className="list__title">{workout.name}</span>
+                <span className="list__meta">{t.exerciseCount(workout.exerciseIds.length)}</span>
+              </span>
             </Link>
             <StartWorkoutButton workout={workout} />
           </li>
@@ -53,9 +59,16 @@ export function WorkoutListScreen() {
           <ul className="list">
             {archived.map((workout) => (
               <li key={workout.id} className="list__row list__row--muted">
-                <Link className="list__main" to={`/workouts/${workout.id}`}>
-                  <span className="list__title">{workout.name}</span>
-                  <span className="list__meta">{t.exerciseCount(workout.exerciseIds.length)}</span>
+                <Link className="list__main list__main--icon" to={`/workouts/${workout.id}`}>
+                  <span className="workout-tile">
+                    <WorkoutIconView icon={workout.icon} />
+                  </span>
+                  <span className="list__text">
+                    <span className="list__title">{workout.name}</span>
+                    <span className="list__meta">
+                      {t.exerciseCount(workout.exerciseIds.length)}
+                    </span>
+                  </span>
                 </Link>
                 <button
                   type="button"

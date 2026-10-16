@@ -1,5 +1,6 @@
 import { localDateString } from '../domain/date';
 import { newId } from '../domain/id';
+import { WORKOUT_ICONS } from '../domain/types';
 import { assertValidSetValues } from '../domain/set-values';
 import type {
   DraftItem,
@@ -9,6 +10,7 @@ import type {
   SessionDraft,
   SessionSet,
   Workout,
+  WorkoutIcon,
 } from '../domain/types';
 import type { LiftDB } from './schema';
 import { STARTER_EXERCISES, SEEDED_KEY } from './seed';
@@ -19,12 +21,14 @@ import { STARTER_EXERCISES, SEEDED_KEY } from './seed';
  *
  * - 1: first format. Workouts have no `archived` flag.
  * - 2: workouts have `archived`. Format 1 files are still read (archived = false).
+ * - 3: workouts have `icon`. Older files are still read (icon = 'generic'); an unknown icon
+ *   value also becomes 'generic'.
  *
  * The app writes the latest version and reads every version listed in READABLE_VERSIONS.
  */
 export const BACKUP_APP = 'lift';
-export const BACKUP_FORMAT_VERSION = 2;
-const READABLE_VERSIONS: readonly number[] = [1, 2];
+export const BACKUP_FORMAT_VERSION = 3;
+const READABLE_VERSIONS: readonly number[] = [1, 2, 3];
 
 const LAST_EXPORT_KEY = 'lastExportAt';
 export const BACKUP_REMINDER_DAYS = 30;
@@ -163,6 +167,11 @@ function readExercise(raw: unknown, path: string): Exercise {
   };
 }
 
+/** Missing or unknown icons fall back to the generic one instead of rejecting the file. */
+function readIcon(v: unknown): WorkoutIcon {
+  return (WORKOUT_ICONS as readonly unknown[]).includes(v) ? (v as WorkoutIcon) : 'generic';
+}
+
 function readWorkout(raw: unknown, path: string, formatVersion: number): Workout {
   const r = record(raw, path);
   let archived = false; // format 1 has no archived workouts
@@ -177,6 +186,7 @@ function readWorkout(raw: unknown, path: string, formatVersion: number): Workout
       str(id, `${path}.exerciseIds[${i}]`),
     ),
     archived,
+    icon: readIcon(r.icon),
   };
 }
 

@@ -58,5 +58,18 @@ export class LiftDB extends Dexie {
             if (workout.archived === undefined) workout.archived = false;
           }),
       );
+
+    // v3: workouts get an icon. Not indexed, so the table list is unchanged. Every existing
+    // workout gets the generic icon (no guessing by name).
+    this.version(3)
+      .stores({})
+      .upgrade((tx) =>
+        tx
+          .table('workouts')
+          .toCollection()
+          .modify((workout: { icon?: string }) => {
+            if (workout.icon === undefined) workout.icon = 'generic';
+          }),
+      );
   }
 }

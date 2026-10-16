@@ -49,14 +49,16 @@ const DAY = 24 * 60 * 60 * 1000;
 function validBackup(): BackupFile {
   return {
     app: 'lift',
-    formatVersion: 2,
+    formatVersion: 3,
     exportedAt: T0,
     data: {
       exercises: [
         { id: 'e1', name: 'Bench press', stepGrams: 2500, archived: false },
         { id: 'e2', name: 'Dips', stepGrams: 1000, archived: true },
       ],
-      workouts: [{ id: 'w1', name: 'Push', exerciseIds: ['e1', 'e2'], archived: false }],
+      workouts: [
+        { id: 'w1', name: 'Push', exerciseIds: ['e1', 'e2'], archived: false, icon: 'push' },
+      ],
       sessions: [
         { id: 's1', workoutId: 'w1', date: '2026-10-05', startedAt: T0, finishedAt: T0 + 3600000 },
       ],
@@ -151,10 +153,10 @@ describe('validateBackup / parseBackupText: rejected', () => {
   });
 
   it('rejects an unknown formatVersion and reports it', () => {
-    expect(validateBackup({ ...validBackup(), formatVersion: 3 })).toEqual({
+    expect(validateBackup({ ...validBackup(), formatVersion: 4 })).toEqual({
       ok: false,
       error: 'unsupported-version',
-      version: 3,
+      version: 4,
     });
     expect(validateBackup({ ...validBackup(), formatVersion: 0 })).toMatchObject({
       error: 'unsupported-version',
@@ -234,7 +236,10 @@ describe('format versions', () => {
   it('still reads a format 1 file (no archived on workouts): workouts come back active', async () => {
     const v1 = JSON.parse(JSON.stringify(validBackup()));
     v1.formatVersion = 1;
-    for (const w of v1.data.workouts) delete w.archived;
+    for (const w of v1.data.workouts) {
+      delete w.archived;
+      delete w.icon;
+    }
     const parsed = validateBackup(v1);
     expect(parsed.ok).toBe(true);
     if (!parsed.ok) return;
@@ -242,9 +247,9 @@ describe('format versions', () => {
 
     await importBackup(db, parsed.backup);
     const exported = await exportBackup(db, T0);
-    expect(exported.formatVersion).toBe(2);
+    expect(exported.formatVersion).toBe(3);
     expect(exported.data.workouts).toEqual([
-      { id: 'w1', name: 'Push', exerciseIds: ['e1', 'e2'], archived: false },
+      { id: 'w1', name: 'Push', exerciseIds: ['e1', 'e2'], archived: false, icon: 'generic' },
     ]);
   });
 
@@ -263,6 +268,7 @@ describe('format versions', () => {
       name: 'Old routine',
       exerciseIds: ['e1'],
       archived: true,
+      icon: 'legs',
     });
     await importBackup(db, backup);
     const text = serializeBackup(await exportBackup(db, T0));
@@ -283,6 +289,34 @@ describe('format versions', () => {
     const exported = await exportBackup(db, T0);
     const session = exported.data.sessions[0]!;
     expect(exported.data.workouts.find((w) => w.id === session.workoutId)).toBeDefined();
+  });
+});
+
+describe('workout icons in backups', () => {
+  it('keeps the icon through export -> text -> import', async () => {
+    const backup = validBackup();
+    backup.data.workouts[0]!.icon = 'pull';
+    await importBackup(db, backup);
+    const parsed = parseBackupText(serializeBackup(await exportBackup(db, T0)));
+    expect(parsed.ok && parsed.backup.data.workouts[0]?.icon).toBe('pull');
+  });
+
+  it('reads a format 2 file (no icon) and gives workouts the generic icon', async () => {
+    const v2 = JSON.parse(JSON.stringify(validBackup()));
+    v2.formatVersion = 2;
+    for (const w of v2.data.workouts) delete w.icon;
+    const parsed = validateBackup(v2);
+    expect(parsed.ok && parsed.backup.data.workouts[0]?.icon).toBe('generic');
+    if (!parsed.ok) return;
+    await importBackup(db, parsed.backup);
+    expect((await exportBackup(db, T0)).data.workouts[0]?.icon).toBe('generic');
+  });
+
+  it.each([['skateboard'], [42], [null]])('falls back to generic for the icon %j', (bad) => {
+    const raw = JSON.parse(JSON.stringify(validBackup()));
+    raw.data.workouts[0].icon = bad;
+    const parsed = validateBackup(raw);
+    expect(parsed.ok && parsed.backup.data.workouts[0]?.icon).toBe('generic');
   });
 });
 
@@ -319,7 +353,7 @@ describe('export and import', () => {
       'sets',
       'workouts',
     ]);
-    expect(exported).toMatchObject({ app: 'lift', formatVersion: 2, exportedAt: T0 + 2 * DAY });
+    expect(exported).toMatchObject({ app: 'lift', formatVersion: 3, exportedAt: T0 + 2 * DAY });
     expect(JSON.stringify(exported)).not.toContain('checkedSetId');
   });
 

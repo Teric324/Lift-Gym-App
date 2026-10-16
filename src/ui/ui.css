@@ -160,6 +160,57 @@
   color: var(--text-2);
   font-size: var(--font-small);
 }
+.list__main--icon {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.list__text {
+  flex: 1;
+  min-width: 0;
+}
+.workout-tile {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-m);
+  background: var(--surface-2);
+  color: var(--yellow);
+}
+.list__row--muted .workout-tile {
+  color: var(--text-2);
+}
+
+/* workout icon picker */
+.icon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 var(--space-4);
+}
+.icon-picker__tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+.icon-picker__tile.is-selected {
+  border-color: var(--yellow);
+  background: var(--yellow-tint);
+  color: var(--yellow);
+}
+
 .list__actions {
   display: flex;
   gap: var(--space-1);

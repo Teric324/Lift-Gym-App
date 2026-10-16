@@ -1,5 +1,5 @@
 import { newId } from '../../domain/id';
-import type { Workout } from '../../domain/types';
+import type { Workout, WorkoutIcon } from '../../domain/types';
 import type { LiftDB } from '../schema';
 
 function cleanName(name: string): string {
@@ -43,6 +43,7 @@ export async function createWorkout(
   db: LiftDB,
   name: string,
   exerciseIds: readonly string[] = [],
+  icon: WorkoutIcon = 'generic',
 ): Promise<Workout> {
   const clean = cleanName(name);
   return db.transaction('rw', db.workouts, db.exercises, async () => {
@@ -52,6 +53,7 @@ export async function createWorkout(
       name: clean,
       exerciseIds: [...exerciseIds],
       archived: false,
+      icon,
     };
     await db.workouts.add(workout);
     return workout;
@@ -60,6 +62,11 @@ export async function createWorkout(
 
 export async function renameWorkout(db: LiftDB, id: string, name: string): Promise<void> {
   const updated = await db.workouts.update(id, { name: cleanName(name) });
+  if (updated === 0) throw new Error(`Workout ${id} not found`);
+}
+
+export async function setWorkoutIcon(db: LiftDB, id: string, icon: WorkoutIcon): Promise<void> {
+  const updated = await db.workouts.update(id, { icon });
   if (updated === 0) throw new Error(`Workout ${id} not found`);
 }
 

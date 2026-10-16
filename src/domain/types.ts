@@ -9,6 +9,9 @@ export interface Exercise {
   archived: boolean;
 }
 
+export const WORKOUT_ICONS = ['generic', 'push', 'pull', 'legs', 'fullbody'] as const;
+export type WorkoutIcon = (typeof WORKOUT_ICONS)[number];
+
 /** A reusable routine. It only points to registry exercises; it never owns history. */
 export interface Workout {
   id: string;
@@ -17,6 +20,8 @@ export interface Workout {
   /** Archived routines are hidden from the main list but never deleted, so a session's
    * `workoutId` always resolves. */
   archived: boolean;
+  /** Picture shown next to the routine's name. */
+  icon: WorkoutIcon;
 }
 
 export interface Session {

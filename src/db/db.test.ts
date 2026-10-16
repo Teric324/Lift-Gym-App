@@ -170,7 +170,7 @@ describe('workouts', () => {
     await setWorkoutExercises(db, w.id, [b.id, a.id]);
     await renameWorkout(db, w.id, 'Push day');
     expect(await listWorkouts(db)).toEqual([
-      { id: w.id, name: 'Push day', exerciseIds: [b.id, a.id], archived: false },
+      { id: w.id, name: 'Push day', exerciseIds: [b.id, a.id], archived: false, icon: 'generic' },
     ]);
   });
 

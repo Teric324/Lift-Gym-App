@@ -66,14 +66,14 @@ describe('schema version 2 upgrade', () => {
     open.push(db);
     const workouts = await db.workouts.orderBy('id').toArray();
     expect(workouts).toEqual([
-      { id: 'w1', name: 'Push', exerciseIds: ['e1'], archived: false },
-      { id: 'w2', name: 'Pull', exerciseIds: [], archived: false },
+      { id: 'w1', name: 'Push', exerciseIds: ['e1'], archived: false, icon: 'generic' },
+      { id: 'w2', name: 'Pull', exerciseIds: [], archived: false, icon: 'generic' },
     ]);
     expect(await db.exercises.count()).toBe(1);
     expect(await db.sessions.count()).toBe(1);
     expect((await db.sets.get('x1'))?.weightGrams).toBe(27250);
     expect((await db.meta.get('exercisesSeeded'))?.value).toBe(true);
-    expect(db.verno).toBe(2);
+    expect(db.verno).toBe(3);
   });
 
   it('does not overwrite an archived flag that is already set', async () => {
@@ -90,7 +90,7 @@ describe('schema version 2 upgrade', () => {
     const db = new LiftDB(freshName());
     open.push(db);
     await db.open();
-    expect(db.verno).toBe(2);
+    expect(db.verno).toBe(3);
     expect(db.tables.map((t) => t.name).sort()).toEqual([
       'drafts',
       'exercises',
@@ -102,6 +102,59 @@ describe('schema version 2 upgrade', () => {
   });
 });
 
+describe('schema version 3 upgrade', () => {
+  /** The database exactly as version 2 of the app left it (frozen copy of v1 + v2). */
+  class DbV2 extends DbV1 {
+    constructor(name: string) {
+      super(name);
+      this.version(2).stores({});
+    }
+  }
+
+  it('gives every existing workout the generic icon and keeps all data', async () => {
+    const name = freshName();
+    const v2 = new DbV2(name);
+    await v2.table('exercises').add({ id: 'e1', name: 'Bench', stepGrams: 2500, archived: false });
+    await v2.table('workouts').bulkAdd([
+      { id: 'w1', name: 'Push day', exerciseIds: ['e1'], archived: false },
+      { id: 'w2', name: 'Legs', exerciseIds: [], archived: true },
+    ]);
+    await v2.table('sessions').add({
+      id: 's1',
+      workoutId: 'w1',
+      date: '2026-10-05',
+      startedAt: 1,
+      finishedAt: 2,
+    });
+    v2.close();
+
+    const db = new LiftDB(name);
+    open.push(db);
+    const workouts = await db.workouts.orderBy('id').toArray();
+    expect(workouts).toEqual([
+      { id: 'w1', name: 'Push day', exerciseIds: ['e1'], archived: false, icon: 'generic' },
+      { id: 'w2', name: 'Legs', exerciseIds: [], archived: true, icon: 'generic' },
+    ]);
+    expect(await db.exercises.count()).toBe(1);
+    expect(await db.sessions.count()).toBe(1);
+    expect(db.verno).toBe(3);
+  });
+
+  it('does not overwrite an icon that is already set', async () => {
+    const name = freshName();
+    const v2 = new DbV2(name);
+    await v2.table('workouts').add({ id: 'w1', name: 'X', exerciseIds: [], archived: false });
+    v2.close();
+    const db = new LiftDB(name);
+    open.push(db);
+    await db.workouts.update('w1', { icon: 'legs' });
+    db.close();
+    const again = new LiftDB(name);
+    open.push(again);
+    expect((await again.workouts.get('w1'))?.icon).toBe('legs');
+  });
+});
+
 describe('versionchange', () => {
   it('closes the open connection so a newer schema can upgrade (and tells the app)', async () => {
     const name = freshName();
@@ -110,10 +163,16 @@ describe('versionchange', () => {
     let notified = 0;
     db.onVersionChange = () => notified++;
     await db.open();
-    await db.workouts.add({ id: 'w1', name: 'Push', exerciseIds: [], archived: false });
+    await db.workouts.add({
+      id: 'w1',
+      name: 'Push',
+      exerciseIds: [],
+      archived: false,
+      icon: 'generic',
+    });
 
-    // Another tab runs a newer version of the app that wants schema version 3.
-    const v3Stores: Record<string, string> = {
+    // Another tab runs a newer version of the app that wants schema version 4.
+    const v4Stores: Record<string, string> = {
       exercises: 'id, name',
       workouts: 'id',
       sessions: 'id, date, workoutId',
@@ -125,7 +184,7 @@ describe('versionchange', () => {
     class Future extends Dexie {
       constructor() {
         super(name);
-        this.version(3).stores(v3Stores);
+        this.version(4).stores(v4Stores);
       }
     }
     const future = new Future();
