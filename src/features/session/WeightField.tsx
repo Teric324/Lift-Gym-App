@@ -56,24 +56,26 @@ export function WeightField({ valueGrams, onChange, label = t.weightLabel }: Wei
 
   return (
     <span className="field-inline weight-field">
-      <input
-        className={`field__input field-inline__input${invalid ? ' field__input--invalid' : ''}`}
-        type="text"
-        inputMode="decimal"
-        enterKeyHint="done"
-        autoComplete="off"
-        aria-label={label}
-        aria-invalid={invalid}
-        aria-describedby={invalid || warn ? messageId : undefined}
-        value={shown}
-        onChange={(e) => handleChange(e.target.value)}
-        onFocus={(e) => e.currentTarget.select()}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') e.currentTarget.blur();
-        }}
-        onBlur={handleBlur}
-      />
-      <span className="weight-field__unit">{t.kg}</span>
+      <span className={`weight-field__cell${invalid ? ' weight-field__cell--invalid' : ''}`}>
+        <input
+          className={`field__input field-inline__input${invalid ? ' field__input--invalid' : ''}`}
+          type="text"
+          inputMode="decimal"
+          enterKeyHint="done"
+          autoComplete="off"
+          aria-label={label}
+          aria-invalid={invalid}
+          aria-describedby={invalid || warn ? messageId : undefined}
+          value={shown}
+          onChange={(e) => handleChange(e.target.value)}
+          onFocus={(e) => e.currentTarget.select()}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') e.currentTarget.blur();
+          }}
+          onBlur={handleBlur}
+        />
+        <span className="weight-field__unit">{t.kg}</span>
+      </span>
       {invalid && (
         <span id={messageId} className="field__error" role="status">
           {`${t.fieldError[reading.error]} ${

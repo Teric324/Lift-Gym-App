@@ -78,7 +78,7 @@ export function StartWorkoutButton({ workout }: { workout: Workout }) {
     <>
       <button
         type="button"
-        className="button button--primary button--small"
+        className="button button--primary button--block"
         disabled={busy || empty}
         title={empty ? t.noExercises : undefined}
         onClick={() => void onStart()}

@@ -1,7 +1,53 @@
-/* Session screen. Uses the tokens from src/app/theme.css. */
+/* Session screens. Uses the tokens from src/app/theme.css. */
 
-/* Overview: one compact row per exercise. */
+/* ---------- progress ---------- */
+.progress {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 6px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-3);
+  color: var(--yellow);
+  overflow: hidden;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.progress::-webkit-progress-bar {
+  background: var(--surface-3);
+}
+.progress::-webkit-progress-value {
+  border-radius: var(--radius-pill);
+  background: var(--yellow);
+}
+.progress::-moz-progress-bar {
+  border-radius: var(--radius-pill);
+  background: var(--yellow);
+}
+.session-summary {
+  margin: 0 0 var(--space-4);
+}
+.session-summary__line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.session-summary__percent {
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* ---------- overview: one card per exercise ---------- */
 .session-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
   margin: var(--space-3) 0;
   padding: 0;
   list-style: none;
@@ -9,50 +55,58 @@
 .session-row {
   display: flex;
   align-items: stretch;
-  min-height: var(--tap);
-  border-bottom: 1px solid var(--line);
-  background: var(--bg);
+  box-sizing: border-box;
+  min-height: 72px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  background: var(--surface-1);
 }
 .session-row--done {
-  background: var(--yellow-tint);
+  border-color: var(--yellow-line);
+  background: var(--yellow-solid);
 }
 .session-row__main {
   flex: 1;
   min-width: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-1);
+  align-content: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) 0 var(--space-3) var(--space-4);
+  border-radius: var(--radius-m);
   color: var(--text);
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  transition: background-color var(--press);
 }
 .session-row__main:active {
-  background: var(--surface-1);
+  background: var(--surface-2);
 }
 .session-row__text {
   min-width: 0;
 }
 .session-row__name {
   display: block;
+  font-size: var(--text-md);
   font-weight: 800;
   overflow-wrap: anywhere;
 }
 .session-row__meta {
   display: block;
+  margin-top: 2px;
   color: var(--text-2);
-  font-size: var(--font-small);
+  font-size: var(--text-sm);
+  font-weight: 500;
 }
 .session-row__progress {
-  flex: none;
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
   color: var(--text-2);
-  font-size: var(--font-small);
-  font-weight: 700;
+  font-size: var(--text-sm);
+  font-weight: 800;
 }
 .session-row--done .session-row__progress {
   color: var(--yellow);
@@ -64,7 +118,15 @@
   width: 18px;
   height: 18px;
 }
-/* Exercise screen. */
+.session-row__bar {
+  grid-column: 1 / -1;
+  height: 4px;
+}
+.session-row .drag-handle {
+  align-self: center;
+}
+
+/* ---------- exercise screen ---------- */
 .exercise-head {
   display: flex;
   align-items: flex-start;
@@ -76,35 +138,33 @@
   min-width: 0;
 }
 .exercise-head__title {
-  margin-top: 0;
+  margin-top: var(--space-1);
+  font-size: var(--text-2xl);
 }
 .exercise-head__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  margin: 0;
-  font-size: var(--font-small);
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-sm);
+}
+.exercise-head__meta:empty {
+  display: none;
 }
 .exercise-head__more {
-  flex: none;
-  min-width: var(--tap-min);
-  margin: 0;
-  padding: 0;
-  border-radius: var(--radius-pill);
+  margin-top: var(--space-2);
 }
 .add-set,
 .next-exercise {
-  display: flex;
-  width: 100%;
-  margin-right: 0;
+  margin-top: var(--space-2);
 }
 .next-exercise {
   margin-top: var(--space-4);
 }
 
 .set-list {
-  margin: var(--space-2) 0;
+  margin: var(--space-3) 0 var(--space-2);
   padding: 0;
   list-style: none;
 }
@@ -112,15 +172,17 @@
    weight or the reps (over 500 kg, not saved) wrap onto a line of their own below. */
 .set-swipe {
   position: relative;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-m);
   overflow: hidden;
   /* The browser keeps the vertical pan; a horizontal move is ours (swipe to delete). */
   touch-action: pan-y;
 }
 .set-swipe__delete {
   position: absolute;
-  top: var(--space-1);
+  top: 0;
   right: 0;
-  bottom: var(--space-1);
+  bottom: 0;
   box-sizing: border-box;
   width: 80px; /* REVEAL_PX in domain/gesture.ts */
   border: 0;
@@ -128,21 +190,41 @@
   background: var(--danger);
   color: var(--bg);
   font: inherit;
+  font-size: var(--text-sm);
   font-weight: 800;
+  /* Hidden (not display: none, so the keyboard can still reach it) until the row slides. */
+  opacity: 0;
+}
+.set-swipe:has(.set-row--shifted) .set-swipe__delete,
+.set-swipe__delete:focus {
+  opacity: 1;
+}
+.set-row,
+.history-set--editing {
+  --cell-height: var(--tap);
+  --reps-width: 56px;
 }
 .set-row {
   position: relative;
   z-index: 1;
+  box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  column-gap: var(--space-2);
-  min-height: 60px;
-  padding: var(--space-1) 0;
-  background: var(--bg);
+  column-gap: 6px;
+  min-height: 68px;
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  background: var(--surface-1);
 }
-/* Only while slid: a transform on the row would otherwise stay on it (and on the weight picker
-   dialog inside it) all the time. */
+.set-row--done {
+  --field-bg: rgba(10, 10, 11, 0.55);
+  border-color: rgba(255, 214, 10, 0.3);
+  background: var(--yellow-solid);
+}
+/* Only while slid: a transform on the row would otherwise stay on it (and on the dialog inside
+   it) all the time. */
 .set-row--shifted {
   transform: translateX(var(--swipe-x));
 }
@@ -152,42 +234,96 @@
   -webkit-user-select: none;
   user-select: none;
 }
-.set-row__number {
+.set-row__number,
+.history-set__number {
   flex: none;
-  width: 1.25rem;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-3);
   color: var(--text-2);
-  font-size: var(--font-small);
-  font-weight: 700;
+  font-size: var(--text-xs);
+  font-weight: 800;
+}
+.set-row--done .set-row__number {
+  background: var(--yellow);
+  color: var(--on-yellow);
 }
 .set-row__times {
   flex: none;
-  color: var(--text-2);
+  color: var(--text-3);
+  font-size: var(--text-sm);
+  font-weight: 700;
 }
-.set-row .field-inline {
-  /* The weight button, the reps input and their messages are the row's own flex items. */
+/* The weight cell, the reps input and their messages are the row's own flex items. */
+.set-row .field-inline,
+.history-set--editing .field-inline {
   display: contents;
 }
-.set-row .weight-field .field-inline__input {
-  /* The weight takes the room the row has left; the unit sits right after it. */
+.set-row .weight-field__cell,
+.history-set--editing .weight-field__cell {
   flex: 1 1 0;
-  width: auto;
-  min-width: 0;
 }
 .set-row .field__warning,
-.set-row .field__error {
+.set-row .field__error,
+.history-set--editing .field__warning,
+.history-set--editing .field__error {
   order: 10;
   flex-basis: 100%;
-  margin: 0 0 var(--space-1);
-  padding-left: calc(1.25rem + var(--space-2));
-}
-.set-row--done .field-inline__input {
-  border-color: var(--yellow-line);
+  margin: var(--space-1) 0 var(--space-1);
+  padding-left: calc(26px + 6px);
 }
 
+/* the set fields: big, bold, centred */
+.weight-field__cell {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: 0;
+  height: var(--cell-height, var(--tap));
+  padding: 0 var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--control-radius);
+  background: var(--field-bg);
+  transition:
+    border-color var(--press),
+    box-shadow var(--press);
+}
+.weight-field__cell:focus-within {
+  border-color: var(--yellow);
+  box-shadow: var(--glow);
+}
+.weight-field__cell--invalid,
+.weight-field__cell--invalid:focus-within {
+  border-color: var(--danger);
+}
+.weight-field__cell .field-inline__input {
+  flex: 0 1 5.4ch;
+  width: 5.4ch;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: var(--text-xl);
+  font-weight: 800;
+  text-align: right;
+}
+.weight-field__cell .field-inline__input:focus {
+  border: 0;
+  box-shadow: none;
+}
 .weight-field__unit {
   flex: none;
   color: var(--text-2);
+  font-size: var(--text-sm);
   font-weight: 700;
 }
 .field-inline {
@@ -196,85 +332,68 @@
   align-items: center;
   gap: var(--space-1);
 }
-.field-inline .field-inline__input {
-  /* Room for "102.5" (6ch with slack). The shared field padding is 16px a side, which left too
-     little for the text, so it is smaller here; widths are in ch so the digits always fit. */
-  width: calc(6ch + 2 * var(--space-2) + 2px + var(--space-1));
-  padding-inline: var(--space-2);
-  text-align: right;
-}
 .field-inline.reps-field .field-inline__input {
-  /* Room for "100" (reps go 1 to 100). */
-  width: calc(3ch + 2 * var(--space-2) + 2px + var(--space-1));
+  flex: none;
+  width: var(--reps-width, 56px);
+  height: var(--cell-height, var(--tap));
+  min-height: 0;
+  padding: 0 var(--space-1);
+  font-size: var(--text-xl);
+  font-weight: 800;
   text-align: center;
 }
-.set-row .field-inline.reps-field .field-inline__input {
-  flex: none;
-}
-.field__input--invalid {
-  border-color: var(--danger);
-}
-.field__warning {
+.field-inline .field__error,
+.field-inline .field__warning {
   flex-basis: 100%;
-  color: var(--warning);
-  font-size: var(--font-small);
-}
-.field-inline .field__error {
-  flex-basis: 100%;
-  margin: 0;
 }
 .set-row__check {
   flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
-  width: 52px;
-  height: 52px;
-  border: 2px solid currentColor;
-  border-radius: var(--radius);
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 2px solid color-mix(in srgb, var(--text-2) 45%, transparent);
+  border-radius: var(--control-radius);
   background: transparent;
-  color: inherit;
+  color: var(--on-yellow);
   font: inherit;
-  font-size: 1.5rem;
-  line-height: 1;
+  transition:
+    background-color var(--press),
+    border-color var(--press),
+    transform var(--press);
+}
+.set-row__check:active {
+  transform: scale(0.97);
+}
+.set-row__check .icon {
+  width: 24px;
+  height: 24px;
 }
 .set-row__check:disabled {
   opacity: 0.35;
+  transform: none;
 }
 .set-row__check--done {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--bar-bg);
+  border-color: var(--yellow);
+  background: var(--yellow);
 }
-
 .set-row__remove {
   flex: none;
-  min-width: 36px;
-  padding: 0;
-  margin: 0;
-  opacity: 0.7;
+  color: var(--text-2);
 }
 
 .finish-bar {
-  margin-top: var(--space-4);
-  padding-top: var(--space-3);
-  border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  margin-top: var(--space-5);
 }
-
-.exercise-card__heading {
-  min-width: 0;
-}
-.exercise-card__actions {
-  display: flex;
-  flex: none;
-  gap: var(--space-1);
-}
-.exercise-card__actions .button {
-  min-width: 44px;
-  min-height: 44px;
-  padding: 0;
+.finish-bar .field__error {
+  text-align: center;
 }
 
 .choice-group {
-  margin: var(--space-3) 0 0;
+  margin: var(--space-4) 0 0;
   padding: 0;
   border: 0;
 }
@@ -283,13 +402,17 @@
   align-items: flex-start;
   gap: var(--space-3);
   min-height: var(--tap);
-  padding: var(--space-2) 0;
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--control-radius);
+  background: var(--surface-2);
 }
 .choice input {
   width: 22px;
   height: 22px;
-  margin-top: 2px;
+  margin: 1px 0 0;
   flex: none;
+  accent-color: var(--yellow);
 }
 .choice--disabled {
   opacity: 0.6;

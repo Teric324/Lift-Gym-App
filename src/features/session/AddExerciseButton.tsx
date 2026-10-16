@@ -5,6 +5,7 @@ import { addExerciseToDraft } from '../../db/repo/drafts';
 import { addExercise, listExercises } from '../../db/repo/exercises';
 import type { SessionDraft } from '../../domain/types';
 import { en } from '../../i18n/en';
+import { PlusIcon } from '../../ui/icons';
 import { ExercisePicker } from '../workouts/ExercisePicker';
 
 const t = en.session;
@@ -27,7 +28,12 @@ export function AddExerciseButton({
 
   return (
     <>
-      <button type="button" className="button" onClick={() => setOpen(true)}>
+      <button
+        type="button"
+        className="button button--block button--after"
+        onClick={() => setOpen(true)}
+      >
+        <PlusIcon />
         {t.addExercise}
       </button>
 

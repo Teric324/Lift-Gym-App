@@ -9,6 +9,7 @@ import {
 import type { DraftRow, Exercise } from '../../domain/types';
 import { en } from '../../i18n/en';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
+import { CheckIcon } from '../../ui/icons';
 import { RepsField } from './RepsField';
 import { useSwipeReveal } from './useSwipeReveal';
 import { WeightField } from './WeightField';
@@ -86,7 +87,7 @@ export function SetRow({ sessionId, exercise, row, number }: SetRowProps) {
           disabled={!checked && !complete}
           onClick={() => void toggle()}
         >
-          {checked ? '✓' : ''}
+          {checked && <CheckIcon />}
         </button>
       </div>
       <ConfirmDialog

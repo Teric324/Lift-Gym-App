@@ -8,6 +8,7 @@ import { visibleItems } from '../../domain/session-items';
 import { en } from '../../i18n/en';
 import { CollapsibleSection } from '../../ui/CollapsibleSection';
 import { EmptyState } from '../../ui/EmptyState';
+import { BoltIcon, ListIcon } from '../../ui/icons';
 import { AddExerciseButton } from './AddExerciseButton';
 import { ExerciseList } from './ExerciseList';
 import { FinishBar } from './FinishBar';
@@ -26,8 +27,8 @@ export function SessionScreen() {
     return (
       <section>
         <DisplayTitle>{t.title}</DisplayTitle>
-        <EmptyState>{t.none}</EmptyState>
-        <Link className="button" to="/">
+        <EmptyState icon={<BoltIcon />}>{t.none}</EmptyState>
+        <Link className="button button--block" to="/">
           {t.goToWorkouts}
         </Link>
       </section>
@@ -44,12 +45,23 @@ export function SessionScreen() {
   return (
     <section>
       <DisplayTitle>{view.workout?.name ?? t.title}</DisplayTitle>
-      <p className="muted">
+      <p className="page-intro muted">
         {t.started(formatSessionDate(session.date), localTimeString(session.startedAt))}
-        {rows.length > 0 && ` · ${t.progress(doneSets, rows.length)}`}
       </p>
 
-      {items.length === 0 && <EmptyState>{t.noExercises}</EmptyState>}
+      {rows.length > 0 && (
+        <div className="session-summary">
+          <p className="session-summary__line">
+            <span>{t.progress(doneSets, rows.length)}</span>
+            <span className="session-summary__percent">
+              {Math.round((doneSets / rows.length) * 100)}%
+            </span>
+          </p>
+          <progress className="progress" value={doneSets} max={rows.length} aria-hidden="true" />
+        </div>
+      )}
+
+      {items.length === 0 && <EmptyState icon={<ListIcon />}>{t.noExercises}</EmptyState>}
 
       <ExerciseList sessionId={session.id} items={items} exercises={byId} />
 

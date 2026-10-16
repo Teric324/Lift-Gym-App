@@ -14,6 +14,7 @@ import './session.css';
 import { useSessionView } from './useSessionView';
 import { DisplayTitle } from '../../ui/DisplayTitle';
 import { BackLink } from '../../ui/BackLink';
+import { MoreIcon, PlusIcon } from '../../ui/icons';
 
 const t = en.session;
 
@@ -97,12 +98,12 @@ function ExerciseView({ exerciseId }: { exerciseId: string }) {
         </div>
         <button
           type="button"
-          className="button exercise-head__more"
+          className="button button--icon exercise-head__more"
           aria-label={t.more(exercise.name)}
           aria-haspopup="dialog"
           onClick={() => setMenuOpen(true)}
         >
-          ⋯
+          <MoreIcon />
         </button>
       </header>
 
@@ -128,18 +129,22 @@ function ExerciseView({ exerciseId }: { exerciseId: string }) {
 
       <button
         type="button"
-        className="button add-set"
+        className="button button--block add-set"
         onClick={() => void attempt(() => addDraftRow(db, sessionId, exercise.id))}
       >
-        <span aria-hidden="true">+</span> {t.addSet}
+        <PlusIcon />
+        {t.addSet}
       </button>
 
       {next && nextName ? (
-        <Link className="button button--primary next-exercise" to={`/session/${next.exerciseId}`}>
+        <Link
+          className="button button--primary button--block next-exercise"
+          to={`/session/${next.exerciseId}`}
+        >
           {t.nextExercise(nextName)}
         </Link>
       ) : (
-        <Link className="button button--primary next-exercise" to="/session">
+        <Link className="button button--primary button--block next-exercise" to="/session">
           {t.backToWorkout}
         </Link>
       )}

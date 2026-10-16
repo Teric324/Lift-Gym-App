@@ -53,7 +53,7 @@ export function FinishBar({ sessionId, draft }: { sessionId: string; draft: Sess
       {checked === 0 ? (
         <button
           type="button"
-          className="button button--danger"
+          className="button button--danger button--block"
           onClick={() => setConfirming('discard')}
         >
           {t.discard}
@@ -61,7 +61,7 @@ export function FinishBar({ sessionId, draft }: { sessionId: string; draft: Sess
       ) : (
         <button
           type="button"
-          className="button button--primary"
+          className="button button--primary button--block"
           onClick={() => (unchecked > 0 ? setConfirming('finish') : void finish())}
         >
           {t.finish}

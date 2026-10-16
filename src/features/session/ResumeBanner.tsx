@@ -2,11 +2,12 @@ import { Link } from 'react-router';
 import { formatSessionDate, localTimeString } from '../../domain/date';
 import { isStaleSession } from '../../domain/session-state';
 import { en } from '../../i18n/en';
+import { BoltIcon } from '../../ui/icons';
 import { useSessionView } from './useSessionView';
 
 const t = en.start;
 
-/** A line at the top of the workout list when a session is open, with a way back into it. */
+/** A card at the top of the workout list when a session is open, with a way back into it. */
 export function ResumeBanner() {
   const view = useSessionView();
   if (!view) return null;
@@ -16,12 +17,18 @@ export function ResumeBanner() {
   const stale = isStaleSession(session, today);
 
   return (
-    <div className="notice resume-banner" role="status">
-      <span>
-        {stale
-          ? t.bannerStale(name, formatSessionDate(session.date))
-          : t.bannerToday(name, localTimeString(session.startedAt))}
-      </span>{' '}
+    <div className="resume-banner" role="status">
+      <span className="resume-banner__icon">
+        <BoltIcon />
+      </span>
+      <span className="resume-banner__text">
+        <span className="resume-banner__title">{stale ? t.bannerStaleTitle : t.bannerTitle}</span>
+        <span className="resume-banner__meta">
+          {stale
+            ? t.bannerStaleMeta(name, formatSessionDate(session.date))
+            : t.bannerMeta(name, localTimeString(session.startedAt))}
+        </span>
+      </span>
       <Link className="button button--small button--primary" to="/session">
         {stale ? t.bannerOpen : t.bannerResume}
       </Link>

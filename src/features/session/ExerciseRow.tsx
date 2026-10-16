@@ -51,6 +51,14 @@ export function ExerciseRow({
           )}
           {t.setsProgress(progress.checked, progress.total)}
         </span>
+        {progress.total > 0 && (
+          <progress
+            className="progress session-row__bar"
+            value={progress.checked}
+            max={progress.total}
+            aria-hidden="true"
+          />
+        )}
       </Link>
       <DragHandle label={t.reorder(exercise.name)} {...handle} />
     </li>
