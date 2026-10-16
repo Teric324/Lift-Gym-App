@@ -1,5 +1,11 @@
 import type { ReactNode } from 'react';
 
-export function EmptyState({ children }: { children: ReactNode }) {
-  return <p className="empty-state">{children}</p>;
+/** A short, quiet message in the middle of an empty list, with an optional icon above it. */
+export function EmptyState({ children, icon }: { children: ReactNode; icon?: ReactNode }) {
+  return (
+    <div className="empty-state">
+      {icon && <span className="empty-state__icon">{icon}</span>}
+      <p>{children}</p>
+    </div>
+  );
 }

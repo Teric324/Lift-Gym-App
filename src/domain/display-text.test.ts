@@ -37,7 +37,7 @@ describe('display font usage', () => {
     });
   }
 
-  it('only the page titles (h1 in theme.css) use the display font', () => {
+  it('only page titles and display-text (theme.css) use the display font', () => {
     const cssFiles = (dir: string): string[] =>
       readdirSync(dir).flatMap((name) => {
         const path = join(dir, name);
@@ -50,7 +50,7 @@ describe('display font usage', () => {
     expect(users).toEqual(['src/app/fonts.css', 'src/app/theme.css']);
     const theme = readFileSync('src/app/theme.css', 'utf8');
     expect(theme.match(/font-family: var\(--font-display\)/g)).toHaveLength(1);
-    expect(theme).toMatch(/h1 \{[^}]*font-family: var\(--font-display\)/);
+    expect(theme).toMatch(/h1,\s*\.display-text \{[^}]*font-family: var\(--font-display\)/);
   });
 
   it('every page title goes through DisplayTitle: no raw <h1> in the screens', () => {

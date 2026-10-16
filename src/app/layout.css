@@ -31,15 +31,22 @@
   text-decoration: none;
 }
 .update-button {
-  min-height: 36px;
-  padding: var(--space-1) var(--space-3);
+  min-height: var(--tap-min);
+  padding: var(--space-1) var(--space-4);
   border: 1px solid var(--yellow-line);
   border-radius: var(--radius-pill);
   background: var(--yellow-tint);
   color: var(--yellow);
   font: inherit;
-  font-size: var(--font-small);
+  font-size: var(--text-sm);
   font-weight: 800;
+  transition:
+    transform var(--press),
+    background-color var(--press);
+}
+.update-button:active {
+  background: var(--yellow-line);
+  transform: scale(0.97);
 }
 .update-note {
   flex: none;
@@ -83,6 +90,7 @@
   background: color-mix(in srgb, var(--bg) 96%, transparent);
 }
 .tabbar__link {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -96,9 +104,26 @@
   line-height: 1.2;
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
+  transition: color var(--press);
+}
+.tabbar__link:active {
+  color: var(--text);
 }
 .tabbar__link.active {
   color: var(--yellow);
+  font-weight: 800;
+}
+/* the active tab: a short yellow bar on the border above it */
+.tabbar__link.active::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  width: 28px;
+  height: 3px;
+  margin-left: -14px;
+  border-radius: 0 0 var(--radius-pill) var(--radius-pill);
+  background: var(--yellow);
 }
 .tabbar__link .icon--bolt {
   fill: none;
@@ -113,10 +138,42 @@
   white-space: nowrap;
 }
 
-/* Settings: raw screen measurements, small and quiet. */
+/* Settings: grouped cards. */
+.settings-card__status {
+  margin: var(--space-3) 0 0;
+  color: var(--yellow);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+.settings-card .notice {
+  margin-top: 0;
+}
+.settings-confirm {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+.app-version {
+  margin: var(--space-5) 0 var(--space-3);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+/* raw screen measurements, small and quiet */
+.settings .viewport-info {
+  margin-top: var(--space-4);
+}
 .viewport-info pre {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
+  white-space: pre-wrap;
+}
+.settings .viewport-info pre {
+  box-sizing: border-box;
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--control-radius);
+  background: var(--surface-1);
+  font-size: var(--text-xs);
   white-space: pre-wrap;
 }
 .viewport-overlay {

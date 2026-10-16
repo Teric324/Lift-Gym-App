@@ -13,3 +13,11 @@ interface DisplayTitleProps {
 export function DisplayTitle({ children, className }: DisplayTitleProps) {
   return <h1 className={className}>{plainLetters(children)}</h1>;
 }
+
+/**
+ * A major name inside a card (a workout on the Workouts screen) in the display font. Like
+ * `DisplayTitle` it shows plain letters; keep it for names, never for body text.
+ */
+export function DisplayText({ children, className = '' }: DisplayTitleProps) {
+  return <span className={`display-text ${className}`.trim()}>{plainLetters(children)}</span>;
+}

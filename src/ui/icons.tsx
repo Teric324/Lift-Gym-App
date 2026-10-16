@@ -70,3 +70,44 @@ export function CheckIcon() {
     </Icon>
   );
 }
+
+export function PlusIcon() {
+  return (
+    <Icon className="icon">
+      <path d="M12 5v14M5 12h14" />
+    </Icon>
+  );
+}
+
+export function CloseIcon() {
+  return (
+    <Icon className="icon">
+      <path d="M6 6l12 12M18 6L6 18" />
+    </Icon>
+  );
+}
+
+export function ChevronRightIcon() {
+  return (
+    <Icon className="icon icon--chevron">
+      <path d="M9.5 5.5L16 12l-6.5 6.5" />
+    </Icon>
+  );
+}
+
+export function SearchIcon() {
+  return (
+    <Icon className="icon">
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="M16 16l4.5 4.5" />
+    </Icon>
+  );
+}
+
+export function MoreIcon() {
+  return (
+    <Icon className="icon" strokeWidth="3.5">
+      <path d="M5.5 12h.01M12 12h.01M18.5 12h.01" />
+    </Icon>
+  );
+}
