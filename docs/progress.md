@@ -1,6 +1,6 @@
 # Progress and next steps
 
-Last updated: 2026-10-15 (step 11 tested OK; new look stages 1 and 2 built).
+Last updated: 2026-10-16 (drag-to-reorder everywhere, typed weights, plain-letter titles, app-style links).
 
 Live app: https://lift-tracker-dwa.pages.dev (Cloudflare Pages, deploys on every push to `main`).
 Latest commit at the time of writing: see `git log`.
@@ -10,20 +10,21 @@ Latest commit at the time of writing: see `git log`.
 | Step | What | Tested on iPhone |
 |---|---|---|
 | 1 | Scaffold: Vite, React, TypeScript, ESLint, Prettier, Vitest | n/a |
-| 2 | `domain/weight`: parse, format, step list (integer grams) | n/a |
+| 2 | `domain/weight`: parse, format (integer grams) | n/a |
 | 3 | PR (best set), prefill per exercise, types | n/a |
 | 4 | Dexie schema, repos, starter exercises, `newId`, `localDateString` | n/a |
 | 5 | JSON export/import, Settings, backup reminder | yes |
 | 6 | PWA, offline, update button, persistent storage, deploy | yes |
 | 7 | Exercise registry and workouts UI, schema v2 (`Workout.archived`), backup format 2 | yes |
 | 8 | Workout session: start, prefill, check sets, finish/discard, stale session dialog | yes |
-| 9 | Weight picker (step list, +10/+25 jumps, free typing, iOS keyboard sizing) | yes |
+| 9 | Weight picker (step list, +10/+25 jumps, free typing, iOS keyboard sizing); replaced by a typed input in step 15 | yes |
 | 10 | Freedom in the session: add, move, skip, bring back, replace | yes |
 | 11 | History: list by month, one workout (edit, delete), history per exercise | yes |
 | D1 | New look, stage 1: tokens, Inter and Black Ops One shipped and precached | yes (seen on the phone) |
 | D2 | New look, stage 2: bottom navigation, wordmark, flat icon | **not yet** |
 | 13 | Icon per workout (5 choices), schema v3 (`Workout.icon`), backup format 3 | **not yet** (checklist section 15) |
 | 14 | Workout screen in two levels: compact overview with drag-to-reorder, one screen per exercise (`/session/:exerciseId`), swipe-left to delete a set, plain numeric reps (no − / +), no schema change | **not yet** (checklist section 16) |
+| 15 | Drag-to-reorder everywhere (`src/ui/drag`, routine editor, no ↑/↓ buttons); weights typed inline (no step, no picker, no jump buttons); page titles without diacritics (`DisplayTitle`, `plainLetters`); links styled like the app (`BackLink`, no underline); History editor without reps - / + | **not yet** (checklist section 17) |
 
 The new look is being applied in stages (see `docs/design/README.md`). Stages 1 (tokens, fonts, restyled
 buttons, fields, lists, dialogs) and 2 (wordmark, bottom navigation, flat icon) are built; the
@@ -41,7 +42,12 @@ iPhone test of stage 2 is `docs/iphone-checklist.md`, section 14.
 
 - PR rule: heaviest weight, then more reps; an identical set does not beat the oldest one.
 - Weight in integer grams; 0 kg is valid; reps 1 to 100; warning "Are you sure?" above 500 kg, no
-  blocking; step default 2.5 kg.
+  blocking. Weight is free typing with `.` or `,`.
+- The per-exercise step and the picker's jump buttons (+10 / +25) were removed at the user's
+  request (2026-10-16): users type 12.4 or 27.3 directly. `Exercise.stepGrams` is still stored
+  (schema and backup unchanged) but unused.
+- Drag handle is the only way to reorder, everywhere (no ↑ / ↓ buttons). Titles in the display
+  font are shown without diacritics. No link looks like a default HTML link.
 - Exercises and workouts are archived, never deleted.
 - One active session. A forgotten session from an earlier day is never finished or deleted
   silently; it ends at its last checked set.

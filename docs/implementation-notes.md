@@ -110,9 +110,6 @@ Related: an active session with no checked sets can be offered as "discard" inst
 - `WeightField` / `RepsField` save on every valid keystroke (`readWeightText` / `readRepsText`
   in `src/domain/field-input.ts`). Empty or invalid text is never saved; an invalid text stays
   visible and marked, with a note of the value that is kept. Over 500 kg shows a note, no block.
-- `WeightField`'s props (`valueGrams`, `stepGrams`, `lastGrams`, `onChange`) are the contract for
-  the weight picker of the next step; `SetRow` does not need to change when the picker replaces
-  the text field. `stepGrams` and `lastGrams` are passed already but not used yet.
 - A checked row's stored set takes the row's position as `order`, so later pre-filling lists the
   sets in the planned order even if they were checked out of order.
 - Finish asks only when unchecked rows remain (they are dropped with the draft). With no checked
@@ -122,26 +119,27 @@ Related: an active session with no checked sets can be offered as "discard" inst
   The dialogs are always in the DOM, so tests wait for `dialog[open]`, not for their text.
 - Session styles live in `src/features/session/session.css` and use the shared tokens.
 
-## Weight picker (step 9)
+## Weight input (the picker of step 9 was removed on 2026-10-16)
 
-- The row shows the weight as a button (`.weight-button`, 52 px tall, like the check button);
-  a tap opens `WeightPicker`, a modal `<dialog>` mounted only while open so each opening starts
-  fresh. `WeightField`'s props are unchanged, so `SetRow.tsx` did not change.
-- Maths is in `src/domain/weight-picker.ts` (integers only): `nearestStep`, `pickerStart` (value,
-  else last weight, else first step), `pickerWindow` (30 steps each side, from one step up to
-  500 kg), `jumpCenter`. The list is built by multiplication, like `stepList`.
-- Jump buttons (-25, -10, +10, +25 kg) move the window only; a tap on a value applies it and
-  closes the picker. 0 kg is a separate button because the list starts at one step.
-- Typing in the picker saves every valid value (same rule as before: empty and invalid are never
-  saved, the last valid value stays, over 500 kg shows a note). The field is not focused on open,
-  so the keyboard does not hide the list.
-- iOS keyboard: the dialog is sized from `window.visualViewport` (`--vv-height`, `--vv-top`, set
-  by `WeightPicker`), not from `dvh`, because on iPhone the keyboard shrinks the visual viewport
-  only. The dialog stays inside it, below the status bar (`env(safe-area-inset-top)`), with the
-  title, typing field and Done at the top and the list taking the remaining space.
-- Tests: pure maths (`weight-picker.test.ts`), the component (`weight-field.test.tsx`, including
-  a fake `visualViewport` that shrinks), and the real-database `SetRow` tests. CSS cannot be
-  checked in jsdom; the geometry was checked in a real browser at 375x812 and 375x430.
+- `WeightField` is a plain inline input like `RepsField`: `inputMode="decimal"`, `.` or `,`, all
+  text selected on focus, `enterKeyHint="done"`, unit `kg` after it. Props: `valueGrams`,
+  `onChange`, `label`. Parsing and the 500 kg note are unchanged (`readWeightText`).
+- Removed: `WeightPicker`, `domain/weight-picker.ts`, `domain/step.ts`, `stepList`, `StepPicker`,
+  `setExerciseStep`, the step chip and the step texts. `Exercise.stepGrams` stays in the schema,
+  seed and backup (no schema change); nothing in the UI reads it.
+- The History set editor has no - / + buttons for reps either (it would not fit on one line at
+  320 px); reps are typed there as in the workout.
+
+## Reorder, display font, links (2026-10-16)
+
+- Drag-to-reorder is one pattern in `src/ui/drag/`: `useDragReorder` (pointer events, auto
+  scroll), `useReorderableList` (optimistic order, arrow keys on the handle, refocus, error flag)
+  and `DragHandle`. Used by the workout overview and the routine editor
+  (`moveWorkoutExercise` in `db/repo/workouts.ts`). Do not add up / down buttons anywhere.
+- The display font (Black Ops One) has no accents: page titles go through `DisplayTitle`, which
+  shows `plainLetters(text)` (`domain/display-text.ts`). A test fails if a raw `<h1>` appears.
+- `a { color: inherit; text-decoration: none }` is the baseline in `theme.css`. Back links are
+  `BackLink` (`ui/BackLink.tsx`); list links are full-width rows (`.list__row > a.list__main`).
 
 ## Freedom in the session (step 10)
 
@@ -182,7 +180,7 @@ Related: an active session with no checked sets can be offered as "discard" inst
   `orderExercisesInSession`, `sessionsForExercise`, `formatSetLine`, `sessionTimeRange`.
 - The exercise order in a finished workout is the order of its first checked set (the draft with
   the planned order is deleted at Finish); its sets are in their planned `order`.
-- Editing is behind an "Edit" button and reuses `WeightField` and `RepsField` (the same picker and
+- Editing is behind an "Edit" button and reuses `WeightField` and `RepsField` (the same inputs and
   the same save-at-once rule as in a live workout). Values change with `updateSetValues`, which
   keeps `createdAt`.
 - Repo (`db/repo/sessions.ts`):

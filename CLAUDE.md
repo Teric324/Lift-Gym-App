@@ -16,7 +16,7 @@ Current status, decisions already made and next steps: `docs/progress.md`.
 - Sets are pre-filled from the last time but **saved only when checked**; unchecked = not stored.
 - Total freedom in a session: edit values, add/delete sets, replace/add/reorder exercises.
 - History and PR belong to the exercise (registry), not to the routine.
-- Flexible weight input (per-exercise step, jump buttons, free typing with `.` or `,`).
+- Weight input is free typing with `.` or `,` (no step, no picker, no jump buttons).
 - Works offline in the gym (service worker, local storage).
 - Data loss is unacceptable: JSON export/import from day one.
 - Weights in kg, stored as integer grams (no floating-point drift).

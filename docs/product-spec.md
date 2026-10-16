@@ -44,19 +44,17 @@ The profile lists every exercise with its PR, e.g. "Leg press PR 150 kg x 5".
 
 ## Weight input
 
-1. **Step picker.** The user chooses the weight step per exercise (0.25, 0.5, 1, 2, 2.5, 4, 5 or a
-   custom value). The list is step, 2*step, 3*step, ... so step 0.25 gives 0.25, 0.5, 0.75, ...
-   The step is remembered per exercise and can be changed any time.
-2. **Fast reach** to high weights (e.g. 100 kg) without long scrolling: jump buttons (+10 / +25)
-   next to the list.
-3. **Free typing.** Accept `27.25`, also decimal comma (`27,25`), surrounding spaces and a trailing
-   `kg`; reject empty, negative, non-numeric or absurd values.
+Free typing, in a plain inline input after the set number (unit `kg` after it). Accept `27.25`, also
+decimal comma (`27,25`), surrounding spaces and a trailing `kg`; reject empty, negative, non-numeric
+or absurd values. `0` is valid (bodyweight). Above 500 kg the app asks "Are you sure?" but accepts
+the value. There is no per-exercise step, no step list and no jump buttons (removed at the user's
+request, 2026-10-16: weights such as 12.4 or 27.3 are typed directly).
 
 Implementation notes:
 - `parseWeight(input)` is a pure function with unit tests.
-- Store weight as an integer (grams); generate step lists by integer multiplication, never by
-  repeated floating-point addition.
-- The picker may open scrolled near the last used weight, but nothing is selected until a tap.
+- Store weight as an integer (grams), never as floating-point kg.
+- `Exercise.stepGrams` stays in the schema and in the backup format (data safety) but the UI no
+  longer reads or shows it.
 
 ## Defaults for v1
 

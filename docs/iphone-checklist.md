@@ -63,6 +63,8 @@ After deploying a new version:
 
 ## 8. Exercises and workouts (step 7)
 
+(The step chip and the ↑ ↓ buttons below no longer exist: see section 17.)
+
 Do this on the **updated** installed app (see "How to update the installed app" below). Settings
 shows `Version <hash> · <time>` at the bottom; it must match the latest deploy.
 
@@ -146,6 +148,8 @@ Finish:
 
 ## 10. Weight picker (step 9)
 
+(Superseded: the picker was replaced by a typed input, see section 17.)
+
 Do this on the updated app (Settings → bottom line shows the new `Version ...`).
 
 The weight in the row:
@@ -184,6 +188,8 @@ Checked sets:
 - [ ] After Finish, export a backup and import it back: the weights are the same.
 
 ## 11. Freedom in the workout (step 10)
+
+(The ↑ ↓ buttons were replaced by the drag handle, see sections 16 and 17.)
 
 Do this on the updated app (Settings → bottom line shows the new `Version ...`). Export a backup
 first. Use a workout with at least two exercises that you have trained before, so they come
@@ -421,7 +427,7 @@ long screen; where they disagree with this section, this section wins.
 
 **Exercise screen**
 
-- [ ] Top: `‹ Workout` link, the exercise name, a `Step ... kg` chip, `Instead of ...` when it
+- [ ] Top: `‹ Workout` link, the exercise name, `Instead of ...` when it
       replaces one, and the `⋯` button. `‹ Workout` goes back to the overview.
 - [ ] Each set is on ONE line: set number, weight, `×`, reps, check square. Also with a long weight
       such as 102.5 kg and with 3-digit reps. No − or + next to the reps.
@@ -440,10 +446,9 @@ long screen; where they disagree with this section, this section wins.
       (leave the field and check). Leaving the screen and coming back shows the last valid value.
 - [ ] Tapping the check on a row, then changing its reps, updates the saved set (see History).
 
-**Weight picker**
+**Weight typing**
 
-- [ ] Tap the weight: the picker opens as before (step list, jumps, typing 27,5), the keyboard
-      does not cover the field or Done, Done closes it. The value shows in the row.
+- [ ] See section 17: the weight is a plain input, there is no picker any more.
 
 **Swipe to delete a set**
 
@@ -452,7 +457,7 @@ long screen; where they disagree with this section, this section wins.
       stays open.
 - [ ] Drag left only about 1 cm and release: it snaps back closed.
 - [ ] While open: tap elsewhere, or swipe the row back right: it closes. Tapping the row while open
-      only closes it (the picker does not open).
+      only closes it.
 - [ ] Scroll the page up and down starting on a set row (a long page, e.g. 6+ sets): the page
       scrolls, no row opens. A slightly diagonal scroll still scrolls.
 - [ ] Open a row, tap **Delete**: the set is gone and the numbers re-count. Deleting a set that is
@@ -494,6 +499,59 @@ long screen; where they disagree with this section, this section wins.
       offers to resume as before; Resume opens the overview, with the checked sets and edited
       values intact in each exercise.
 - [ ] After finishing, tapping the Workouts tab shows the workout list, not an old exercise screen.
+
+## 17. Reorder handle, typed weights, plain-letter titles, app-style links
+
+Update first (Settings → bottom line shows `Version ...`).
+
+**Drag to reorder, everywhere**
+
+- [ ] Workouts → a workout → Edit screen: every exercise row has an `✕` and a three-bar handle at
+      the far right. No ↑ or ↓ buttons anywhere in the app.
+- [ ] Put a finger on a handle and drag down: the row follows the finger, the others make room.
+      Release: it stays; leave the screen and come back: the order is kept. Start the workout:
+      its overview shows the same new order.
+- [ ] Drag the last row to the top, and one row by a single place. Touching a row away from the
+      handle and moving up/down scrolls the page (the row does not move).
+- [ ] With 8+ exercises, drag a row near the tab bar: the page scrolls by itself. `✕` still
+      removes an exercise.
+- [ ] In the workout overview the same handle still works exactly as before.
+
+**Weights are typed (no step, no picker)**
+
+- [ ] Exercises → any exercise: no `Weight step` section. The Exercises list rows and the Add
+      exercise sheet show only the names (no `Step 2.5 kg`). The workout exercise screen has no
+      `Step` chip.
+- [ ] In a workout set row, the weight is an input with `kg` after it, like the reps field.
+      Tap it: the decimal keypad opens, the number is selected, the key says `Done`.
+- [ ] Type `12.4`, then another set `27,3`: both are kept (leave the screen and come back: 12.4
+      and 27.3). Type `0`: kept as 0. Type `80x`: a red message appears and the old value is kept.
+- [ ] Type `501`: a note `Over 500 kg. Make sure that is right.` appears but the value is saved.
+- [ ] Prefill is unchanged: a workout started after a past one shows last time's weights and reps.
+- [ ] A set row stays on ONE line (number, weight, `kg`, `×`, reps, check) with 102.5 and with
+      100 reps. iPhone SE size or a narrow window (about 320 px) too.
+- [ ] History → a workout → Edit: each set is one line with the weight input, `kg ×`, the reps
+      input and `✕` (no − / + around the reps). Changing the weight or the reps saves at once.
+
+**Page titles without diacritics**
+
+- [ ] Rename an exercise or a workout to `Împingere țâșnită ă î â ș ț` (use the Rename button):
+      its page title (big letters) shows `IMPINGERE TASNITA A I A S T` with no strange marks.
+      The same name in a list row and everywhere else in normal text keeps its diacritics.
+- [ ] Other titles (Workouts, History, Exercises, Settings, a workout name, a History workout,
+      the exercise screen) all use the big letters without marks.
+
+**Links look like the app**
+
+- [ ] Nowhere in the app is text underlined or browser blue/yellow: check Workouts, a workout's
+      Edit screen, the workout overview, an exercise screen, History (list and one workout),
+      Exercises (list and one exercise) and Settings.
+- [ ] The `Back to ...` link at the top of those screens is a small grey `‹ Back ...` control that
+      turns yellow while pressed. `‹ Workout` on the exercise screen looks the same.
+- [ ] History → a workout: the exercise name above its sets is white with a grey `›`, not a link
+      colour; tapping it opens the exercise.
+- [ ] List rows (Workouts, Exercises, History, an exercise's history) highlight when pressed
+      anywhere on the row, including the empty space to the right of the name.
 
 ## How to update the installed app
 
