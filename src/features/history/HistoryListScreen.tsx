@@ -5,10 +5,16 @@ import { listFinishedSessions } from '../../db/repo/sessions';
 import { listAllSets } from '../../db/repo/sets';
 import { listWorkouts } from '../../db/repo/workouts';
 import { formatSessionDate } from '../../domain/date';
-import { groupSessionsByMonth, sessionTimeRange, summarizeSessionSets } from '../../domain/history';
+import {
+  dateTileParts,
+  groupSessionsByMonth,
+  sessionTimeRange,
+  summarizeSessionSets,
+} from '../../domain/history';
 import type { SessionSet } from '../../domain/types';
 import { en } from '../../i18n/en';
 import { EmptyState } from '../../ui/EmptyState';
+import { ChevronRightIcon, HistoryIcon } from '../../ui/icons';
 import './history.css';
 import { DisplayTitle } from '../../ui/DisplayTitle';
 
@@ -38,9 +44,9 @@ export function HistoryListScreen() {
   return (
     <section>
       <DisplayTitle>{t.title}</DisplayTitle>
-      <p className="muted">{t.intro}</p>
+      <p className="page-intro muted">{t.intro}</p>
 
-      {groups.length === 0 && <EmptyState>{t.empty}</EmptyState>}
+      {groups.length === 0 && <EmptyState icon={<HistoryIcon />}>{t.empty}</EmptyState>}
 
       {groups.map((group) => (
         <div key={group.key} className="history-month">
@@ -48,15 +54,33 @@ export function HistoryListScreen() {
           <ul className="list">
             {group.sessions.map((session) => {
               const summary = summarizeSessionSets(setsBySession.get(session.id) ?? []);
+              const tile = dateTileParts(session.date);
               return (
                 <li key={session.id} className="list__row">
-                  <Link className="list__main" to={`/history/${session.id}`}>
-                    <span className="list__title">
-                      {formatSessionDate(session.date)} ·{' '}
-                      {workoutName.get(session.workoutId) ?? t.unknownWorkout}
+                  <Link
+                    className="list__main"
+                    to={`/history/${session.id}`}
+                    aria-label={`${formatSessionDate(session.date)} · ${
+                      workoutName.get(session.workoutId) ?? t.unknownWorkout
+                    }`}
+                  >
+                    <span className="date-tile" aria-hidden="true">
+                      <span className="date-tile__day">{tile.day}</span>
+                      <span className="date-tile__weekday">{tile.weekday}</span>
                     </span>
-                    <span className="list__meta">
-                      {t.counts(summary.exercises, summary.sets)} · {sessionTimeRange(session)}
+                    <span className="list__text">
+                      <span className="list__title">
+                        {workoutName.get(session.workoutId) ?? t.unknownWorkout}
+                      </span>
+                      <span className="list__meta">
+                        {t.counts(summary.exercises, summary.sets)}
+                      </span>
+                      <span className="list__meta list__meta--quiet">
+                        {sessionTimeRange(session)}
+                      </span>
+                    </span>
+                    <span className="list__chevron">
+                      <ChevronRightIcon />
                     </span>
                   </Link>
                 </li>

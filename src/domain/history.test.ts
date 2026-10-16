@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  dateTileParts,
   formatSetLine,
   formatSetsInline,
   groupSessionsByMonth,
+  lastDoneByExercise,
+  lastDoneByWorkout,
   monthLabel,
   orderExercisesInSession,
   sessionTimeRange,
@@ -167,5 +170,33 @@ describe('formatting', () => {
     const end = new Date(2026, 9, 12, 19, 12).getTime();
     expect(sessionTimeRange({ startedAt: start, finishedAt: end })).toBe('18:05 – 19:12');
     expect(sessionTimeRange({ startedAt: start, finishedAt: null })).toBe('18:05');
+  });
+});
+
+describe('lastDone helpers and the date tile', () => {
+  it('finds the latest finished session per workout and per exercise', () => {
+    const sessions = [
+      session('a', '2026-10-01', { workoutId: 'w1' }),
+      session('b', '2026-10-05', { workoutId: 'w1' }),
+      session('c', '2026-10-03', { workoutId: 'w2' }),
+      session('open', '2026-10-09', { workoutId: 'w2', finishedAt: null }),
+    ];
+    expect(lastDoneByWorkout(sessions)).toEqual(
+      new Map([
+        ['w1', '2026-10-05'],
+        ['w2', '2026-10-03'],
+      ]),
+    );
+    const sets = [set('a', 'bench', 80, 5), set('b', 'squat', 100, 5), set('a', 'squat', 90, 5)];
+    expect(lastDoneByExercise(sessions, sets)).toEqual(
+      new Map([
+        ['bench', '2026-10-01'],
+        ['squat', '2026-10-05'],
+      ]),
+    );
+  });
+
+  it('splits a date into day and weekday', () => {
+    expect(dateTileParts('2026-10-12')).toEqual({ day: '12', weekday: 'MON' });
   });
 });

@@ -9,6 +9,7 @@ import { formatSessionDate } from '../../domain/date';
 import { formatSetsInline, sessionsForExercise } from '../../domain/history';
 import { en } from '../../i18n/en';
 import { EmptyState } from '../../ui/EmptyState';
+import { ChevronRightIcon, HistoryIcon } from '../../ui/icons';
 
 const t = en.exercises;
 const VISIBLE_AT_FIRST = 20;
@@ -34,22 +35,31 @@ export function ExerciseHistory({ exerciseId }: { exerciseId: string }) {
   return (
     <div>
       <h2>{t.historyHeading}</h2>
-      {entries.length === 0 && <EmptyState>{t.historyEmpty}</EmptyState>}
+      {entries.length === 0 && <EmptyState icon={<HistoryIcon />}>{t.historyEmpty}</EmptyState>}
       <ul className="list">
         {shown.map(({ session, sets }) => (
           <li key={session.id} className="list__row">
             <Link className="list__main" to={`/history/${session.id}`}>
-              <span className="list__title">
-                {formatSessionDate(session.date)} ·{' '}
-                {workoutName.get(session.workoutId) ?? en.history.unknownWorkout}
+              <span className="list__text">
+                <span className="list__title">
+                  {formatSessionDate(session.date)} ·{' '}
+                  {workoutName.get(session.workoutId) ?? en.history.unknownWorkout}
+                </span>
+                <span className="list__meta">{formatSetsInline(sets)}</span>
               </span>
-              <span className="list__meta">{formatSetsInline(sets)}</span>
+              <span className="list__chevron">
+                <ChevronRightIcon />
+              </span>
             </Link>
           </li>
         ))}
       </ul>
       {!showAll && entries.length > VISIBLE_AT_FIRST && (
-        <button type="button" className="button" onClick={() => setShowAll(true)}>
+        <button
+          type="button"
+          className="button button--block button--after"
+          onClick={() => setShowAll(true)}
+        >
           {t.showAll(entries.length)}
         </button>
       )}

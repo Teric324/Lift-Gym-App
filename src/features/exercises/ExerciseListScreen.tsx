@@ -8,6 +8,10 @@ import {
   listExercises,
   setExerciseArchived,
 } from '../../db/repo/exercises';
+import { listFinishedSessions } from '../../db/repo/sessions';
+import { listAllSets } from '../../db/repo/sets';
+import { formatSessionDate } from '../../domain/date';
+import { lastDoneByExercise } from '../../domain/history';
 import type { Exercise } from '../../domain/types';
 import { en } from '../../i18n/en';
 import { CollapsibleSection } from '../../ui/CollapsibleSection';
@@ -15,16 +19,30 @@ import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { EmptyState } from '../../ui/EmptyState';
 import { TextPrompt } from '../../ui/TextPrompt';
 import { DisplayTitle } from '../../ui/DisplayTitle';
+import { ChevronRightIcon, ListIcon, PlusIcon, SearchIcon } from '../../ui/icons';
 
 const t = en.exercises;
 
 export function ExerciseListScreen() {
-  const all = useLiveQuery(() => listExercises(db, { includeArchived: true }), []);
+  const data = useLiveQuery(
+    async () => ({
+      exercises: await listExercises(db, { includeArchived: true }),
+      sessions: await listFinishedSessions(db),
+      sets: await listAllSets(db),
+    }),
+    [],
+  );
   const [query, setQuery] = useState('');
   const [adding, setAdding] = useState(false);
   const [toRestore, setToRestore] = useState<Exercise | null>(null);
 
-  if (all === undefined) return <p>{en.settings.loading}</p>;
+  if (data === undefined) return <p>{en.settings.loading}</p>;
+  const all = data.exercises;
+  const lastDone = lastDoneByExercise(data.sessions, data.sets);
+  const lastDoneText = (id: string) => {
+    const date = lastDone.get(id);
+    return date ? t.lastDone(formatSessionDate(date)) : t.notDoneYet;
+  };
 
   const needle = query.trim().toLowerCase();
   const matches = (e: Exercise) => needle === '' || e.name.toLowerCase().includes(needle);
@@ -34,21 +52,29 @@ export function ExerciseListScreen() {
 
   return (
     <section>
-      <DisplayTitle>{t.title}</DisplayTitle>
-      <p className="muted">{t.intro}</p>
-
-      <div className="screen__actions">
-        <button type="button" className="button button--primary" onClick={() => setAdding(true)}>
-          {t.add}
+      <div className="page-head">
+        <DisplayTitle>{t.title}</DisplayTitle>
+        <button
+          type="button"
+          className="button button--primary button--small"
+          aria-label={t.add}
+          onClick={() => setAdding(true)}
+        >
+          <PlusIcon />
+          {t.addShort}
         </button>
       </div>
+      <p className="page-intro muted">{t.intro}</p>
 
       {all.length > 0 && (
-        <label className="field">
-          <span className="field__label">{t.searchLabel}</span>
+        <label className="search-field">
+          <span className="search-field__icon">
+            <SearchIcon />
+          </span>
           <input
             className="field__input"
             type="search"
+            aria-label={t.searchLabel}
             placeholder={t.searchPlaceholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -56,16 +82,22 @@ export function ExerciseListScreen() {
         </label>
       )}
 
-      {all.length === 0 && <EmptyState>{t.empty}</EmptyState>}
+      {all.length === 0 && <EmptyState icon={<ListIcon />}>{t.empty}</EmptyState>}
       {all.length > 0 && active.length === 0 && archived.length === 0 && (
-        <EmptyState>{t.noMatches}</EmptyState>
+        <EmptyState icon={<SearchIcon />}>{t.noMatches}</EmptyState>
       )}
 
       <ul className="list">
         {active.map((exercise) => (
           <li key={exercise.id} className="list__row">
             <Link className="list__main" to={`/exercises/${exercise.id}`}>
-              <span className="list__title">{exercise.name}</span>
+              <span className="list__text">
+                <span className="list__title">{exercise.name}</span>
+                <span className="list__meta">{lastDoneText(exercise.id)}</span>
+              </span>
+              <span className="list__chevron">
+                <ChevronRightIcon />
+              </span>
             </Link>
           </li>
         ))}
@@ -77,7 +109,9 @@ export function ExerciseListScreen() {
             {archived.map((exercise) => (
               <li key={exercise.id} className="list__row list__row--muted">
                 <Link className="list__main" to={`/exercises/${exercise.id}`}>
-                  <span className="list__title">{exercise.name}</span>
+                  <span className="list__text">
+                    <span className="list__title">{exercise.name}</span>
+                  </span>
                 </Link>
                 <button
                   type="button"

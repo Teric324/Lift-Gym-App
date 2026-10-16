@@ -3,6 +3,7 @@ import { updateSetValues } from '../../db/repo/sets';
 import { formatSetLine } from '../../domain/history';
 import type { SessionSet } from '../../domain/types';
 import { en } from '../../i18n/en';
+import { CloseIcon } from '../../ui/icons';
 import { RepsField } from '../session/RepsField';
 import { WeightField } from '../session/WeightField';
 
@@ -45,11 +46,11 @@ export function HistorySetRow({ set, number, editing, onRemove }: HistorySetRowP
       />
       <button
         type="button"
-        className="button button--small set-row__remove"
+        className="button button--icon set-row__remove"
         aria-label={t.removeSet(number)}
         onClick={onRemove}
       >
-        ✕
+        <CloseIcon />
       </button>
     </li>
   );

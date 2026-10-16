@@ -20,6 +20,7 @@ import {
 import { en } from '../../i18n/en';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { EmptyState } from '../../ui/EmptyState';
+import { HistoryIcon, PlusIcon } from '../../ui/icons';
 import { HistorySetRow } from './HistorySetRow';
 import './history.css';
 import { DisplayTitle } from '../../ui/DisplayTitle';
@@ -67,7 +68,7 @@ export function HistorySessionScreen() {
         <BackLink to="/history">{t.back}</BackLink>
         <DisplayTitle>{workout?.name ?? t.unknownWorkout}</DisplayTitle>
         <p className="notice">{t.inProgress}</p>
-        <Link className="button button--primary" to="/session">
+        <Link className="button button--primary button--block" to="/session">
           {t.openWorkout}
         </Link>
       </section>
@@ -111,15 +112,15 @@ export function HistorySessionScreen() {
     <section>
       <BackLink to="/history">{t.back}</BackLink>
       <DisplayTitle>{workout?.name ?? t.unknownWorkout}</DisplayTitle>
-      <p className="muted">
+      <p className="history-session__meta muted">
         {formatSessionDate(session.date)} · {sessionTimeRange(session)}
       </p>
-      <p className="muted">{t.counts(summary.exercises, summary.sets)}</p>
+      <p className="history-session__meta muted">{t.counts(summary.exercises, summary.sets)}</p>
 
       <div className="screen__actions">
         <button
           type="button"
-          className={`button${editing ? ' button--primary' : ''}`}
+          className={`button button--block${editing ? ' button--primary' : ''}`}
           onClick={() => setEditing((value) => !value)}
         >
           {editing ? t.done : t.edit}
@@ -132,13 +133,13 @@ export function HistorySessionScreen() {
         </p>
       )}
 
-      {groups.length === 0 && <EmptyState>{t.noSets}</EmptyState>}
+      {groups.length === 0 && <EmptyState icon={<HistoryIcon />}>{t.noSets}</EmptyState>}
 
       {groups.map((group) => {
         const exercise = byId.get(group.exerciseId);
         const last = group.sets.at(-1);
         return (
-          <article key={group.exerciseId} className="history-exercise">
+          <article key={group.exerciseId} className="card history-exercise">
             <h2 className="history-exercise__title">
               <Link className="inline-link" to={`/exercises/${group.exerciseId}`}>
                 {exercise?.name ?? group.exerciseId}
@@ -159,7 +160,7 @@ export function HistorySessionScreen() {
             {editing && last && (
               <button
                 type="button"
-                className="button"
+                className="button button--block button--after"
                 onClick={() =>
                   void attempt(() =>
                     addSetToFinishedSession(db, {
@@ -171,6 +172,7 @@ export function HistorySessionScreen() {
                   )
                 }
               >
+                <PlusIcon />
                 {t.addSet}
               </button>
             )}
@@ -182,7 +184,7 @@ export function HistorySessionScreen() {
         <div className="finish-bar">
           <button
             type="button"
-            className="button button--danger"
+            className="button button--danger button--block"
             onClick={() => setConfirm({ kind: 'workout' })}
           >
             {t.deleteWorkout}

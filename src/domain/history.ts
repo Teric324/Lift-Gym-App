@@ -132,3 +132,39 @@ export function sessionTimeRange(session: Pick<Session, 'startedAt' | 'finishedA
   const start = localTimeString(session.startedAt);
   return session.finishedAt === null ? start : `${start} – ${localTimeString(session.finishedAt)}`;
 }
+
+/** The date ("YYYY-MM-DD") of the latest finished session of each workout, by workout id. */
+export function lastDoneByWorkout(sessions: readonly Session[]): Map<string, string> {
+  const last = new Map<string, string>();
+  for (const session of sortNewestFirst(sessions)) {
+    if (session.finishedAt !== null && !last.has(session.workoutId)) {
+      last.set(session.workoutId, session.date);
+    }
+  }
+  return last;
+}
+
+/** The date of the latest finished session in which each exercise has a set, by exercise id. */
+export function lastDoneByExercise(
+  sessions: readonly Session[],
+  sets: readonly SessionSet[],
+): Map<string, string> {
+  const dateOf = new Map(
+    sessions.filter((s) => s.finishedAt !== null).map((s) => [s.id, s.date] as const),
+  );
+  const last = new Map<string, string>();
+  for (const set of sets) {
+    const date = dateOf.get(set.sessionId);
+    if (date !== undefined && date > (last.get(set.exerciseId) ?? '')) {
+      last.set(set.exerciseId, date);
+    }
+  }
+  return last;
+}
+
+/** Day of the month and short weekday ("12", "MON") of a "YYYY-MM-DD" date, for list tiles. */
+export function dateTileParts(date: string): { day: string; weekday: string } {
+  const [y, m, d] = date.split('-').map(Number) as [number, number, number];
+  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  return { day: String(d), weekday: days[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]! };
+}

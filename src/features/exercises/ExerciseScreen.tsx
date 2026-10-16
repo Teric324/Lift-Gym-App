@@ -44,7 +44,7 @@ export function ExerciseScreen() {
       <DisplayTitle>{exercise.name}</DisplayTitle>
       {exercise.archived && <p className="notice">{t.archivedNote}</p>}
 
-      <div className="screen__actions">
+      <div className="screen__actions screen__actions--stretch">
         <button type="button" className="button" onClick={() => setRenaming(true)}>
           {t.rename}
         </button>
@@ -67,8 +67,10 @@ export function ExerciseScreen() {
         )}
       </div>
 
-      <p className="muted">{t.usedIn(workouts.map((w) => w.name))}</p>
-      <p className="muted">{t.setsLogged(sets)}</p>
+      <div className="card">
+        <p className="muted">{t.usedIn(workouts.map((w) => w.name))}</p>
+        <p className="muted">{t.setsLogged(sets)}</p>
+      </div>
 
       <ExerciseHistory exerciseId={exercise.id} />
 

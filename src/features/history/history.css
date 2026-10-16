@@ -1,19 +1,33 @@
 /* History screens. Uses the tokens from src/app/theme.css. */
 
 .history-month h2 {
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
+}
+.list__meta--quiet {
+  color: var(--text-3);
 }
 
+.history-session__meta {
+  margin: 0 0 var(--space-1);
+}
+
+/* an exercise of a finished workout: a card with its sets */
 .history-exercise {
-  margin: var(--space-4) 0;
-  padding-top: var(--space-3);
-  border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  margin: var(--space-3) 0;
 }
 .history-exercise__title {
-  margin: 0 0 var(--space-2);
-  font-size: 1.1rem;
+  margin: 0 0 var(--space-3);
+  color: var(--text);
+  font-size: var(--text-lg);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.25;
+  text-transform: none;
 }
 .history-sets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -24,17 +38,14 @@
   gap: var(--space-3);
   min-height: 40px;
 }
-.history-set__number {
-  flex: none;
-  width: 1.5rem;
-  text-align: right;
-  opacity: 0.7;
-}
 .history-set__line {
   flex: 1;
+  font-size: var(--text-md);
+  font-weight: 700;
 }
 
 .history-set--editing {
   flex-wrap: wrap;
+  column-gap: 6px;
   min-height: 56px;
 }

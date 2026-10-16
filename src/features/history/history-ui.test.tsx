@@ -107,7 +107,10 @@ describe('HistoryListScreen', () => {
     await waitFor(() => expect(screen.getByText('October 2026')).toBeTruthy());
     const months = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent);
     expect(months).toEqual(['October 2026', 'August 2026']);
-    const rows = screen.getAllByRole('link').map((a) => a.textContent);
+    // The date and the workout name are the link's accessible name; the tile shows day and weekday.
+    const rows = screen
+      .getAllByRole('link')
+      .map((a) => `${a.getAttribute('aria-label')} ${a.textContent}`);
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatch(/Mon 5 Oct · Push/);
     expect(rows[0]).toMatch(/2 exercises · 3 sets/);
