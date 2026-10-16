@@ -27,26 +27,29 @@ export function WorkoutIconView({ icon }: { icon: WorkoutIcon }) {
     case 'push': // barbell on the floor, arrow pushing up
       return (
         <Svg className={className}>
-          <path d="M3 20h18M6 17v6M18 17v6M12 15V4M8 8l4-4 4 4" />
+          <path d="M2 18h20M5 15v6M19 15v6M12 13V3M8 7l4-4 4 4" />
         </Svg>
       );
-    case 'pull': // pull-up bar with an arrow pulling down
+    case 'pull': // a figure hanging from a pull-up bar
       return (
         <Svg className={className}>
-          <path d="M3 4h18M7 4v3M17 4v3M12 9v11M8 16l4 4 4-4" />
+          <path d="M2 3h20M8 3l2 5M16 3l-2 5" />
+          <circle cx="12" cy="9.5" r="2" />
+          <path d="M12 11.5v5M12 16.5l-2.5 4.5M12 16.5l2.5 4.5" />
         </Svg>
       );
-    case 'legs': // a leg in profile: thigh, bent knee, shin and foot
+    case 'legs': // a figure in a squat
       return (
         <Svg className={className}>
-          <path d="M6 3l9 9-2 8h6" />
+          <circle cx="13" cy="3.5" r="2" />
+          <path d="M12.5 6l-3 6.5 5.5 2-2 6.5h3.5M11.5 8.5l5.5 1.5" />
         </Svg>
       );
-    case 'fullbody': // a standing figure, arms out
+    case 'fullbody': // a standing figure, arms raised
       return (
         <Svg className={className}>
-          <circle cx="12" cy="4.5" r="2.5" />
-          <path d="M12 9v6M5 11h14M12 15l-3.5 6M12 15l3.5 6" />
+          <circle cx="12" cy="4" r="2" />
+          <path d="M12 6.5v7.5M6 4.5l6 3.5 6-3.5M12 14l-4 7M12 14l4 7" />
         </Svg>
       );
     case 'generic': // dumbbell
