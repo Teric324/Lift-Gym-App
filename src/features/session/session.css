@@ -408,11 +408,8 @@
   background: var(--surface-2);
 }
 .choice input {
-  width: 22px;
-  height: 22px;
-  margin: 1px 0 0;
   flex: none;
-  accent-color: var(--yellow);
+  margin-top: 1px;
 }
 .choice--disabled {
   opacity: 0.6;

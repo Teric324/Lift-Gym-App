@@ -670,10 +670,41 @@
   cursor: pointer;
 }
 .picker__choice input {
-  width: 22px;
-  height: 22px;
   flex: none;
-  accent-color: var(--yellow);
+}
+/* Checkboxes and radios: a rounded outline that fills yellow with a dark tick when chosen. */
+.picker__choice input[type='checkbox'],
+.choice input[type='radio'] {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  border: 2px solid var(--text-3);
+  background: transparent center / 16px no-repeat;
+  -webkit-appearance: none;
+  appearance: none;
+  transition:
+    background-color var(--press),
+    border-color var(--press);
+}
+.picker__choice input[type='checkbox'] {
+  border-radius: 8px;
+}
+.choice input[type='radio'] {
+  border-radius: var(--radius-pill);
+}
+.picker__choice input[type='checkbox']:checked {
+  border-color: var(--yellow);
+  background-color: var(--yellow);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230a0a0b' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+}
+.choice input[type='radio']:checked {
+  border-color: var(--yellow);
+  background-color: var(--yellow);
+  background-image: radial-gradient(circle, var(--on-yellow) 0 4px, transparent 4.5px);
+}
+.choice input[type='radio']:disabled {
+  border-color: var(--line);
 }
 .picker__choice--button {
   border: 0;

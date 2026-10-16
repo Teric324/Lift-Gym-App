@@ -154,11 +154,12 @@ h1,
   line-height: 1.1;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 h1 {
   margin: var(--space-3) 0 var(--space-2);
-  font-size: 2rem;
+  /* 2rem from 375 px up; a little smaller on a 320 px phone so "EXERCISES" stays in one piece */
+  font-size: clamp(1.625rem, 8.5vw, 2rem);
 }
 /* Section headings are small, spaced capitals in the secondary colour. */
 h2 {

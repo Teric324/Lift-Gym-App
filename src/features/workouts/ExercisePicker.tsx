@@ -4,6 +4,7 @@ import { db } from '../../db/instance';
 import type { Exercise } from '../../domain/types';
 import { en } from '../../i18n/en';
 import { EmptyState } from '../../ui/EmptyState';
+import { SearchIcon } from '../../ui/icons';
 
 const t = en.workouts.picker;
 
@@ -117,16 +118,21 @@ export function ExercisePicker({
 
       <label className="field">
         <span className="field__label">{t.searchLabel}</span>
-        <input
-          className="field__input"
-          type="search"
-          value={query}
-          autoComplete="off"
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setError(null);
-          }}
-        />
+        <span className="search-field">
+          <span className="search-field__icon">
+            <SearchIcon />
+          </span>
+          <input
+            className="field__input"
+            type="search"
+            value={query}
+            autoComplete="off"
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setError(null);
+            }}
+          />
+        </span>
       </label>
       {error && (
         <p className="field__error" role="alert">
