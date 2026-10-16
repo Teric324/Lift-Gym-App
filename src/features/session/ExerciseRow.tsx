@@ -19,7 +19,13 @@ interface ExerciseRowProps {
 }
 
 /** One exercise in the overview: tap to open it, drag the handle to move it. */
-export function ExerciseRow({ exercise, item, insteadOfName, row, handle }: ExerciseRowProps) {
+export function ExerciseRow({
+  exercise,
+  item,
+  insteadOfName,
+  row: { setElement, style, dragging },
+  handle,
+}: ExerciseRowProps) {
   const progress = itemProgress(item);
   const detail = [
     progress.last ? t.lastSet(formatWeight(progress.last.weightGrams), progress.last.reps) : null,
@@ -28,9 +34,9 @@ export function ExerciseRow({ exercise, item, insteadOfName, row, handle }: Exer
 
   return (
     <li
-      ref={row.ref}
-      className={`session-row drag-row${progress.done ? ' session-row--done' : ''}${row.dragging ? ' drag-row--dragging' : ''}`}
-      style={row.style}
+      ref={setElement}
+      className={`session-row drag-row${progress.done ? ' session-row--done' : ''}${dragging ? ' drag-row--dragging' : ''}`}
+      style={style}
     >
       <Link className="session-row__main" to={`/session/${exercise.id}`} draggable={false}>
         <span className="session-row__text">

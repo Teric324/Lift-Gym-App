@@ -10,9 +10,9 @@ import { shiftFor } from '../../domain/reorder';
 import type { DragHandleBindings } from './DragHandle';
 import { useDragReorder } from './useDragReorder';
 
-/** What a row element needs: spread `ref`, `style` and the dragged flag onto the `<li>`. */
+/** What a row element needs: spread `setElement` (as the ref), `style` and the dragged flag onto the `<li>`. */
 export interface ReorderRowProps {
-  ref: (element: HTMLElement | null) => void;
+  setElement: (element: HTMLElement | null) => void;
   style: CSSProperties;
   dragging: boolean;
 }
@@ -98,7 +98,7 @@ export function useReorderableList(
           : shiftFor(index, dragState.from, dragState.to) * dragState.height
         : 0;
       return {
-        ref: drag.rowRef(id),
+        setElement: drag.rowRef(id),
         style: { '--drag-y': `${offsetPx}px` } as CSSProperties,
         dragging: isDragged,
       };

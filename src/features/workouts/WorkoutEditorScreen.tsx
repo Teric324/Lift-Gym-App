@@ -133,7 +133,7 @@ export function WorkoutEditorScreen() {
           return (
             <li
               key={exerciseId}
-              ref={row.ref}
+              ref={row.setElement}
               style={row.style}
               className={`list__row drag-row${exercise?.archived ? ' list__row--muted' : ''}${row.dragging ? ' drag-row--dragging' : ''}`}
             >
