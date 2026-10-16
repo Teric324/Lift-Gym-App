@@ -23,6 +23,7 @@ Latest commit at the time of writing: see `git log`.
 | D1 | New look, stage 1: tokens, Inter and Black Ops One shipped and precached | yes (seen on the phone) |
 | D2 | New look, stage 2: bottom navigation, wordmark, flat icon | **not yet** |
 | 13 | Icon per workout (5 choices), schema v3 (`Workout.icon`), backup format 3 | **not yet** (checklist section 15) |
+| 14 | Workout screen in two levels: compact overview with drag-to-reorder, one screen per exercise (`/session/:exerciseId`), swipe-left to delete a set, plain numeric reps (no − / +), no schema change | **not yet** (checklist section 16) |
 
 The new look is being applied in stages (see `docs/design/README.md`). Stages 1 (tokens, fonts, restyled
 buttons, fields, lists, dialogs) and 2 (wordmark, bottom navigation, flat icon) are built; the

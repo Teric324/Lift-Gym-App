@@ -402,6 +402,99 @@ Update first (Settings → bottom line shows `Version ...`). Export a backup bef
       the dumbbell.
 - [ ] Update keeps data: all history, sets and exercises are still there after the update.
 
+## 16. Workout screen in two levels (overview and exercise)
+
+Update first (Settings → bottom line shows `Version ...`). Start a workout with at least 5
+exercises, some with history, so the sets are pre-filled. Sections 9 and 11 describe the old single
+long screen; where they disagree with this section, this section wins.
+
+**Overview (`Workouts` tab stays yellow throughout)**
+
+- [ ] The workout screen shows the name, `started ...` and `N of M sets done`, then one compact row
+      per exercise: name, `checked/total sets` on the right, a three-bar handle at the far right.
+      No set rows, no ↑ ↓ buttons, no `…` menu here. Add exercise, Skipped and Finish workout are
+      below the list.
+- [ ] An exercise with a checked set shows the last checked one under its name (`80 kg × 5`). A
+      replacement shows `Instead of ...`. An exercise with every set checked has a yellow tint,
+      a check mark and a yellow count.
+- [ ] Tap an exercise (on its name or anywhere left of the handle): its own screen opens.
+
+**Exercise screen**
+
+- [ ] Top: `‹ Workout` link, the exercise name, a `Step ... kg` chip, `Instead of ...` when it
+      replaces one, and the `⋯` button. `‹ Workout` goes back to the overview.
+- [ ] Each set is on ONE line: set number, weight, `×`, reps, check square. Also with a long weight
+      such as 102.5 kg and with 3-digit reps. No − or + next to the reps.
+- [ ] At the bottom: `Add set`, then `Next: <name> →`. Tap it: the next exercise opens (same order
+      as the overview, skipped ones left out). On the last exercise the button says `Back to
+      workout` and returns to the overview.
+- [ ] On an exercise screen, swipe from the left screen edge (iOS Back gesture): you return to the
+      previous screen without losing anything. The tab bar stays and `Workouts` stays yellow.
+
+**Reps typing**
+
+- [ ] Tap a reps field: the number keypad opens (digits only), the number is selected, the key
+      says `Done`. Type `10`: it replaces the old value. Tap Done: the keyboard closes.
+- [ ] Type `12`, then `100`: both are accepted. Type `0`, then `101`: a red message `Reps must be
+      from 1 to 100. Not saved. Keeping ...` appears under the row, the old value is what is saved
+      (leave the field and check). Leaving the screen and coming back shows the last valid value.
+- [ ] Tapping the check on a row, then changing its reps, updates the saved set (see History).
+
+**Weight picker**
+
+- [ ] Tap the weight: the picker opens as before (step list, jumps, typing 27,5), the keyboard
+      does not cover the field or Done, Done closes it. The value shows in the row.
+
+**Swipe to delete a set**
+
+- [ ] Put a finger on a set row (on the number or the `×`, then also on the weight and reps) and
+      drag left about 2 cm: the row slides and a red **Delete** shows at the right. Release: it
+      stays open.
+- [ ] Drag left only about 1 cm and release: it snaps back closed.
+- [ ] While open: tap elsewhere, or swipe the row back right: it closes. Tapping the row while open
+      only closes it (the picker does not open).
+- [ ] Scroll the page up and down starting on a set row (a long page, e.g. 6+ sets): the page
+      scrolls, no row opens. A slightly diagonal scroll still scrolls.
+- [ ] Open a row, tap **Delete**: the set is gone and the numbers re-count. Deleting a set that is
+      checked first asks `Remove this set?`; Cancel keeps it, Remove deletes it and its saved set.
+- [ ] VoiceOver (optional): the Delete button is there for each set (`Delete set 2`).
+
+**Reorder by dragging (overview)**
+
+- [ ] Put a finger on the handle of the 1st exercise and drag down: the row follows the finger, the
+      other rows move out of the way, and a gap shows where it will land. Release: it stays in
+      the new place. Reopen the app: the order is kept.
+- [ ] Drag the last exercise to the top, and one in the middle by a single place.
+- [ ] Touching a row anywhere except the handle and moving up/down scrolls the list normally (the
+      row does not move).
+- [ ] With 8+ exercises, scroll the list down first (so the top is hidden), then drag a row: it
+      still lands where you expect. Drag a row to just above the tab bar: the list scrolls by
+      itself; drag it near the top bar to scroll up. It never scrolls far past the end of the list.
+- [ ] A drag that goes back to where it started changes nothing. Checked sets stay on their
+      exercise after a move (the counts do not change).
+
+**Skip, replace, add**
+
+- [ ] On an exercise screen: `⋯` → Skip this exercise: with no checked set it returns to the
+      overview at once and the exercise shows under `Skipped`; Bring back restores it with its rows.
+      With checked sets it asks first; Cancel stays on the exercise, confirming removes those sets
+      and returns to the overview.
+- [ ] `⋯` → Replace with another exercise…: after confirming, the screen of the new exercise opens
+      (own history pre-filled, `Instead of ...` shown). With sets already checked on the old one,
+      the old exercise stays in the overview with those sets and the new one follows it.
+- [ ] Add exercise (overview): the new exercise appears at the end as `0/0 sets`; open it, Add set,
+      fill weight and reps, check.
+
+**Finish and resume**
+
+- [ ] Check some sets on several exercises, then Finish workout: same result as before (unchecked
+      sets are not saved, the History entry lists the checked sets with the right weights and reps,
+      PR and prefill for the next workout are as expected).
+- [ ] Mid-workout (while on an exercise screen), swipe the app away and reopen: the Workouts tab
+      offers to resume as before; Resume opens the overview, with the checked sets and edited
+      values intact in each exercise.
+- [ ] After finishing, tapping the Workouts tab shows the workout list, not an old exercise screen.
+
 ## How to update the installed app
 
 An installed Home Screen app is a separate copy of the site that updates itself in the background.
