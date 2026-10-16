@@ -90,13 +90,17 @@ body {
 }
 
 /* The app shell: a column pinned to the window edges with position: fixed, so its height does
-   not depend on vh / dvh / innerHeight, which iOS can report wrongly at launch in the Home
-   Screen app. Header on top, scrolling main area, bottom bar. The page runs edge to edge
+   not depend on vh / dvh; iOS reports a short window at launch in the Home Screen app, so the
+   height comes from --app-height (app-height.ts). Header on top, scrolling main area, bottom bar. The page runs edge to edge
    (viewport-fit=cover): the side padding keeps content out of the notch and rounded corners. The
    bottom bar carries the home indicator padding itself. */
 #root {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* --app-height is set by app-height.ts (iOS can report a short window at launch). */
+  height: var(--app-height, 100%);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

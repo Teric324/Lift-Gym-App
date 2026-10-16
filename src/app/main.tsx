@@ -5,6 +5,7 @@ import { requestPersistentStorage } from '../db/persist';
 import { seedStarterExercises } from '../db/seed';
 import { initPwaUpdates } from '../features/pwa/update';
 import { App } from './App';
+import { startAppHeight } from './app-height';
 import './fonts.css';
 import './theme.css';
 import './layout.css';
@@ -33,6 +34,7 @@ async function prepareData() {
 }
 
 function start() {
+  startAppHeight();
   // Render first: the app must never wait (and show nothing) on IndexedDB, which can be slow or
   // stuck right after an update on iOS. The start-up safety net reports if the database or the
   // service worker does not come up.

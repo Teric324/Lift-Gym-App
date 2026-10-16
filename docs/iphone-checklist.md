@@ -414,10 +414,13 @@ If the button does not appear:
       hidden behind it at the end of the page.
 - [ ] Cold start (the app is a fixed-height shell now: the page itself no longer scrolls, only the
       area between the top bar and the bottom bar does). Swipe the app away in the app switcher,
-      reopen it, and without touching the screen check that the bottom bar is at the bottom edge,
+      reopen it (the shell height is now set from the real screen size at launch, `app height ...
+      from screen` in Settings → Screen info means the short-window workaround was used), and without touching the screen check that the bottom bar is at the bottom edge,
       above the home indicator and not floating. Repeat once starting on each of the four tabs
       (open the app on a tab, swipe it away, reopen). If it floats, turn on Settings → Screen info
       and note the `root`, `main` and `bottom bar` lines.
+- [ ] The top bar is the status bar area plus one row (about 111 pt in total on an iPhone 393x852,
+      not 170), with the LIFT wordmark vertically centred in that row.
 - [ ] A long workout (many exercises), scrolled to the end: the last set and the Finish button are
       reachable and not hidden behind the bottom bar; the top bar stays at the top.
 - [ ] Keyboard open in Add exercise (type in the name field) and in the weight picker (type a
