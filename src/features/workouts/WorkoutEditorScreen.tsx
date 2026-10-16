@@ -21,6 +21,7 @@ import { TextPrompt } from '../../ui/TextPrompt';
 import { WorkoutIconView } from '../../ui/workout-icons';
 import { useActiveSession } from '../session/useActiveSession';
 import { ExercisePicker } from './ExercisePicker';
+import { DisplayTitle } from '../../ui/DisplayTitle';
 
 const t = en.workouts;
 const NO_IDS: readonly string[] = [];
@@ -48,7 +49,7 @@ export function WorkoutEditorScreen() {
   if (workout === null) {
     return (
       <section>
-        <h1>{t.notFound}</h1>
+        <DisplayTitle>{t.notFound}</DisplayTitle>
         <Link to="/">{t.back}</Link>
       </section>
     );
@@ -66,7 +67,7 @@ export function WorkoutEditorScreen() {
       <p>
         <Link to="/">{t.back}</Link>
       </p>
-      <h1>{workout.name}</h1>
+      <DisplayTitle>{workout.name}</DisplayTitle>
       {workout.archived && <p className="notice">{t.archivedNote}</p>}
       {activeSession?.workoutId === workout.id && (
         <p className="notice" role="status">

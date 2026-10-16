@@ -18,6 +18,7 @@ import { localDateString } from '../../domain/date';
 import { en } from '../../i18n/en';
 import { canShareFile, shareFile } from './share';
 import { ViewportInfo } from './ViewportInfo';
+import { DisplayTitle } from '../../ui/DisplayTitle';
 
 const t = en.settings;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -202,7 +203,7 @@ export function SettingsScreen() {
 
   return (
     <section className="settings">
-      <h1>{t.title}</h1>
+      <DisplayTitle>{t.title}</DisplayTitle>
 
       <h2>{t.backupHeading}</h2>
       <p>{t.backupIntro}</p>

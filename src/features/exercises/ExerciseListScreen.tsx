@@ -14,6 +14,7 @@ import { CollapsibleSection } from '../../ui/CollapsibleSection';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { EmptyState } from '../../ui/EmptyState';
 import { TextPrompt } from '../../ui/TextPrompt';
+import { DisplayTitle } from '../../ui/DisplayTitle';
 
 const t = en.exercises;
 
@@ -33,7 +34,7 @@ export function ExerciseListScreen() {
 
   return (
     <section>
-      <h1>{t.title}</h1>
+      <DisplayTitle>{t.title}</DisplayTitle>
       <p className="muted">{t.intro}</p>
 
       <div className="screen__actions">

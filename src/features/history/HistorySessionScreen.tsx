@@ -22,6 +22,7 @@ import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { EmptyState } from '../../ui/EmptyState';
 import { HistorySetRow } from './HistorySetRow';
 import './history.css';
+import { DisplayTitle } from '../../ui/DisplayTitle';
 
 const t = en.history;
 
@@ -54,7 +55,7 @@ export function HistorySessionScreen() {
         <p>
           <Link to="/history">{t.back}</Link>
         </p>
-        <h1>{t.notFound}</h1>
+        <DisplayTitle>{t.notFound}</DisplayTitle>
       </section>
     );
   }
@@ -67,7 +68,7 @@ export function HistorySessionScreen() {
         <p>
           <Link to="/history">{t.back}</Link>
         </p>
-        <h1>{workout?.name ?? t.unknownWorkout}</h1>
+        <DisplayTitle>{workout?.name ?? t.unknownWorkout}</DisplayTitle>
         <p className="notice">{t.inProgress}</p>
         <Link className="button button--primary" to="/session">
           {t.openWorkout}
@@ -114,7 +115,7 @@ export function HistorySessionScreen() {
       <p>
         <Link to="/history">{t.back}</Link>
       </p>
-      <h1>{workout?.name ?? t.unknownWorkout}</h1>
+      <DisplayTitle>{workout?.name ?? t.unknownWorkout}</DisplayTitle>
       <p className="muted">
         {formatSessionDate(session.date)} · {sessionTimeRange(session)}
       </p>

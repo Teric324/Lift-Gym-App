@@ -13,6 +13,7 @@ import { ExerciseList } from './ExerciseList';
 import { FinishBar } from './FinishBar';
 import './session.css';
 import { useSessionView } from './useSessionView';
+import { DisplayTitle } from '../../ui/DisplayTitle';
 
 const t = en.session;
 
@@ -24,7 +25,7 @@ export function SessionScreen() {
   if (view === null) {
     return (
       <section>
-        <h1>{t.title}</h1>
+        <DisplayTitle>{t.title}</DisplayTitle>
         <EmptyState>{t.none}</EmptyState>
         <Link className="button" to="/">
           {t.goToWorkouts}
@@ -42,7 +43,7 @@ export function SessionScreen() {
 
   return (
     <section>
-      <h1>{view.workout?.name ?? t.title}</h1>
+      <DisplayTitle>{view.workout?.name ?? t.title}</DisplayTitle>
       <p className="muted">
         {t.started(formatSessionDate(session.date), localTimeString(session.startedAt))}
         {rows.length > 0 && ` · ${t.progress(doneSets, rows.length)}`}

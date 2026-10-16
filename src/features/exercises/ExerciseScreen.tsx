@@ -8,6 +8,7 @@ import { en } from '../../i18n/en';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { TextPrompt } from '../../ui/TextPrompt';
 import { ExerciseHistory } from './ExerciseHistory';
+import { DisplayTitle } from '../../ui/DisplayTitle';
 
 const t = en.exercises;
 
@@ -30,7 +31,7 @@ export function ExerciseScreen() {
   if (exercise === null) {
     return (
       <section>
-        <h1>{t.notFound}</h1>
+        <DisplayTitle>{t.notFound}</DisplayTitle>
         <Link to="/exercises">{t.back}</Link>
       </section>
     );
@@ -41,7 +42,7 @@ export function ExerciseScreen() {
       <p>
         <Link to="/exercises">{t.back}</Link>
       </p>
-      <h1>{exercise.name}</h1>
+      <DisplayTitle>{exercise.name}</DisplayTitle>
       {exercise.archived && <p className="notice">{t.archivedNote}</p>}
 
       <div className="screen__actions">

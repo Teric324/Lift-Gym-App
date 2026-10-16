@@ -10,6 +10,7 @@ import { TextPrompt } from '../../ui/TextPrompt';
 import { WorkoutIconView } from '../../ui/workout-icons';
 import { ResumeBanner } from '../session/ResumeBanner';
 import { StartWorkoutButton } from '../session/StartWorkoutButton';
+import { DisplayTitle } from '../../ui/DisplayTitle';
 
 const t = en.workouts;
 
@@ -24,7 +25,7 @@ export function WorkoutListScreen() {
 
   return (
     <section>
-      <h1>{t.title}</h1>
+      <DisplayTitle>{t.title}</DisplayTitle>
       <p className="muted">{t.intro}</p>
 
       <ResumeBanner />

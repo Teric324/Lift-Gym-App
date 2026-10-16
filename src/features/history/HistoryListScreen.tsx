@@ -10,6 +10,7 @@ import type { SessionSet } from '../../domain/types';
 import { en } from '../../i18n/en';
 import { EmptyState } from '../../ui/EmptyState';
 import './history.css';
+import { DisplayTitle } from '../../ui/DisplayTitle';
 
 const t = en.history;
 
@@ -36,7 +37,7 @@ export function HistoryListScreen() {
 
   return (
     <section>
-      <h1>{t.title}</h1>
+      <DisplayTitle>{t.title}</DisplayTitle>
       <p className="muted">{t.intro}</p>
 
       {groups.length === 0 && <EmptyState>{t.empty}</EmptyState>}

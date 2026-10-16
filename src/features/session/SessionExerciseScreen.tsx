@@ -12,6 +12,7 @@ import { ReplaceExerciseFlow } from './ReplaceExerciseFlow';
 import { SetRow } from './SetRow';
 import './session.css';
 import { useSessionView } from './useSessionView';
+import { DisplayTitle } from '../../ui/DisplayTitle';
 
 const t = en.session;
 
@@ -91,7 +92,7 @@ function ExerciseView({ exerciseId }: { exerciseId: string }) {
 
       <header className="exercise-head">
         <div className="exercise-head__text">
-          <h1 className="exercise-head__title">{exercise.name}</h1>
+          <DisplayTitle className="exercise-head__title">{exercise.name}</DisplayTitle>
           <p className="exercise-head__meta">
             {insteadOfName && <span className="muted">{t.insteadOf(insteadOfName)}</span>}
           </p>
